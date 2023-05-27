@@ -23,13 +23,13 @@ public class GameLobby : MonoBehaviour
 
     public void OnPlayerOrderChanged(OnPlayerOrderChangedEventData data)
     {
-        List<LobbyRoomPlayer> playersInLobby = NetworkManagerCustom.Instance.RoomPlayers;
-
-        if (playersInLobby.Count > 0)
-        {
-            m_playerEntries[data.m_oldOrder].Reset();
-            m_playerEntries[data.m_newOrder].SetPlayerOwner(playersInLobby[data.m_newOrder]);
-        }
+        // List<LobbyRoomPlayer> playersInLobby = NetworkManagerCustom.Instance.RoomPlayers;
+        //
+        // if (playersInLobby.Count > 0)
+        // {
+        //     m_playerEntries[data.m_oldOrder].Reset();
+        //     m_playerEntries[data.m_newOrder].SetPlayerOwner(playersInLobby[data.m_newOrder]);
+        // }
     }
     
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
