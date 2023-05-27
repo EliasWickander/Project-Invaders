@@ -15,15 +15,21 @@ namespace CustomToolkit.UI
         public Element m_target;
         public UIScreenData m_screenData;
         public UIPanelData m_panelData;
-    
+        public bool m_openWithPanel = false;
+
         public void Trigger()
         {
             UINavigation uiNavigation = UINavigation.Instance;
         
             if (m_target == Element.Screen)
             {
-                if(m_screenData)
-                    uiNavigation.NavigateTo(m_screenData);
+                if (m_screenData)
+                {
+                    if (m_openWithPanel)
+                        uiNavigation.NavigateTo(m_screenData, m_panelData);
+                    else
+                        uiNavigation.NavigateTo(m_screenData, null);
+                }
             }
             else if (m_target == Element.Panel)
             {

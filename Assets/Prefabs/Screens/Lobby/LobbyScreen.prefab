@@ -564,6 +564,8 @@ GameObject:
   - component: {fileID: 8308621830490918835}
   - component: {fileID: 829475469871515942}
   - component: {fileID: 8064064865348817876}
+  - component: {fileID: 6470573583263344957}
+  - component: {fileID: 2370615074556003711}
   m_Layer: 5
   m_Name: LobbyScreen
   m_TagString: Untagged
@@ -795,6 +797,50 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6470573583263344957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043698207368596530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c73dc54fdcfad478230fe8f9b15831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_event: {fileID: 11400000, guid: 5f4ee208592e42846b3237e73c5b9c62, type: 2}
+  m_response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2370615074556003711}
+        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2370615074556003711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043698207368596530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd52da19b48bc9c43b5099c569878332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_target: 0
+  m_screenData: {fileID: 11400000, guid: a3a6645c1e504d7479655aceb7b67910, type: 2}
+  m_panelData: {fileID: 11400000, guid: f94f2ee942c3a754f9493a431c2ae2f7, type: 2}
+  m_openWithPanel: 1
 --- !u!1 &7387484765494204792
 GameObject:
   m_ObjectHideFlags: 0

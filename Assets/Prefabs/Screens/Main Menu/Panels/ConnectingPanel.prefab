@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 925217a8190475e4a976a84c3cde4538, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_panelData: {fileID: 0}
+  m_panelData: {fileID: 11400000, guid: 41c0c4323a214d84ba1a28978fee97ed, type: 2}
 --- !u!114 &9010337343110999166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,6 +264,7 @@ MonoBehaviour:
   m_target: 0
   m_screenData: {fileID: 11400000, guid: 55073b21079442c4bb37dd0cc484739d, type: 2}
   m_panelData: {fileID: 0}
+  m_openWithPanel: 0
 --- !u!1 &1827389449146705842
 GameObject:
   m_ObjectHideFlags: 0

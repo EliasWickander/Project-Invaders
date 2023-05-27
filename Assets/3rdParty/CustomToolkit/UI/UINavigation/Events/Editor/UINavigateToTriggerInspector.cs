@@ -21,8 +21,17 @@ namespace CustomToolkit.UI
                 case UINavigateToTrigger.Element.Screen:
                 {
                     SerializedProperty screenData = serializedObject.FindProperty(nameof(UINavigateToTrigger.m_screenData));
-
+                    SerializedProperty openWithPanel = serializedObject.FindProperty(nameof(UINavigateToTrigger.m_openWithPanel));
+                    
                     EditorGUILayout.PropertyField(screenData);
+                    EditorGUILayout.PropertyField(openWithPanel);
+
+                    if (openWithPanel.boolValue)
+                    {
+                        SerializedProperty panelData = serializedObject.FindProperty(nameof(UINavigateToTrigger.m_panelData));
+                
+                        EditorGUILayout.PropertyField(panelData);
+                    }
                     break;
                 }
                 case UINavigateToTrigger.Element.Panel:

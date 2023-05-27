@@ -66,7 +66,7 @@ namespace CustomToolkit.UI
             return screenInstance;
         }
 
-        public void NavigateTo(UIScreenData screen)
+        public void NavigateTo(UIScreenData screen, UIPanelData panel = null)
         {
             if (screen == null || screen.m_uiScreenPrefab == null)
             {
@@ -84,6 +84,9 @@ namespace CustomToolkit.UI
             m_screenStack.Push(screenObject);
 
             ActiveScreen.SetVisible(true);
+            
+            if(panel != null)
+                NavigateTo(panel);
         }
 
         public void NavigateTo(UIPanelData panel)
