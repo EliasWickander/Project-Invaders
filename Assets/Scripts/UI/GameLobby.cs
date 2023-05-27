@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameLobby : MonoBehaviour
 {
-    public PlayerLobbyEntry[] m_playerEntries;
+    public PlayerLobbyEntryViewModel[] m_playerEntries;
 
     private void Start()
     {
@@ -35,7 +35,7 @@ public class GameLobby : MonoBehaviour
         for (int i = 0; i < players.Count; i++)
         {
             LobbyRoomPlayer player = players[i];
-            PlayerLobbyEntry entry = m_playerEntries[i];
+            PlayerLobbyEntryViewModel entry = m_playerEntries[i];
             
             entry.SetPlayerOwner(player);
         }
