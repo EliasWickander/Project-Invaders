@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a95307cf7d6720489269476fae03d62, type: 3}
-  m_Name: PlayerData
+  m_Script: {fileID: 11500000, guid: d94b4ec429f688549a15d76adfcce708, type: 3}
+  m_Name: OnServerDisconnectedEvent
   m_EditorClassIdentifier: 
-  m_trailMaterial: {fileID: 2100000, guid: daf5a42904e6dbf43a1bd77b5fc7c6db, type: 2}
-  m_territoryMaterial: {fileID: 2100000, guid: daf5a42904e6dbf43a1bd77b5fc7c6db, type: 2}
-  m_moveSpeed: 0.1

@@ -1,7 +1,7 @@
 using CustomToolkit.Events;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "OnClientDisconnected", menuName = "Project 100/GameEvents/OnClientDisconnectedEvent")]
+[CreateAssetMenu(fileName = "OnClientDisconnected", menuName = "Custom/Events/Network/OnClientDisconnectedEvent")]
 public class OnClientDisconnectedEvent : GameEvent
 {
 

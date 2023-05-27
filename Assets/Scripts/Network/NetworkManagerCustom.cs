@@ -14,6 +14,9 @@ public class NetworkManagerCustom : NetworkManager
     [SerializeField]
     private string m_menuScene;
 
+    [SerializeField]
+    private int m_minPlayers = 1;
+    
     [Header("Lobby Room")] 
     [SerializeField]
     private LobbyRoomPlayer m_roomPlayerPrefab;
@@ -24,6 +27,10 @@ public class NetworkManagerCustom : NetworkManager
     public OnClientConnectedEvent m_onClientConnectedEvent;
     public OnClientDisconnectedEvent m_onClientDisconnectedEvent;
     public OnClientErrorEvent m_onClientErrorEvent;
+    public OnServerConnectedEvent m_onServerConnectedEvent;
+    public OnServerDisconnectedEvent m_onServerDisconnectedEvent;
+
+    public List<LobbyRoomPlayer> RoomPlayers { get; } = new List<LobbyRoomPlayer>();
 
     public override void OnStartServer()
     {
@@ -70,7 +77,7 @@ public class NetworkManagerCustom : NetworkManager
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
         base.OnServerConnect(conn);
-
+        
         if (numPlayers >= maxConnections)
         {
             conn.Disconnect();
@@ -82,18 +89,45 @@ public class NetworkManagerCustom : NetworkManager
             conn.Disconnect();
             return;
         }
+
+        if(m_onServerConnectedEvent != null)
+            m_onServerConnectedEvent.Raise(new OnServerConnectedEventData() {m_connection = conn});
     }
 
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        if(conn.identity == null)
+            return;
+
+        LobbyRoomPlayer player = conn.identity.GetComponent<LobbyRoomPlayer>();
+
+        RoomPlayers.Remove(player);
+        
+        if(m_onServerDisconnectedEvent != null)
+            m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
+        
+        NotifyPlayersReadyState();
+        
+        base.OnServerDisconnect(conn);
+    }
+    
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
         if (SceneManager.GetActiveScene().path == m_menuScene)
         {
             LobbyRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
 
+            roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
+            
             NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
         }
     }
-    
+
+    public override void OnStopServer()
+    {
+        RoomPlayers.Clear();
+    }
+
     public override void OnStartHost()
     {
         base.OnStartHost();
@@ -102,6 +136,26 @@ public class NetworkManagerCustom : NetworkManager
             m_onStartHostEvent.Raise();
     }
 
+    public void NotifyPlayersReadyState()
+    {
+        foreach(LobbyRoomPlayer player in RoomPlayers)
+            player.HandleReadyToStart(IsReadyToStart());
+    }
+
+    private bool IsReadyToStart()
+    {
+        if(numPlayers < m_minPlayers)
+            return false;
+
+        foreach (LobbyRoomPlayer player in RoomPlayers)
+        {
+            if (!player.IsReady)
+                return false;
+        }
+
+        return true;
+    }
+    
     public void HostLobby()
     {
         if(NetworkServer.active || NetworkClient.active)

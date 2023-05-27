@@ -60,8 +60,19 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
   timeInterpolationGui: 0
   m_menuScene: Assets/Scenes/MainMenu.unity
+  m_minPlayers: 1
   m_roomPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
   m_onStartHostAttemptEvent: {fileID: 11400000, guid: 62305c44588ccc143a8ce21636848ca7, type: 2}
   m_onStartHostEvent: {fileID: 11400000, guid: 0f3fd24998353144f865b20b854e48c3, type: 2}
@@ -69,6 +80,8 @@ MonoBehaviour:
   m_onClientConnectedEvent: {fileID: 11400000, guid: d485b03cf4f51a54c967e4ed390d9405, type: 2}
   m_onClientDisconnectedEvent: {fileID: 11400000, guid: 5f4ee208592e42846b3237e73c5b9c62, type: 2}
   m_onClientErrorEvent: {fileID: 11400000, guid: bd33ce8192dca2948b464dc96029fbd2, type: 2}
+  m_onServerConnectedEvent: {fileID: 11400000, guid: 69e8b94e50ee8df419818e5dd2d2cb48, type: 2}
+  m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,18 +94,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7777
+  port: 7777
   DualMode: 1
   NoDelay: 1
   Interval: 10
   Timeout: 10000
+  RecvBufferSize: 7361536
+  SendBufferSize: 7361536
   FastResend: 2
-  SendWindowSize: 4096
   ReceiveWindowSize: 4096
+  SendWindowSize: 4096
   MaxRetransmit: 40
   MaximizeSocketBuffers: 1
-  ReliableMaxMessageSize: 298449
-  UnreliableMaxMessageSize: 1199
+  ReliableMaxMessageSize: 297433
+  UnreliableMaxMessageSize: 1195
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0

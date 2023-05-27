@@ -17,6 +17,7 @@ namespace CustomToolkit.UI
         public UIScreen ActiveScreen => m_screenStack.Count > 0 ? m_screenStack.Peek() : null;
         private Stack<UIScreen> m_screenStack = new Stack<UIScreen>();
 
+
         private void Awake()
         {
             if (Instance != null)

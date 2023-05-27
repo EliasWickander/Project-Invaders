@@ -1,6 +1,6 @@
 using UnityEngine;
 using CustomToolkit.Events;
-[CreateAssetMenu(fileName = "OnStartHostEvent", menuName = "Project 100/GameEvents/OnStartHostEvent")]
+[CreateAssetMenu(fileName = "OnStartHostEvent", menuName = "Custom/Events/Network/OnStartHostEvent")]
 public class OnStartHostEvent : GameEvent
 {
 
