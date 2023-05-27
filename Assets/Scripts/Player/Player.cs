@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -9,14 +10,17 @@ public class Player : MonoBehaviour
     private PlayerData m_playerData;
 
     public PlayerData PlayerData => m_playerData;
-    
+
     [SerializeField] 
     private string m_playerId = "Player";
 
     public string PlayerId => m_playerId;
 
+    private CustomPlayerInput m_playerInput;
+    
     private WorldGrid m_worldGrid;
 
+    private WorldGridNode m_currentNode = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
 
     private float m_moveTimer = 0;
@@ -25,12 +29,38 @@ public class Player : MonoBehaviour
 
     public List<WorldGridNode> m_ownedNodes = new List<WorldGridNode>();
     
+    private void Awake()
+    {
+        m_playerInput = new CustomPlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        m_playerInput.Enable();
+
+        m_playerInput.Movement.Movement.performed += OnMovementPerformed;
+    }
+
+    private void OnDisable()
+    {
+        m_playerInput.Disable();
+        m_playerInput.Movement.Movement.performed -= OnMovementPerformed;
+    }
 
     private void Start()
     {
         m_worldGrid = WorldGrid.Instance;
+
+        m_currentNode = m_worldGrid.Grid.GetNode(transform.position);
     }
 
+    private void OnMovementPerformed(InputAction.CallbackContext value)
+    {
+        Vector2 inputDir = value.ReadValue<Vector2>();
+
+        m_currentMoveDirection = new Vector3(inputDir.x, 0, inputDir.y);
+    }
+    
     private void Update()
     {
         HandleMovement();
@@ -38,24 +68,13 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 moveInputDir = GetMoveInputDir();
-
-        if (moveInputDir != Vector3.zero)
-        {
-            m_currentMoveDirection = moveInputDir;
-
-            m_moveTimer = m_playerData.MoveSpeed;
-        }
-        
         if (m_currentMoveDirection != Vector3.zero)
         {
             if (m_moveTimer >= m_playerData.MoveSpeed)
             {
-                WorldGridNode currentNode = m_worldGrid.Grid.GetNode(transform.position);
-                
-                WorldGridNode targetNode = m_worldGrid.Grid.GetNeighbour(currentNode, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
+                WorldGridNode targetNode = m_worldGrid.Grid.GetNeighbour(m_currentNode, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
 
-                if (targetNode != null && targetNode != currentNode)
+                if (targetNode != null && targetNode != m_currentNode)
                 {
                     StepOnNode(targetNode);
                 }
@@ -69,25 +88,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    private Vector3 GetMoveInputDir()
-    {
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-            return Vector3.forward;
-
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-            return Vector3.back;
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-            return Vector3.left;
-        
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-            return Vector3.right;
-
-        return Vector3.zero;
-    }
-
     private void StepOnNode(WorldGridNode node)
     {
+        m_currentNode = node;
+        
         transform.position = node.m_worldPosition;
 
         transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
