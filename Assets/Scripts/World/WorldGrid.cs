@@ -17,14 +17,14 @@ public class WorldGridNode : GridNode
         
         player.m_ownedNodes.Add(this);
         
-        m_tile.UpdateMaterial(player.OwnerMaterial);
+        m_tile.UpdateMaterial(player.PlayerData.TerritoryMaterial);
     }
 
     public void SetTrail(Player player)
     {
         m_trailedByPlayerId = player.PlayerId;
         
-        m_tile.UpdateMaterial(player.TrailMaterial);
+        m_tile.UpdateMaterial(player.PlayerData.TrailMaterial);
     }
 }
 public class WorldGrid : Singleton<WorldGrid>

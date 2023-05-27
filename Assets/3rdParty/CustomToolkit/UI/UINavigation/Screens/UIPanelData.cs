@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomToolkit.UI
 {
-    [CreateAssetMenu(fileName = "New Panel Data", menuName = "Project 100/UI/Panel Data")]
+    [CreateAssetMenu(fileName = "New Panel Data", menuName = "Custom/UI/Panel Data")]
     public class UIPanelData : ScriptableObject
     {
         public UIPanel m_uiPanelPrefab;

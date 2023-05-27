@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomToolkit.UI
 {
-    [CreateAssetMenu(fileName = "New Screen Data", menuName = "Project 100/UI/Screen Data")]
+    [CreateAssetMenu(fileName = "New Screen Data", menuName = "Custom/UI/Screen Data")]
     public class UIScreenData : ScriptableObject
     {
         public UIScreen m_uiScreenPrefab;

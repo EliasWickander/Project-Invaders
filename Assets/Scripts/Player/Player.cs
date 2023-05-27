@@ -6,23 +6,15 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] 
+    private PlayerData m_playerData;
+
+    public PlayerData PlayerData => m_playerData;
+    
+    [SerializeField] 
     private string m_playerId = "Player";
 
     public string PlayerId => m_playerId;
 
-    [SerializeField]
-    private Material m_trailMaterial;
-
-    public Material TrailMaterial => m_trailMaterial;
-    
-    [SerializeField] 
-    private Material m_ownerMaterial;
-
-    public Material OwnerMaterial => m_ownerMaterial;
-    
-    [SerializeField] 
-    private float m_moveSpeed = 1;
-    
     private WorldGrid m_worldGrid;
 
     private Vector3 m_currentMoveDirection = Vector3.zero;
@@ -52,12 +44,12 @@ public class Player : MonoBehaviour
         {
             m_currentMoveDirection = moveInputDir;
 
-            m_moveTimer = m_moveSpeed;
+            m_moveTimer = m_playerData.MoveSpeed;
         }
         
         if (m_currentMoveDirection != Vector3.zero)
         {
-            if (m_moveTimer >= m_moveSpeed)
+            if (m_moveTimer >= m_playerData.MoveSpeed)
             {
                 WorldGridNode currentNode = m_worldGrid.Grid.GetNode(transform.position);
                 
