@@ -19,7 +19,7 @@ public class JoinLobbyTrigger : MonoBehaviour
     
     public void Trigger(string ip)
     {
-        if (NetworkManagerCustom.Instance != null)
+        if (NetworkManagerCustom.Instance != null && !string.IsNullOrEmpty(ip))
         {
             NetworkManagerCustom.Instance.JoinLobby(ip);
         }
@@ -27,7 +27,7 @@ public class JoinLobbyTrigger : MonoBehaviour
 
     public void Trigger(TMP_InputField ip)
     {
-        if (NetworkManagerCustom.Instance != null && ip != null)
+        if (NetworkManagerCustom.Instance != null && !string.IsNullOrEmpty(ip.text))
         {
             NetworkManagerCustom.Instance.JoinLobby(ip.text);
         }
