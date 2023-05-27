@@ -66,8 +66,6 @@ public class LobbyRoomPlayer : NetworkBehaviour
     public void SetDisplayNameCommand(string displayName)
     {
         DisplayName = displayName;
-        
-        Debug.Log("set name " + displayName);
     }
 
     [Command]

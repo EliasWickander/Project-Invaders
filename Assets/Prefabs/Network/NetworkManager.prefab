@@ -81,6 +81,7 @@ MonoBehaviour:
   m_onClientDisconnectedEvent: {fileID: 11400000, guid: 5f4ee208592e42846b3237e73c5b9c62, type: 2}
   m_onClientErrorEvent: {fileID: 11400000, guid: bd33ce8192dca2948b464dc96029fbd2, type: 2}
   m_onServerConnectedEvent: {fileID: 11400000, guid: 69e8b94e50ee8df419818e5dd2d2cb48, type: 2}
+  m_onServerAddPlayerEvent: {fileID: 11400000, guid: 8a182423925611046882ccb57b3cf65b, type: 2}
   m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:

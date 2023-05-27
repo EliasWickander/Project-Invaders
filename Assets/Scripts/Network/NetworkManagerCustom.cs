@@ -28,6 +28,7 @@ public class NetworkManagerCustom : NetworkManager
     public OnClientDisconnectedEvent m_onClientDisconnectedEvent;
     public OnClientErrorEvent m_onClientErrorEvent;
     public OnServerConnectedEvent m_onServerConnectedEvent;
+    public OnServerAddPlayerEvent m_onServerAddPlayerEvent;
     public OnServerDisconnectedEvent m_onServerDisconnectedEvent;
 
     public List<LobbyRoomPlayer> RoomPlayers { get; } = new List<LobbyRoomPlayer>();
@@ -120,6 +121,9 @@ public class NetworkManagerCustom : NetworkManager
             roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
             
             NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
+            
+            if(m_onServerAddPlayerEvent != null)
+                m_onServerAddPlayerEvent.Raise(new OnServerAddPlayerEventData() {m_connection = conn});
         }
     }
 

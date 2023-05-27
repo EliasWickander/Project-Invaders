@@ -15,6 +15,7 @@ public class GameLobby : MonoBehaviour
 
     public void OnServerConnected(OnServerConnectedEventData data)
     {
+        Debug.Log(data.m_connection.identity);
         if(data.m_connection.identity == null)
             return;
         
