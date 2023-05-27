@@ -23,16 +23,12 @@ public class GameLobby : MonoBehaviour
 
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
     {
-        int index = NetworkManagerCustom.Instance.RoomPlayers.IndexOf(data.m_player);
-
-        m_playerEntries[index].DisplayName = data.m_newDisplayName;
+        m_playerEntries[data.m_playerIndex].DisplayName = data.m_newDisplayName;
     }
 
     public void OnPlayerReadyStatusChanged(OnPlayerReadyStatusChangedEventData data)
     {
-        int index = NetworkManagerCustom.Instance.RoomPlayers.IndexOf(data.m_player);
-
-        m_playerEntries[index].IsReady = data.m_newReadyStatus;
+        m_playerEntries[data.m_playerIndex].IsReady = data.m_newReadyStatus;
     }
     
     private void UpdateEntries()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OnPlayerDisplayNameChangedEventData
 {
-    public LobbyRoomPlayer m_player;
+    public int m_playerIndex;
     public string m_oldDisplayName;
     public string m_newDisplayName;
 }

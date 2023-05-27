@@ -120,7 +120,6 @@ public class NetworkManagerCustom : NetworkManager
             LobbyRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
 
             roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
-            
             NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
             
             if(m_onServerAddPlayerEvent != null)

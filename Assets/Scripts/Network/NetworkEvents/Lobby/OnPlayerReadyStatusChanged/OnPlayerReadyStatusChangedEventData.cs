@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OnPlayerReadyStatusChangedEventData
 {
-    public LobbyRoomPlayer m_player;
+    public int m_playerIndex;
     public bool m_oldReadyStatus;
     public bool m_newReadyStatus;
 }

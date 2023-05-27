@@ -11,6 +11,9 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
     [SerializeField] 
     private OnPlayerReadyStatusChangedEvent m_onReadyStatusChangedEvent;
+
+    [SyncVar(hook = nameof(OnPlayerOrderChanged))]
+    public int Order = 0;
     
     [SyncVar(hook = nameof(OnDisplayNameChanged))]
     public string DisplayName = "Loading...";
@@ -49,6 +52,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
         if (isOwned)
         {
+            Order = Lobby.RoomPlayers.Count - 1;
             SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
         }
     }
@@ -58,16 +62,20 @@ public class LobbyRoomPlayer : NetworkBehaviour
         Lobby.RoomPlayers.Remove(this);
     }
 
+    public void OnPlayerOrderChanged(int oldValue, int newValue)
+    {
+        
+    }
     public void OnReadyStatusChanged(bool oldValue, bool newValue)
     {
         if(m_onReadyStatusChangedEvent != null)
-            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_player = this, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
+            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = Order, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
     }
 
     public void OnDisplayNameChanged(string oldValue, string newValue)
     {
         if(m_onDisplayNameChangedEvent != null)
-            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_player = this, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
+            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = Order, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
     }
 
     [Command]
