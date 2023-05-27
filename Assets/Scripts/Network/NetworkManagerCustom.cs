@@ -30,6 +30,7 @@ public class NetworkManagerCustom : NetworkManager
     public OnServerConnectedEvent m_onServerConnectedEvent;
     public OnServerAddPlayerEvent m_onServerAddPlayerEvent;
     public OnServerDisconnectedEvent m_onServerDisconnectedEvent;
+    public OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyEvent;
 
     public List<LobbyRoomPlayer> RoomPlayers { get; } = new List<LobbyRoomPlayer>();
 
@@ -207,5 +208,16 @@ public class NetworkManagerCustom : NetworkManager
         yield return new WaitForSeconds(0.1f);
 
         StartClient();
+    }
+
+    public void OnPlayerJoinedLobby(LobbyRoomPlayer player)
+    {
+        if(player == null)
+            return;
+        
+        RoomPlayers.Add(player);
+
+        if(m_onPlayerJoinedLobbyEvent != null)
+            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player});
     }
 }

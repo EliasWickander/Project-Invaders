@@ -83,6 +83,7 @@ MonoBehaviour:
   m_onServerConnectedEvent: {fileID: 11400000, guid: 69e8b94e50ee8df419818e5dd2d2cb48, type: 2}
   m_onServerAddPlayerEvent: {fileID: 11400000, guid: 8a182423925611046882ccb57b3cf65b, type: 2}
   m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
+  m_onPlayerJoinedLobbyEvent: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0

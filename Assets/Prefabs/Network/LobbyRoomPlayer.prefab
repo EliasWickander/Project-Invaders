@@ -48,6 +48,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  m_onDisplayNameChangedEvent: {fileID: 11400000, guid: 1ae6f54c1abd6fe46a229bec60b5f1a2, type: 2}
+  m_onReadyStatusChangedEvent: {fileID: 11400000, guid: 8aeac3383b786df448867e16bfed9c66, type: 2}
+  DisplayName: Loading...
+  IsReady: 0
 --- !u!114 &-2878622097938902847
 MonoBehaviour:
   m_ObjectHideFlags: 0

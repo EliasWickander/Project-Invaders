@@ -560,7 +560,9 @@ GameObject:
   - component: {fileID: 6043698207368596529}
   - component: {fileID: 6043698207368596528}
   - component: {fileID: 6043698207368596531}
-  - component: {fileID: 5978043749783755380}
+  - component: {fileID: 3291616898861269825}
+  - component: {fileID: 8308621830490918835}
+  - component: {fileID: 829475469871515942}
   m_Layer: 5
   m_Name: LobbyScreen
   m_TagString: Untagged
@@ -680,7 +682,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5978043749783755380
+--- !u!114 &3291616898861269825
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -689,16 +691,72 @@ MonoBehaviour:
   m_GameObject: {fileID: 6043698207368596530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1754179a4c3e47439535ec5bf07b8ec, type: 3}
+  m_Script: {fileID: 11500000, guid: fc84a989ffabdde468f4e569971ccb06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 69e8b94e50ee8df419818e5dd2d2cb48, type: 2}
+  m_event: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
         m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
-        m_MethodName: OnServerConnected
+        m_MethodName: OnPlayerJoinedLobby
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8308621830490918835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043698207368596530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dec3a0cad09248488208134bc949481, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_event: {fileID: 11400000, guid: 1ae6f54c1abd6fe46a229bec60b5f1a2, type: 2}
+  m_response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5519943580622141746}
+        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
+        m_MethodName: OnPlayerDisplayNameChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &829475469871515942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043698207368596530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feb748afb77b6a64aae908655d2d2a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_event: {fileID: 11400000, guid: 8aeac3383b786df448867e16bfed9c66, type: 2}
+  m_response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5519943580622141746}
+        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
+        m_MethodName: OnPlayerReadyStatusChanged
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

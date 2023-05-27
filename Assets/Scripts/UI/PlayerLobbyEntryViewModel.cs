@@ -69,10 +69,9 @@ public class PlayerLobbyEntryViewModel : ViewModelMonoBehaviour
             return;
         }
 
-        IsActive = true;
-        
         DisplayName = player.DisplayName;
         IsReady = player.IsReady;
+        IsActive = true;
     }
 
     public void Reset()

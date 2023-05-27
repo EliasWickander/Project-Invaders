@@ -8,20 +8,33 @@ public class GameLobby : MonoBehaviour
 {
     public PlayerLobbyEntryViewModel[] m_playerEntries;
 
-    private void Start()
+    private LobbyRoomPlayer m_localPlayer;
+    
+    public void OnPlayerJoinedLobby(OnPlayerJoinedLobbyEventData data)
     {
-        UpdateEntries();
-    }
-
-    public void OnServerConnected(OnServerConnectedEventData data)
-    {
-        Debug.Log(data.m_connection.identity);
-        if(data.m_connection.identity == null)
+        if(data.m_player == null)
             return;
+
+        if (data.m_player.isOwned)
+            m_localPlayer = data.m_player;
         
         UpdateEntries();
     }
 
+    public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
+    {
+        int index = NetworkManagerCustom.Instance.RoomPlayers.IndexOf(data.m_player);
+
+        m_playerEntries[index].DisplayName = data.m_newDisplayName;
+    }
+
+    public void OnPlayerReadyStatusChanged(OnPlayerReadyStatusChangedEventData data)
+    {
+        int index = NetworkManagerCustom.Instance.RoomPlayers.IndexOf(data.m_player);
+
+        m_playerEntries[index].IsReady = data.m_newReadyStatus;
+    }
+    
     private void UpdateEntries()
     {
         //Clear all entries
@@ -32,7 +45,6 @@ public class GameLobby : MonoBehaviour
         
         List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
 
-        Debug.Log(players.Count);
         for (int i = 0; i < players.Count; i++)
         {
             LobbyRoomPlayer player = players[i];

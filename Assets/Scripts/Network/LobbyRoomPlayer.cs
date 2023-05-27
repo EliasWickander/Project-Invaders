@@ -6,6 +6,12 @@ using UnityEngine.UI;
 
 public class LobbyRoomPlayer : NetworkBehaviour
 {
+    [SerializeField] 
+    private OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedEvent;
+
+    [SerializeField] 
+    private OnPlayerReadyStatusChangedEvent m_onReadyStatusChangedEvent;
+    
     [SyncVar(hook = nameof(OnDisplayNameChanged))]
     public string DisplayName = "Loading...";
     
@@ -37,14 +43,14 @@ public class LobbyRoomPlayer : NetworkBehaviour
         }
     }
 
-    public override void OnStartAuthority()
-    {
-        SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));
-    }
-
     public override void OnStartClient()
     {
-        Lobby.RoomPlayers.Add(this);
+        Lobby.OnPlayerJoinedLobby(this);
+
+        if (isOwned)
+        {
+            SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
+        }
     }
 
     public override void OnStopClient()
@@ -54,12 +60,14 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
     public void OnReadyStatusChanged(bool oldValue, bool newValue)
     {
-        
+        if(m_onReadyStatusChangedEvent != null)
+            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_player = this, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
     }
 
     public void OnDisplayNameChanged(string oldValue, string newValue)
     {
-        
+        if(m_onDisplayNameChangedEvent != null)
+            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_player = this, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
     }
 
     [Command]
