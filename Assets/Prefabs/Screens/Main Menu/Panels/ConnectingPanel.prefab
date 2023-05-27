@@ -52,8 +52,10 @@ GameObject:
   - component: {fileID: 9010337343110999166}
   - component: {fileID: 3796567542331312177}
   - component: {fileID: 6502540384853222554}
+  - component: {fileID: 303039147478201741}
   - component: {fileID: 1827389449090598700}
   - component: {fileID: 1827389449090598699}
+  - component: {fileID: 8721190037291638139}
   m_Layer: 5
   m_Name: ConnectingPanel
   m_TagString: Untagged
@@ -181,6 +183,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &303039147478201741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1827389449090598698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97acdde3e382d74408262fc928023c10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_event: {fileID: 11400000, guid: d485b03cf4f51a54c967e4ed390d9405, type: 2}
+  m_response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8721190037291638139}
+        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &1827389449090598700
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -219,6 +249,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8721190037291638139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1827389449090598698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd52da19b48bc9c43b5099c569878332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_target: 0
+  m_screenData: {fileID: 11400000, guid: 55073b21079442c4bb37dd0cc484739d, type: 2}
+  m_panelData: {fileID: 0}
 --- !u!1 &1827389449146705842
 GameObject:
   m_ObjectHideFlags: 0
