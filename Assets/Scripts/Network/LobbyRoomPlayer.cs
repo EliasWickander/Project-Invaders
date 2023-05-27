@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class LobbyRoomPlayer : NetworkBehaviour
 {
     [SerializeField] 
+    private OnPlayerOrderChangedEvent m_onPlayerOrderChangedEvent;
+    
+    [SerializeField] 
     private OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedEvent;
 
     [SerializeField] 
@@ -52,7 +55,8 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
         if (isOwned)
         {
-            Order = Lobby.RoomPlayers.Count - 1;
+            SetOrder(Lobby.RoomPlayers.Count - 1);
+
             SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
         }
     }
@@ -64,8 +68,10 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
     public void OnPlayerOrderChanged(int oldValue, int newValue)
     {
-        
+        if(m_onPlayerOrderChangedEvent != null)
+            m_onPlayerOrderChangedEvent.Raise(new OnPlayerOrderChangedEventData() {m_playerIndex = oldValue, m_oldOrder = oldValue, m_newOrder = newValue});
     }
+    
     public void OnReadyStatusChanged(bool oldValue, bool newValue)
     {
         if(m_onReadyStatusChangedEvent != null)
@@ -78,6 +84,11 @@ public class LobbyRoomPlayer : NetworkBehaviour
             m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = Order, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
     }
 
+    [Command]
+    public void SetOrder(int order)
+    {
+        Order = order;
+    }
     [Command]
     public void SetDisplayNameCommand(string displayName)
     {
