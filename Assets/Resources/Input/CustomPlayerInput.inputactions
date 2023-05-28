@@ -1,5 +1,5 @@
 {
-    "name": "PlayerInputActions",
+    "name": "CustomPlayerInput",
     "maps": [
         {
             "name": "Movement",
@@ -125,6 +125,45 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "UI Navigation",
+            "id": "aca58736-3f2e-44ca-b5c9-c8d57a19b6e9",
+            "actions": [
+                {
+                    "name": "Navigate Back",
+                    "type": "Button",
+                    "id": "28336128-21a7-4b5c-8913-d592d708dfa0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d8b9b3b3-9fc7-4f42-bf4c-03e23f3eafd5",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Navigate Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d74987c0-79b4-4208-9479-ff3d4cf0cf0d",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Navigate Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

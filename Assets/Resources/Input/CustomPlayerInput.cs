@@ -149,6 +149,45 @@ public partial class @CustomPlayerInput : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""UI Navigation"",
+            ""id"": ""aca58736-3f2e-44ca-b5c9-c8d57a19b6e9"",
+            ""actions"": [
+                {
+                    ""name"": ""Navigate Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""28336128-21a7-4b5c-8913-d592d708dfa0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d8b9b3b3-9fc7-4f42-bf4c-03e23f3eafd5"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d74987c0-79b4-4208-9479-ff3d4cf0cf0d"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -162,6 +201,9 @@ public partial class @CustomPlayerInput : IInputActionCollection2, IDisposable
         // Movement
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Movement = m_Movement.FindAction("Movement", throwIfNotFound: true);
+        // UI Navigation
+        m_UINavigation = asset.FindActionMap("UI Navigation", throwIfNotFound: true);
+        m_UINavigation_NavigateBack = m_UINavigation.FindAction("Navigate Back", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -250,6 +292,39 @@ public partial class @CustomPlayerInput : IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // UI Navigation
+    private readonly InputActionMap m_UINavigation;
+    private IUINavigationActions m_UINavigationActionsCallbackInterface;
+    private readonly InputAction m_UINavigation_NavigateBack;
+    public struct UINavigationActions
+    {
+        private @CustomPlayerInput m_Wrapper;
+        public UINavigationActions(@CustomPlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @NavigateBack => m_Wrapper.m_UINavigation_NavigateBack;
+        public InputActionMap Get() { return m_Wrapper.m_UINavigation; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UINavigationActions set) { return set.Get(); }
+        public void SetCallbacks(IUINavigationActions instance)
+        {
+            if (m_Wrapper.m_UINavigationActionsCallbackInterface != null)
+            {
+                @NavigateBack.started -= m_Wrapper.m_UINavigationActionsCallbackInterface.OnNavigateBack;
+                @NavigateBack.performed -= m_Wrapper.m_UINavigationActionsCallbackInterface.OnNavigateBack;
+                @NavigateBack.canceled -= m_Wrapper.m_UINavigationActionsCallbackInterface.OnNavigateBack;
+            }
+            m_Wrapper.m_UINavigationActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @NavigateBack.started += instance.OnNavigateBack;
+                @NavigateBack.performed += instance.OnNavigateBack;
+                @NavigateBack.canceled += instance.OnNavigateBack;
+            }
+        }
+    }
+    public UINavigationActions @UINavigation => new UINavigationActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -262,5 +337,9 @@ public partial class @CustomPlayerInput : IInputActionCollection2, IDisposable
     public interface IMovementActions
     {
         void OnMovement(InputAction.CallbackContext context);
+    }
+    public interface IUINavigationActions
+    {
+        void OnNavigateBack(InputAction.CallbackContext context);
     }
 }
