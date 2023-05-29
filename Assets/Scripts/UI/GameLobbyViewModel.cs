@@ -1,14 +1,35 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using CustomToolkit.UnityMVVM;
+using Mirror;
 using TMPro;
 using UnityEngine;
 
-public class GameLobby : MonoBehaviour
+[Binding]
+public class GameLobbyViewModel : ViewModelMonoBehaviour
 {
     public PlayerLobbyEntryViewModel[] m_playerEntries;
 
     private LobbyRoomPlayer m_localPlayer;
+
+    private PropertyChangedEventArgs m_isLocalPlayerHostProp = new PropertyChangedEventArgs(nameof(IsLocalPlayerHost));
+    private bool m_isLocalPlayerHost;
+
+    [Binding]
+    public bool IsLocalPlayerHost
+    {
+        get
+        {
+            return m_isLocalPlayerHost;
+        }
+        set
+        {
+            m_isLocalPlayerHost = value;
+            OnPropertyChanged(m_isLocalPlayerHostProp);
+        }
+    }
     
     public void OnPlayerJoinedLobby(OnPlayerJoinedLobbyEventData data)
     {
@@ -16,20 +37,17 @@ public class GameLobby : MonoBehaviour
             return;
 
         if (data.m_player.isOwned)
+        {
             m_localPlayer = data.m_player;
+            IsLocalPlayerHost = m_localPlayer.IsLeader;
+        }
 
         UpdateEntries();
     }
 
     public void OnPlayerOrderChanged(OnPlayerOrderChangedEventData data)
     {
-        // List<LobbyRoomPlayer> playersInLobby = NetworkManagerCustom.Instance.RoomPlayers;
-        //
-        // if (playersInLobby.Count > 0)
-        // {
-        //     m_playerEntries[data.m_oldOrder].Reset();
-        //     m_playerEntries[data.m_newOrder].SetPlayerOwner(playersInLobby[data.m_newOrder]);
-        // }
+
     }
     
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)

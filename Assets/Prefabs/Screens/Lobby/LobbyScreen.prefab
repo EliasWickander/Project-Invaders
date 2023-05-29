@@ -518,13 +518,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8632457455071553107}
+  - component: {fileID: 5430267308946591891}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8632457455071553107
 RectTransform:
   m_ObjectHideFlags: 0
@@ -546,6 +547,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5430267308946591891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5789197135745715078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b812a48e895fd2f469ffb15ef5be762d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewAdapterTypeName: 
+  viewAdapterOptions: {fileID: 0}
+  viewModelPropertyName: GameLobbyViewModel.IsLocalPlayerHost
 --- !u!1 &6043698207368596530
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,8 +580,7 @@ GameObject:
   - component: {fileID: 8308621830490918835}
   - component: {fileID: 829475469871515942}
   - component: {fileID: 8064064865348817876}
-  - component: {fileID: 6470573583263344957}
-  - component: {fileID: 2370615074556003711}
+  - component: {fileID: 2539646312535373015}
   m_Layer: 5
   m_Name: LobbyScreen
   m_TagString: Untagged
@@ -797,7 +812,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6470573583263344957
+--- !u!114 &2539646312535373015
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -813,10 +828,10 @@ MonoBehaviour:
   m_response:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2370615074556003711}
-        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
-        m_MethodName: Trigger
-        m_Mode: 1
+      - m_Target: {fileID: 5519943580622141746}
+        m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
+        m_MethodName: OnPlayerLeftLobby
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -825,22 +840,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2370615074556003711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6043698207368596530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd52da19b48bc9c43b5099c569878332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_target: 0
-  m_screenData: {fileID: 11400000, guid: a3a6645c1e504d7479655aceb7b67910, type: 2}
-  m_panelData: {fileID: 11400000, guid: f94f2ee942c3a754f9493a431c2ae2f7, type: 2}
-  m_openWithPanel: 1
+  m_listenType: 1
+  m_scope: 0
 --- !u!1 &7387484765494204792
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,6 +851,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3172679199377108460}
+  - component: {fileID: 3991461920471065140}
   m_Layer: 5
   m_Name: ReadyButton
   m_TagString: Untagged
@@ -878,6 +880,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3991461920471065140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7387484765494204792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b812a48e895fd2f469ffb15ef5be762d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewAdapterTypeName: CustomToolkit.UnityMVVM.Adapters.BoolInversionAdapter
+  viewAdapterOptions: {fileID: 0}
+  viewModelPropertyName: GameLobbyViewModel.IsLocalPlayerHost
 --- !u!1 &7977704096232092865
 GameObject:
   m_ObjectHideFlags: 0
@@ -1135,7 +1152,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2196661380984070785
 RectTransform:
   m_ObjectHideFlags: 0

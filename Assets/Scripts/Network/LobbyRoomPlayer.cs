@@ -8,7 +8,10 @@ public class LobbyRoomPlayer : NetworkBehaviour
 {
     [SerializeField] 
     private OnPlayerOrderChangedEvent m_onPlayerOrderChangedEvent;
-    
+
+    [SerializeField] 
+    private OnClientDisconnectedEvent m_onClientDisconnectedEvent;
+
     [SerializeField] 
     private OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedEvent;
 
@@ -16,7 +19,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
     private OnPlayerReadyStatusChangedEvent m_onReadyStatusChangedEvent;
 
     [SyncVar(hook = nameof(OnPlayerOrderChanged))]
-    public int Order = 0;
+    public int Order = -1;
     
     [SyncVar(hook = nameof(OnDisplayNameChanged))]
     public string DisplayName = "Loading...";
@@ -25,7 +28,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
     public bool IsReady = false;
 
     private bool m_isLeader = false;
-
+    
     public bool IsLeader
     {
         get { return m_isLeader; }
@@ -34,7 +37,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
             m_isLeader = value;
         }
     }
-
+    
     private NetworkManagerCustom m_lobby;
 
     private NetworkManagerCustom Lobby
@@ -116,5 +119,15 @@ public class LobbyRoomPlayer : NetworkBehaviour
         if(!IsLeader)
             return;
 
+    }
+
+    [ClientRpc]
+    public void HandleClientDisconnected(int clientIndex)
+    {
+        if(m_onClientDisconnectedEvent != null)
+            m_onClientDisconnectedEvent.Raise(new OnClientDisconnectedEventData() {m_wasSelf = false, m_isLocalScope = isOwned});
+
+        if (Order > clientIndex)
+            Order--;
     }
 }

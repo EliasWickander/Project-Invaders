@@ -64,7 +64,7 @@ public class NetworkManagerCustom : NetworkManager
         base.OnClientDisconnect();
 
         if(m_onClientDisconnectedEvent)
-            m_onClientDisconnectedEvent.Raise();
+            m_onClientDisconnectedEvent.Raise(new OnClientDisconnectedEventData() {m_wasSelf = true, m_isLocalScope = true});
     }
 
     public override void OnClientError(TransportError error, string reason)
@@ -103,12 +103,15 @@ public class NetworkManagerCustom : NetworkManager
 
         LobbyRoomPlayer player = conn.identity.GetComponent<LobbyRoomPlayer>();
 
+        int clientIndex = player.Order;
+        
         RoomPlayers.Remove(player);
         
         if(m_onServerDisconnectedEvent != null)
             m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
         
         NotifyPlayersReadyState();
+        NotifyPlayersClientDisconnected(clientIndex);
         
         base.OnServerDisconnect(conn);
     }
@@ -144,6 +147,12 @@ public class NetworkManagerCustom : NetworkManager
     {
         foreach(LobbyRoomPlayer player in RoomPlayers)
             player.HandleReadyToStart(IsReadyToStart());
+    }
+
+    public void NotifyPlayersClientDisconnected(int clientIndex)
+    {
+        foreach(LobbyRoomPlayer player in RoomPlayers)
+            player.HandleClientDisconnected(clientIndex);
     }
 
     private bool IsReadyToStart()
