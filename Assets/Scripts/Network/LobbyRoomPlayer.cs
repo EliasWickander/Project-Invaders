@@ -106,8 +106,6 @@ public class LobbyRoomPlayer : NetworkBehaviour
     public void ToggleReadyCommand()
     {
         IsReady = !IsReady;
-        
-        Lobby.NotifyPlayersReadyState();
     }
 
     [Command]
@@ -118,12 +116,6 @@ public class LobbyRoomPlayer : NetworkBehaviour
         
         Debug.Log("start game");
         //start game
-    }
-    public void HandleReadyToStart(bool readyToStart)
-    {
-        if(!IsLeader)
-            return;
-
     }
 
     [ClientRpc]

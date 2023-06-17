@@ -109,8 +109,7 @@ public class NetworkManagerCustom : NetworkManager
         
         if(m_onServerDisconnectedEvent != null)
             m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
-        
-        NotifyPlayersReadyState();
+
         NotifyPlayersClientDisconnected(clientIndex);
         
         base.OnServerDisconnect(conn);
@@ -146,12 +145,6 @@ public class NetworkManagerCustom : NetworkManager
         
         if(m_onStartHostEvent)
             m_onStartHostEvent.Raise();
-    }
-
-    public void NotifyPlayersReadyState()
-    {
-        foreach(LobbyRoomPlayer player in RoomPlayers)
-            player.HandleReadyToStart(IsReadyToStart());
     }
 
     public void NotifyPlayersClientDisconnected(int clientIndex)
