@@ -2,6 +2,7 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class LobbyRoomPlayer : NetworkBehaviour
@@ -19,7 +20,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
     private OnPlayerReadyStatusChangedEvent m_onReadyStatusChangedEvent;
 
     [SyncVar(hook = nameof(OnPlayerOrderChanged))]
-    public int Order = -1;
+    public int PlayerIndex = -1;
     
     [SyncVar(hook = nameof(OnDisplayNameChanged))]
     public string DisplayName = "Loading...";
@@ -58,9 +59,12 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
         if (isOwned)
         {
-            SetOrder(Lobby.RoomPlayers.Count - 1);
+            SetPlayerIndex(Lobby.RoomPlayers.Count - 1);
 
             SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
+            
+            if(IsLeader)
+                ToggleReadyCommand();
         }
     }
 
@@ -78,19 +82,19 @@ public class LobbyRoomPlayer : NetworkBehaviour
     public void OnReadyStatusChanged(bool oldValue, bool newValue)
     {
         if(m_onReadyStatusChangedEvent != null)
-            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = Order, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
+            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = PlayerIndex, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
     }
 
     public void OnDisplayNameChanged(string oldValue, string newValue)
     {
         if(m_onDisplayNameChangedEvent != null)
-            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = Order, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
+            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = PlayerIndex, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
     }
 
     [Command]
-    public void SetOrder(int order)
+    public void SetPlayerIndex(int order)
     {
-        Order = order;
+        PlayerIndex = order;
     }
     [Command]
     public void SetDisplayNameCommand(string displayName)
@@ -109,9 +113,10 @@ public class LobbyRoomPlayer : NetworkBehaviour
     [Command]
     public void StartGameCommand()
     {
-        if(Lobby.RoomPlayers[0].connectionToClient != connectionToClient)
+        if(!IsLeader)
             return;
         
+        Debug.Log("start game");
         //start game
     }
     public void HandleReadyToStart(bool readyToStart)
@@ -127,7 +132,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
         if(m_onClientDisconnectedEvent != null)
             m_onClientDisconnectedEvent.Raise(new OnClientDisconnectedEventData() {m_wasSelf = false, m_isLocalScope = isOwned});
 
-        if (Order > clientIndex)
-            Order--;
+        if (PlayerIndex > clientIndex)
+            PlayerIndex--;
     }
 }

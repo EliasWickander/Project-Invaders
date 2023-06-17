@@ -31,6 +31,39 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
         }
     }
     
+    private PropertyChangedEventArgs m_isLocalPlayerReadyProp = new PropertyChangedEventArgs(nameof(IsLocalPlayerReady));
+    private bool m_isLocalPlayerReady = false;
+
+    [Binding]
+    public bool IsLocalPlayerReady
+    {
+        get
+        {
+            return m_isLocalPlayerReady;
+        }
+        set
+        {
+            m_isLocalPlayerReady = value;
+            OnPropertyChanged(m_isLocalPlayerReadyProp);
+        }
+    }
+
+    private PropertyChangedEventArgs m_canStartProp = new PropertyChangedEventArgs(nameof(CanStart));
+    private bool m_canStart = false;
+
+    [Binding]
+    public bool CanStart
+    {
+        get
+        {
+            return m_canStart;
+        }
+        set
+        {
+            m_canStart = value;
+            OnPropertyChanged(m_canStartProp);
+        }
+    }
     public void OnPlayerJoinedLobby(OnPlayerJoinedLobbyEventData data)
     {
         if(data.m_player == null)
@@ -41,8 +74,8 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
             m_localPlayer = data.m_player;
             IsLocalPlayerHost = m_localPlayer.IsLeader;
         }
-
-        UpdateEntries();
+        
+        Sync();
     }
 
     public void OnPlayerOrderChanged(OnPlayerOrderChangedEventData data)
@@ -52,7 +85,7 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
 
     public void OnPlayerDisconnect()
     {
-        UpdateEntries();
+        Sync();
     }
     
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
@@ -63,8 +96,38 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
     public void OnPlayerReadyStatusChanged(OnPlayerReadyStatusChangedEventData data)
     {
         m_playerEntries[data.m_playerIndex].IsReady = data.m_newReadyStatus;
+
+        if (m_localPlayer != null)
+        {
+            if (data.m_playerIndex == m_localPlayer.PlayerIndex)
+                IsLocalPlayerReady = data.m_newReadyStatus;   
+        }
+        
+        UpdateCanStart();
     }
-    
+
+    private void Sync()
+    {
+        UpdateEntries();
+        UpdateCanStart();
+    }
+
+    private void UpdateCanStart()
+    {
+        //Can start only if all players are ready
+        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].IsReady == false)
+            {
+                CanStart = false;
+                return;
+            }
+        }
+
+        CanStart = true;
+    }
     private void UpdateEntries()
     {
         //Clear all entries
@@ -82,5 +145,17 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
             
             entry.SetPlayerOwner(player);
         }
+    }
+
+    [Binding]
+    public void ToggleReady()
+    {
+        m_localPlayer.ToggleReadyCommand();
+    }
+
+    [Binding]
+    public void StartGame()
+    {
+        m_localPlayer.StartGameCommand();
     }
 }

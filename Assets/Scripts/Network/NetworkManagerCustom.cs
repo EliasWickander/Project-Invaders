@@ -103,7 +103,7 @@ public class NetworkManagerCustom : NetworkManager
 
         LobbyRoomPlayer player = conn.identity.GetComponent<LobbyRoomPlayer>();
 
-        int clientIndex = player.Order;
+        int clientIndex = player.PlayerIndex;
         
         RoomPlayers.Remove(player);
         
@@ -122,7 +122,12 @@ public class NetworkManagerCustom : NetworkManager
         {
             LobbyRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
 
-            roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
+            //If this instance is first player
+            if (RoomPlayers.Count == 0)
+            {
+                roomPlayerInstance.IsLeader = true;
+            }
+            
             NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
             
             if(m_onServerAddPlayerEvent != null)
