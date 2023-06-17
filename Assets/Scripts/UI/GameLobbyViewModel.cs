@@ -69,7 +69,6 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
         if(data.m_player == null)
             return;
 
-        Debug.Log("joined " + data.m_player.PlayerIndex);
         if (data.m_player.isOwned)
         {
             m_localPlayer = data.m_player;
@@ -91,13 +90,11 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
     
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
     {
-        Debug.Log("display name change " + data.m_playerIndex);
         m_playerEntries[data.m_playerIndex].DisplayName = data.m_newDisplayName;
     }
 
     public void OnPlayerReadyStatusChanged(OnPlayerReadyStatusChangedEventData data)
     {
-        Debug.Log("ready status change " + data.m_playerIndex);
         m_playerEntries[data.m_playerIndex].IsReady = data.m_newReadyStatus;
 
         if (m_localPlayer != null)
