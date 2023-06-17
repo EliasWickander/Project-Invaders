@@ -12,7 +12,7 @@ public class NetworkManagerCustom : NetworkManager
     
     [Scene]
     [SerializeField]
-    private string m_menuScene;
+    private string m_lobbyScene;
 
     [SerializeField]
     private int m_minPlayers = 1;
@@ -86,7 +86,7 @@ public class NetworkManagerCustom : NetworkManager
             return;
         }
 
-        if (SceneManager.GetActiveScene().path != m_menuScene)
+        if (SceneManager.GetActiveScene().path != m_lobbyScene)
         {
             conn.Disconnect();
             return;
@@ -118,7 +118,7 @@ public class NetworkManagerCustom : NetworkManager
     
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        if (SceneManager.GetActiveScene().path == m_menuScene)
+        if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
             LobbyRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
 
@@ -227,5 +227,10 @@ public class NetworkManagerCustom : NetworkManager
 
         if(m_onPlayerJoinedLobbyEvent != null)
             m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player});
+    }
+
+    public void DisconnectClient()
+    {
+        StopClient();
     }
 }

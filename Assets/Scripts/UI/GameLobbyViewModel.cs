@@ -49,6 +49,11 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
     {
 
     }
+
+    public void OnPlayerDisconnect()
+    {
+        UpdateEntries();
+    }
     
     public void OnPlayerDisplayNameChanged(OnPlayerDisplayNameChangedEventData data)
     {

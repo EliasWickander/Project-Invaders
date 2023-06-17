@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 364aaecf65ebc7c4196a1fa2ca18663c, type: 3}
-  m_Name: LobbyScreen
+  m_Script: {fileID: 11500000, guid: fbd4ea27e68449d4ebcd62c8ad55a85e, type: 3}
+  m_Name: LeaveLobbyPanel
   m_EditorClassIdentifier: 
-  m_uiScreenPrefab: {fileID: 8220531737411850694, guid: 250178164687e204eb10d83efcf4778d, type: 3}
-  m_panels:
-  - {fileID: 11400000, guid: 0e2e0bd15023f2a44bb657545f04e60e, type: 2}
+  m_uiPanelPrefab: {fileID: 2617157735731493894, guid: 6e58791e5363cc545a615e48caf89b8e, type: 3}
+  m_activeOnStart: 0

@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 8308621830490918835}
   - component: {fileID: 829475469871515942}
   - component: {fileID: 8064064865348817876}
-  - component: {fileID: 2539646312535373015}
+  - component: {fileID: 118231449550375087}
   m_Layer: 5
   m_Name: LobbyScreen
   m_TagString: Untagged
@@ -812,7 +812,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2539646312535373015
+--- !u!114 &118231449550375087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -830,8 +830,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
         m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
-        m_MethodName: OnPlayerLeftLobby
-        m_Mode: 0
+        m_MethodName: OnPlayerDisconnect
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -840,8 +840,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_listenType: 1
-  m_scope: 0
 --- !u!1 &7387484765494204792
 GameObject:
   m_ObjectHideFlags: 0
