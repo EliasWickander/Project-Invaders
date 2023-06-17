@@ -224,7 +224,7 @@ public class NetworkManagerCustom : NetworkManager
         RoomPlayers.Add(player);
 
         if(m_onPlayerJoinedLobbyEvent != null)
-            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player});
+            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player, m_isLocalPlayer = player.isOwned});
     }
 
     public void DisconnectClient()
