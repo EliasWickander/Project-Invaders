@@ -14,6 +14,10 @@ public class NetworkManagerCustom : NetworkManager
     [SerializeField]
     private string m_lobbyScene;
 
+    [Scene] 
+    [SerializeField] 
+    private string m_gameScene;
+    
     [SerializeField]
     private int m_minPlayers = 1;
     
@@ -21,6 +25,10 @@ public class NetworkManagerCustom : NetworkManager
     [SerializeField]
     private LobbyRoomPlayer m_roomPlayerPrefab;
 
+    [Header("Game")] 
+    [SerializeField] 
+    private Player m_gamePlayerPrefab;
+    
     public OnStartHostAttemptEvent m_onStartHostAttemptEvent;
     public OnStartHostEvent m_onStartHostEvent;
     public OnClientConnectionAttemptEvent m_onClientConnectionAttemptEvent;
@@ -33,6 +41,7 @@ public class NetworkManagerCustom : NetworkManager
     public OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyEvent;
 
     public List<LobbyRoomPlayer> RoomPlayers { get; } = new List<LobbyRoomPlayer>();
+    public List<Player> GamePlayers { get; } = new List<Player>();
 
     public override void OnStartServer()
     {
@@ -230,5 +239,41 @@ public class NetworkManagerCustom : NetworkManager
     public void DisconnectClient()
     {
         StopClient();
+    }
+
+    public override void ServerChangeScene(string newSceneName)
+    {
+        //If transitioning from lobby to game scene, replace all lobby players with game players
+        if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName == m_gameScene)
+        {
+            for (int i = 0; i < RoomPlayers.Count; i++)
+            {
+                LobbyRoomPlayer roomPlayer = RoomPlayers[i];
+                NetworkConnectionToClient connection = roomPlayer.connectionToClient;
+
+                Player gamePlayerInstance = Instantiate(m_gamePlayerPrefab);
+                gamePlayerInstance.SetDisplayName(roomPlayer.DisplayName);
+                
+                NetworkServer.Destroy(connection.identity.gameObject);
+
+                NetworkServer.ReplacePlayerForConnection(connection, gamePlayerInstance.gameObject);
+            }
+        }
+        
+        base.ServerChangeScene(newSceneName);
+    }
+
+    public void StartGame()
+    {
+        if (SceneManager.GetActiveScene().path == m_lobbyScene)
+        {
+            if (!IsReadyToStart())
+            {
+                Debug.LogError("Attempted to start game but not all players were ready");
+                return;   
+            }
+
+            ServerChangeScene(m_gameScene);
+        }
     }
 }

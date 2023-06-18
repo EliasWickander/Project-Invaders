@@ -73,8 +73,10 @@ MonoBehaviour:
     deliveryTimeEmaDuration: 2
   timeInterpolationGui: 0
   m_lobbyScene: Assets/Scenes/Lobby.unity
+  m_gameScene: Assets/Scenes/GameScene.unity
   m_minPlayers: 1
   m_roomPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
+  m_gamePlayerPrefab: {fileID: 7343631015343462473, guid: ef864599084422e4db54150709ecd4d2, type: 3}
   m_onStartHostAttemptEvent: {fileID: 11400000, guid: 62305c44588ccc143a8ce21636848ca7, type: 2}
   m_onStartHostEvent: {fileID: 11400000, guid: 0f3fd24998353144f865b20b854e48c3, type: 2}
   m_onClientConnectionAttemptEvent: {fileID: 11400000, guid: fcf9c78aaa123cc42a484c0f79ed9b0e, type: 2}

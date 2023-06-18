@@ -63,12 +63,13 @@ public class WorldGrid : Singleton<WorldGrid>
             return;
 
         WorldGridTile tileInstance = Instantiate(m_tilePrefab, node.m_worldPosition, Quaternion.identity);
-
+        
         float nodeDiameter = m_nodeRadius * 2;
         float bias = 0.02f;
         
         tileInstance.transform.localScale = new Vector3(nodeDiameter - bias, tileInstance.transform.localScale.y, nodeDiameter - bias);
-
+        tileInstance.transform.SetParent(transform);
+        
         node.m_tile = tileInstance;
     }
     

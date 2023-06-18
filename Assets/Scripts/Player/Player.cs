@@ -1,16 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
     [SerializeField] 
     private PlayerData m_playerData;
 
     public PlayerData PlayerData => m_playerData;
 
+    [SyncVar] 
+    private string m_displayName;
+    
     [SerializeField] 
     private string m_playerId = "Player";
 
@@ -52,6 +56,16 @@ public class Player : MonoBehaviour
         m_worldGrid = WorldGrid.Instance;
 
         m_currentNode = m_worldGrid.Grid.GetNode(transform.position);
+    }
+
+    public override void OnStartClient()
+    {
+        NetworkManagerCustom.Instance.GamePlayers.Add(this);
+    }
+
+    public override void OnStopClient()
+    {
+        NetworkManagerCustom.Instance.GamePlayers.Remove(this);
     }
 
     private void OnMovementPerformed(InputAction.CallbackContext value)
@@ -155,5 +169,11 @@ public class Player : MonoBehaviour
         }
 
         return nodesWithinEnclosedArea;
+    }
+
+    [Server]
+    public void SetDisplayName(string displayName)
+    {
+        m_displayName = displayName;
     }
 }

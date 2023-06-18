@@ -217,105 +217,92 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &963244780
+--- !u!1001 &897964117
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 257694026799386208, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_Name
+      value: UIScreens
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386209, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_defaultScreens.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 55073b21079442c4bb37dd0cc484739d, type: 2}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386210, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386238, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_event.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 897964119}
+    - target: {fileID: 257694026799386238, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_event.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Trigger
+      objectReference: {fileID: 0}
+    - target: {fileID: 257694026799386238, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+      propertyPath: m_event.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 257694026799386237, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+--- !u!1 &897964118 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 257694026799386208, guid: 5b1c5e2653b2c6944b2b2f3052980fd5, type: 3}
+  m_PrefabInstance: {fileID: 897964117}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 963244782}
-  - component: {fileID: 963244781}
-  - component: {fileID: 963244785}
-  - component: {fileID: 963244786}
-  - component: {fileID: 963244787}
-  m_Layer: 0
-  m_Name: UIScreens
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &963244781
+--- !u!114 &897964119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963244780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12eb1098633c09147ab6a6b18e8a868b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_defaultScreens:
-  - {fileID: 11400000, guid: 55073b21079442c4bb37dd0cc484739d, type: 2}
---- !u!4 &963244782
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963244780}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &963244785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963244780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3954b7b103419d74b9c30fc5c15b4ca7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_target: 0
---- !u!114 &963244786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963244780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d4750b54774116429938d22e359b4f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_inputAsset: {fileID: -944628639613478452, guid: 836980e1ddc70d44a8dcf65fcfa19906, type: 3}
-  m_selectedActionGuid: UI Navigation/Navigate Back
-  m_eventType: 0
-  m_event:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 963244787}
-        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
-        m_MethodName: Trigger
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &963244787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963244780}
+  m_GameObject: {fileID: 897964118}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd52da19b48bc9c43b5099c569878332, type: 3}

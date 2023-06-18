@@ -113,9 +113,8 @@ public class LobbyRoomPlayer : NetworkBehaviour
     {
         if(!IsLeader)
             return;
-        
-        Debug.Log("start game");
-        //start game
+
+        NetworkManagerCustom.Instance.StartGame();
     }
 
     [ClientRpc]
