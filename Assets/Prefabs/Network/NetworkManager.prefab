@@ -76,6 +76,7 @@ MonoBehaviour:
   m_gameScene: Assets/Scenes/GameScene.unity
   m_minPlayers: 1
   m_roomPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
+  m_preGamePlayerPrefab: {fileID: 472075276746226264, guid: 63c264dad49c91f43af70b53540b88bf, type: 3}
   m_gamePlayerPrefab: {fileID: 7343631015343462473, guid: ef864599084422e4db54150709ecd4d2, type: 3}
   m_onStartHostAttemptEvent: {fileID: 11400000, guid: 62305c44588ccc143a8ce21636848ca7, type: 2}
   m_onStartHostEvent: {fileID: 11400000, guid: 0f3fd24998353144f865b20b854e48c3, type: 2}
@@ -87,6 +88,7 @@ MonoBehaviour:
   m_onServerAddPlayerEvent: {fileID: 11400000, guid: 8a182423925611046882ccb57b3cf65b, type: 2}
   m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
   m_onPlayerJoinedLobbyEvent: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
+  m_onPlayerJoinedPreGameEvent: {fileID: 11400000, guid: 943b361259162ca47a35ea0f8927af29, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0

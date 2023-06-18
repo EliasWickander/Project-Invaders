@@ -6,8 +6,15 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public class PlayerProfile
+{
+    public string m_displayName = "Placeholder";
+    public NetworkConnectionToClient m_connection;
+}
+
 public class NetworkManagerCustom : NetworkManager
 {
+
     public static NetworkManagerCustom Instance => singleton as NetworkManagerCustom;
     
     [Scene]
@@ -27,6 +34,9 @@ public class NetworkManagerCustom : NetworkManager
 
     [Header("Game")] 
     [SerializeField] 
+    private PreGamePlayer m_preGamePlayerPrefab;
+    
+    [SerializeField] 
     private Player m_gamePlayerPrefab;
     
     public OnStartHostAttemptEvent m_onStartHostAttemptEvent;
@@ -38,10 +48,18 @@ public class NetworkManagerCustom : NetworkManager
     public OnServerConnectedEvent m_onServerConnectedEvent;
     public OnServerAddPlayerEvent m_onServerAddPlayerEvent;
     public OnServerDisconnectedEvent m_onServerDisconnectedEvent;
+    
+    [Header("Lobby Events")]
     public OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyEvent;
 
+    [Header("Pre Game Events")] 
+    public OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameEvent;
+    
     public List<LobbyRoomPlayer> RoomPlayers { get; } = new List<LobbyRoomPlayer>();
     public List<Player> GamePlayers { get; } = new List<Player>();
+    public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
+
+    public List<PlayerProfile> m_playerProfiles = new List<PlayerProfile>();
 
     public override void OnStartServer()
     {
@@ -109,18 +127,21 @@ public class NetworkManagerCustom : NetworkManager
     {
         if(conn.identity == null)
             return;
-
+        
         LobbyRoomPlayer player = conn.identity.GetComponent<LobbyRoomPlayer>();
 
-        int clientIndex = player.PlayerIndex;
+        if (player != null)
+        {
+            int clientIndex = player.PlayerIndex;
         
-        RoomPlayers.Remove(player);
+            RoomPlayers.Remove(player);
         
-        if(m_onServerDisconnectedEvent != null)
-            m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
+            if(m_onServerDisconnectedEvent != null)
+                m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
 
-        NotifyPlayersClientDisconnected(clientIndex);
-        
+            NotifyPlayersClientDisconnected(clientIndex);   
+        }
+
         base.OnServerDisconnect(conn);
     }
     
@@ -233,9 +254,20 @@ public class NetworkManagerCustom : NetworkManager
         RoomPlayers.Add(player);
 
         if(m_onPlayerJoinedLobbyEvent != null)
-            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player, m_isLocalPlayer = player.isOwned});
+            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player});
     }
 
+    public void OnPlayerJoinedPreGame(PreGamePlayer player)
+    {
+        if(player == null)
+            return;
+        
+        PreGamePlayers.Add(player);
+
+        if(m_onPlayerJoinedPreGameEvent != null)
+            m_onPlayerJoinedPreGameEvent.Raise(new OnPlayerJoinedPreGameEventData() {m_player = player});
+    }
+    
     public void DisconnectClient()
     {
         StopClient();
@@ -243,26 +275,46 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void ServerChangeScene(string newSceneName)
     {
-        //If transitioning from lobby to game scene, replace all lobby players with game players
+        //If transitioning from lobby to game scene, replace all lobby players with pre game players
         if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName == m_gameScene)
         {
+            m_playerProfiles.Clear();
+
             for (int i = 0; i < RoomPlayers.Count; i++)
             {
                 LobbyRoomPlayer roomPlayer = RoomPlayers[i];
                 NetworkConnectionToClient connection = roomPlayer.connectionToClient;
-
-                Player gamePlayerInstance = Instantiate(m_gamePlayerPrefab);
-                gamePlayerInstance.SetDisplayName(roomPlayer.DisplayName);
                 
-                NetworkServer.Destroy(connection.identity.gameObject);
-
-                NetworkServer.ReplacePlayerForConnection(connection, gamePlayerInstance.gameObject);
+                m_playerProfiles.Add(new PlayerProfile() {m_displayName = roomPlayer.DisplayName, m_connection = connection});
             }
         }
         
         base.ServerChangeScene(newSceneName);
     }
 
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        if (sceneName == m_gameScene)
+        {
+            NetworkClient.Ready();
+            
+            foreach (PlayerProfile playerProfile in m_playerProfiles)
+                SceneLoadedForPlayer(playerProfile);
+        }
+    }
+
+    void SceneLoadedForPlayer(PlayerProfile playerProfile)
+    {
+        if (Utils.IsSceneActive(m_gameScene))
+        {
+            PreGamePlayer preGamePlayerInstance = Instantiate(m_preGamePlayerPrefab);
+            preGamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
+
+            // replace room player with game player
+            NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, preGamePlayerInstance.gameObject, true);
+        }
+    }
+    
     public void StartGame()
     {
         if (SceneManager.GetActiveScene().path == m_lobbyScene)

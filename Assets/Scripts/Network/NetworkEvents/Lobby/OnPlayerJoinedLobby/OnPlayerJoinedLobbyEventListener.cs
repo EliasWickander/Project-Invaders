@@ -16,10 +16,10 @@ public class OnPlayerJoinedLobbyEventListener : GameEventListener<OnPlayerJoined
 
     public override void OnEventRaised(OnPlayerJoinedLobbyEventData value)
     {
-        if(m_subject == SubjectType.Self && !value.m_isLocalPlayer)
+        if(m_subject == SubjectType.Self && !value.m_player.isOwned)
             return;
         
-        if(m_subject == SubjectType.Other && value.m_isLocalPlayer)
+        if(m_subject == SubjectType.Other && value.m_player.isOwned)
             return;
 
         base.OnEventRaised(value);
