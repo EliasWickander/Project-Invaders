@@ -124,7 +124,7 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
         }
         
         //Can't start if at least one player isn't ready
-        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
+        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.LobbyPlayers;
         
         for (int i = 0; i < players.Count; i++)
         {
@@ -145,7 +145,7 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
             playerEntry.Reset();    
         }
         
-        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
+        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.LobbyPlayers;
 
         for (int i = 0; i < players.Count; i++)
         {

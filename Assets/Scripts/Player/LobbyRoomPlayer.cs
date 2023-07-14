@@ -47,7 +47,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
         if (isOwned)
         {
-            SetPlayerIndex(networkManager.RoomPlayers.Count - 1);
+            SetPlayerIndex(networkManager.LobbyPlayers.Count - 1);
 
             SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
             
@@ -60,7 +60,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
     {
         NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
         
-        networkManager.RoomPlayers.Remove(this);
+        networkManager.LobbyPlayers.Remove(this);
     }
 
     public void OnPlayerOrderChanged(int oldValue, int newValue)

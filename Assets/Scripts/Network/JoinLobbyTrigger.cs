@@ -13,7 +13,7 @@ public class JoinLobbyTrigger : MonoBehaviour
     {
         if (NetworkManagerCustom.Instance != null)
         {
-            NetworkManagerCustom.Instance.JoinLobby();
+            NetworkManagerCustom.Instance.JoinLobby(NetworkManagerCustom.Instance.networkAddress);
         }
     }
     
