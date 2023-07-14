@@ -19,6 +19,7 @@ public class PreGameScreenViewModel : ViewModelMonoBehaviour
 
         Debug.LogError($"Player joined\n" +
                        $"Display Name: {data.m_player.DisplayName}\n" +
-                       $"Connection: {data.m_player.connectionToClient}");
+                       $"Connection to client: {data.m_player.connectionToClient}\n" +
+                       $"Connection to server: {data.m_player.connectionToServer}");
     }
 }
