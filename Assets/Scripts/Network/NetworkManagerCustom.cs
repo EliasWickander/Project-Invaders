@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 public class PlayerProfile
 {
@@ -82,6 +80,7 @@ public class NetworkManagerCustom : NetworkManager
     {
         base.OnClientConnect();
         
+        //Create lobby player when client connects (assumes player can only connect to lobby)
         CreateLobbyPlayerMessage createLobbyPlayerMsg = new CreateLobbyPlayerMessage();
         NetworkClient.Send(createLobbyPlayerMsg);
         
@@ -106,17 +105,16 @@ public class NetworkManagerCustom : NetworkManager
             m_onClientErrorEvent.Raise(error);
     }
 
+    /// <summary>
+    /// On connected to server
+    /// </summary>
+    /// <param name="conn"></param>
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
         base.OnServerConnect(conn);
         
+        //If no more players allowed in server, disconnect
         if (numPlayers >= maxConnections)
-        {
-            conn.Disconnect();
-            return;
-        }
-
-        if (SceneManager.GetActiveScene().path != m_lobbyScene)
         {
             conn.Disconnect();
             return;
@@ -126,31 +124,57 @@ public class NetworkManagerCustom : NetworkManager
             m_onServerConnectedEvent.Raise(new OnServerConnectedEventData() {m_connection = conn});
     }
 
+    /// <summary>
+    /// On disconnected from server
+    /// </summary>
+    /// <param name="conn">Connection</param>
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
         if(conn.identity == null)
             return;
         
-        LobbyRoomPlayer player = conn.identity.GetComponent<LobbyRoomPlayer>();
-
-        if (player != null)
+        //Remove player from appropriate list on disconnect
+        LobbyRoomPlayer lobbyPlayer = conn.identity.GetComponent<LobbyRoomPlayer>();
+        
+        if (lobbyPlayer != null)
         {
-            int clientIndex = player.PlayerIndex;
-        
-            LobbyPlayers.Remove(player);
-        
-            if(m_onServerDisconnectedEvent != null)
-                m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
+            LobbyPlayers.Remove(lobbyPlayer);
 
-            NotifyPlayersClientDisconnected(clientIndex);   
+            NotifyLobbyPlayersClientDisconnected(lobbyPlayer.PlayerIndex);   
+        }
+        else
+        {
+            PreGamePlayer preGamePlayer = conn.identity.GetComponent<PreGamePlayer>();
+
+            if (preGamePlayer != null)
+            {
+                PreGamePlayers.Remove(preGamePlayer);
+            }
+            else
+            {
+                Player gamePlayer = conn.identity.GetComponent<Player>();
+
+                if (gamePlayer != null)
+                {
+                    GamePlayers.Remove(gamePlayer);
+                }
+            }
         }
 
+        if(m_onServerDisconnectedEvent != null)
+            m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
+        
         base.OnServerDisconnect(conn);
     }
 
+    /// <summary>
+    /// On server stopped
+    /// </summary>
     public override void OnStopServer()
     {
         LobbyPlayers.Clear();
+        PreGamePlayers.Clear();
+        GamePlayers.Clear();
     }
 
     public override void OnStartHost()
@@ -161,7 +185,7 @@ public class NetworkManagerCustom : NetworkManager
             m_onStartHostEvent.Raise();
     }
 
-    public void NotifyPlayersClientDisconnected(int clientIndex)
+    public void NotifyLobbyPlayersClientDisconnected(int clientIndex)
     {
         foreach(LobbyRoomPlayer player in LobbyPlayers)
             player.HandleClientDisconnected(clientIndex);
