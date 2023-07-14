@@ -57,10 +57,12 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 1504603375154782704, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
-  autoCreatePlayer: 1
+  playerPrefab: {fileID: 0}
+  autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 859866044766110532, guid: 63c264dad49c91f43af70b53540b88bf, type: 3}
+  - {fileID: 7043530882013725549, guid: ef864599084422e4db54150709ecd4d2, type: 3}
   snapshotSettings:
     bufferTimeMultiplier: 2
     catchupNegativeThreshold: -1
@@ -75,7 +77,7 @@ MonoBehaviour:
   m_lobbyScene: Assets/Scenes/Lobby.unity
   m_gameScene: Assets/Scenes/GameScene.unity
   m_minPlayers: 1
-  m_roomPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
+  m_lobbyPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
   m_preGamePlayerPrefab: {fileID: 472075276746226264, guid: 63c264dad49c91f43af70b53540b88bf, type: 3}
   m_gamePlayerPrefab: {fileID: 7343631015343462473, guid: ef864599084422e4db54150709ecd4d2, type: 3}
   m_onStartHostAttemptEvent: {fileID: 11400000, guid: 62305c44588ccc143a8ce21636848ca7, type: 2}

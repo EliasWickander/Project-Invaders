@@ -5,6 +5,7 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class PlayerProfile
 {
@@ -12,11 +13,20 @@ public class PlayerProfile
     public NetworkConnectionToClient m_connection;
 }
 
+public struct CreateLobbyPlayerMessage : NetworkMessage
+{
+
+}
+
 public class NetworkManagerCustom : NetworkManager
 {
 
     public static NetworkManagerCustom Instance => singleton as NetworkManagerCustom;
     
+    [SerializeField]
+    private int m_minPlayers = 1;
+    
+    [Header("Scenes")]
     [Scene]
     [SerializeField]
     private string m_lobbyScene;
@@ -24,13 +34,10 @@ public class NetworkManagerCustom : NetworkManager
     [Scene] 
     [SerializeField] 
     private string m_gameScene;
-    
-    [SerializeField]
-    private int m_minPlayers = 1;
-    
+
     [Header("Lobby Room")] 
     [SerializeField]
-    private LobbyRoomPlayer m_roomPlayerPrefab;
+    private LobbyRoomPlayer m_lobbyPlayerPrefab;
 
     [Header("Game")] 
     [SerializeField] 
@@ -39,6 +46,7 @@ public class NetworkManagerCustom : NetworkManager
     [SerializeField] 
     private Player m_gamePlayerPrefab;
     
+    [Header("Network Events")]
     public OnStartHostAttemptEvent m_onStartHostAttemptEvent;
     public OnStartHostEvent m_onStartHostEvent;
     public OnClientConnectionAttemptEvent m_onClientConnectionAttemptEvent;
@@ -59,29 +67,36 @@ public class NetworkManagerCustom : NetworkManager
     public List<Player> GamePlayers { get; } = new List<Player>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
 
-    public List<PlayerProfile> m_playerProfiles = new List<PlayerProfile>();
+    private List<PlayerProfile> m_playerProfiles = new List<PlayerProfile>();
 
     public override void OnStartServer()
     {
         base.OnStartServer();
-
-        spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
+        
+        NetworkServer.RegisterHandler<CreateLobbyPlayerMessage>(OnCreateLobbyPlayer);
     }
 
-    public override void OnStartClient()
+    private void OnCreateLobbyPlayer(NetworkConnectionToClient conn, CreateLobbyPlayerMessage message)
     {
-        base.OnStartClient();
+        if (m_lobbyPlayerPrefab == null)
+            throw new Exception("Lobby Player Prefab is null. Aborting creation of lobby player");
         
-        GameObject[] spawnablePrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs");
+        LobbyRoomPlayer lobbyPlayerInstance = Instantiate(m_lobbyPlayerPrefab);
+
+        //If first player in lobby, make him leader
+        if (RoomPlayers.Count == 0)
+            lobbyPlayerInstance.IsLeader = true;
         
-        foreach(GameObject prefab in spawnablePrefabs)
-            NetworkClient.RegisterPrefab(prefab);
+        NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
     }
 
     public override void OnClientConnect()
     {
         base.OnClientConnect();
-
+        
+        CreateLobbyPlayerMessage createLobbyPlayerMsg = new CreateLobbyPlayerMessage();
+        NetworkClient.Send(createLobbyPlayerMsg);
+        
         if(m_onClientConnectedEvent)
             m_onClientConnectedEvent.Raise();;
     }
@@ -143,25 +158,6 @@ public class NetworkManagerCustom : NetworkManager
         }
 
         base.OnServerDisconnect(conn);
-    }
-    
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        if (SceneManager.GetActiveScene().path == m_lobbyScene)
-        {
-            LobbyRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
-
-            //If this instance is first player
-            if (RoomPlayers.Count == 0)
-            {
-                roomPlayerInstance.IsLeader = true;
-            }
-            
-            NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
-            
-            if(m_onServerAddPlayerEvent != null)
-                m_onServerAddPlayerEvent.Raise(new OnServerAddPlayerEventData() {m_connection = conn});
-        }
     }
 
     public override void OnStopServer()
@@ -294,10 +290,10 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void OnServerSceneChanged(string sceneName)
     {
+        NetworkClient.Ready();
+        
         if (sceneName == m_gameScene)
         {
-            NetworkClient.Ready();
-            
             foreach (PlayerProfile playerProfile in m_playerProfiles)
                 SceneLoadedForPlayer(playerProfile);
         }
@@ -310,7 +306,7 @@ public class NetworkManagerCustom : NetworkManager
             PreGamePlayer preGamePlayerInstance = Instantiate(m_preGamePlayerPrefab);
             preGamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
 
-            // replace room player with game player
+            // replace room player with pre-game player
             NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, preGamePlayerInstance.gameObject, true);
         }
     }

@@ -8,6 +8,8 @@ public class PreGamePlayer : NetworkBehaviour
     [SyncVar]
     private string m_displayName;
 
+    public string DisplayName => m_displayName;
+    
     public override void OnStartClient()
     {
         NetworkManagerCustom.Instance.OnPlayerJoinedPreGame(this);

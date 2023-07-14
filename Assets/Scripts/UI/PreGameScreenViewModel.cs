@@ -9,7 +9,6 @@ public class PreGameScreenViewModel : ViewModelMonoBehaviour
     
     public void OnPlayerJoinedPreGame(OnPlayerJoinedPreGameEventData data)
     {
-        Debug.LogError("hi");
         if(data.m_player == null)
             return;
 
@@ -18,6 +17,8 @@ public class PreGameScreenViewModel : ViewModelMonoBehaviour
             m_localPlayer = data.m_player;
         }
 
-        Debug.LogError("joined");
+        Debug.LogError($"Player joined\n" +
+                       $"Display Name: {data.m_player.DisplayName}\n" +
+                       $"Connection: {data.m_player.connectionToClient}");
     }
 }
