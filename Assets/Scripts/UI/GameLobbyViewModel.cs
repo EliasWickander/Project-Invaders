@@ -114,9 +114,18 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
 
     private void UpdateCanStart()
     {
-        //Can start only if all players are ready
-        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
+        NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
 
+        //Can't start if too few players in lobby
+        if (networkManager.numPlayers < networkManager.MinPlayers)
+        {
+            CanStart = false;
+            return;
+        }
+        
+        //Can't start if at least one player isn't ready
+        List<LobbyRoomPlayer> players = NetworkManagerCustom.Instance.RoomPlayers;
+        
         for (int i = 0; i < players.Count; i++)
         {
             if (players[i].IsReady == false)

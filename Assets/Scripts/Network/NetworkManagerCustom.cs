@@ -10,7 +10,6 @@ using UnityEngine.Serialization;
 public class PlayerProfile
 {
     public string m_displayName = "Placeholder";
-    public NetworkConnectionToClient m_connection;
 }
 
 public struct CreateLobbyPlayerMessage : NetworkMessage
@@ -25,6 +24,8 @@ public class NetworkManagerCustom : NetworkManager
     
     [SerializeField]
     private int m_minPlayers = 1;
+
+    public int MinPlayers => m_minPlayers;
     
     [Header("Scenes")]
     [Scene]
@@ -67,27 +68,13 @@ public class NetworkManagerCustom : NetworkManager
     public List<Player> GamePlayers { get; } = new List<Player>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
 
-    private List<PlayerProfile> m_playerProfiles = new List<PlayerProfile>();
+    private Dictionary<NetworkConnectionToClient, PlayerProfile> m_playerProfiles = new Dictionary<NetworkConnectionToClient, PlayerProfile>();
 
     public override void OnStartServer()
     {
         base.OnStartServer();
         
         NetworkServer.RegisterHandler<CreateLobbyPlayerMessage>(OnCreateLobbyPlayer);
-    }
-
-    private void OnCreateLobbyPlayer(NetworkConnectionToClient conn, CreateLobbyPlayerMessage message)
-    {
-        if (m_lobbyPlayerPrefab == null)
-            throw new Exception("Lobby Player Prefab is null. Aborting creation of lobby player");
-        
-        LobbyRoomPlayer lobbyPlayerInstance = Instantiate(m_lobbyPlayerPrefab);
-
-        //If first player in lobby, make him leader
-        if (RoomPlayers.Count == 0)
-            lobbyPlayerInstance.IsLeader = true;
-        
-        NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
     }
 
     public override void OnClientConnect()
@@ -179,20 +166,6 @@ public class NetworkManagerCustom : NetworkManager
             player.HandleClientDisconnected(clientIndex);
     }
 
-    private bool IsReadyToStart()
-    {
-        if(numPlayers < m_minPlayers)
-            return false;
-
-        foreach (LobbyRoomPlayer player in RoomPlayers)
-        {
-            if (!player.IsReady)
-                return false;
-        }
-
-        return true;
-    }
-    
     public void HostLobby()
     {
         if(NetworkServer.active || NetworkClient.active)
@@ -269,59 +242,64 @@ public class NetworkManagerCustom : NetworkManager
         StopClient();
     }
 
-    public override void ServerChangeScene(string newSceneName)
-    {
-        //If transitioning from lobby to game scene, replace all lobby players with pre game players
-        if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName == m_gameScene)
-        {
-            m_playerProfiles.Clear();
-
-            for (int i = 0; i < RoomPlayers.Count; i++)
-            {
-                LobbyRoomPlayer roomPlayer = RoomPlayers[i];
-                NetworkConnectionToClient connection = roomPlayer.connectionToClient;
-                
-                m_playerProfiles.Add(new PlayerProfile() {m_displayName = roomPlayer.DisplayName, m_connection = connection});
-            }
-        }
-        
-        base.ServerChangeScene(newSceneName);
-    }
-
     public override void OnServerSceneChanged(string sceneName)
     {
         NetworkClient.Ready();
         
-        if (sceneName == m_gameScene)
+        foreach (KeyValuePair<NetworkConnectionToClient, PlayerProfile> playerProfilePair in m_playerProfiles)
         {
-            foreach (PlayerProfile playerProfile in m_playerProfiles)
-                SceneLoadedForPlayer(playerProfile);
+            NetworkConnectionToClient conn = playerProfilePair.Key;
+            PlayerProfile playerProfile = playerProfilePair.Value;
+
+            SceneLoadedForPlayer(conn, playerProfile);
         }
     }
 
-    void SceneLoadedForPlayer(PlayerProfile playerProfile)
+    private void SceneLoadedForPlayer(NetworkConnectionToClient connection, PlayerProfile playerProfile)
     {
         if (Utils.IsSceneActive(m_gameScene))
         {
             PreGamePlayer preGamePlayerInstance = Instantiate(m_preGamePlayerPrefab);
             preGamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
 
-            // replace room player with pre-game player
-            NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, preGamePlayerInstance.gameObject, true);
+            //Replace room player with pre-game player
+            NetworkServer.ReplacePlayerForConnection(connection, preGamePlayerInstance.gameObject, true);
         }
     }
     
     public void StartGame()
     {
+        //If starting from lobby, change scene to game on server side
         if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
-            if (!IsReadyToStart())
-            {
-                Debug.LogError("Attempted to start game but not all players were ready");
-                return;   
-            }
-
             ServerChangeScene(m_gameScene);
         }
+    }
+
+    private void OnCreateLobbyPlayer(NetworkConnectionToClient conn, CreateLobbyPlayerMessage message)
+    {
+        if (m_lobbyPlayerPrefab == null)
+            throw new Exception("Lobby Player Prefab is null. Aborting creation of lobby player");
+        
+        m_playerProfiles.Add(conn, new PlayerProfile() {m_displayName = "Placeholder_Name"});
+        
+        LobbyRoomPlayer lobbyPlayerInstance = Instantiate(m_lobbyPlayerPrefab);
+
+        //If first player in lobby, make him leader
+        if (RoomPlayers.Count == 0)
+            lobbyPlayerInstance.IsLeader = true;
+        
+        NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
+    }
+
+    public PlayerProfile GetPlayerProfileFromConnection(NetworkConnectionToClient connection)
+    {
+        if (!m_playerProfiles.ContainsKey(connection))
+        {
+            Debug.LogError("No player profile associated with connection " + connection);
+            return null;
+        }
+
+        return m_playerProfiles[connection];
     }
 }

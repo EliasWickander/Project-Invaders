@@ -38,28 +38,16 @@ public class LobbyRoomPlayer : NetworkBehaviour
             m_isLeader = value;
         }
     }
-    
-    private NetworkManagerCustom m_lobby;
-
-    private NetworkManagerCustom Lobby
-    {
-        get
-        {
-            if (m_lobby != null)
-                return m_lobby;
-            
-            m_lobby = NetworkManager.singleton as NetworkManagerCustom;
-            return m_lobby;
-        }
-    }
 
     public override void OnStartClient()
     {
-        Lobby.OnPlayerJoinedLobby(this);
+        NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
+        
+        networkManager.OnPlayerJoinedLobby(this);
 
         if (isOwned)
         {
-            SetPlayerIndex(Lobby.RoomPlayers.Count - 1);
+            SetPlayerIndex(networkManager.RoomPlayers.Count - 1);
 
             SetDisplayNameCommand(PlayerPrefs.GetString(PlayerNameInput.c_playerPrefsDisplayNameKey));   
             
@@ -70,7 +58,9 @@ public class LobbyRoomPlayer : NetworkBehaviour
 
     public override void OnStopClient()
     {
-        Lobby.RoomPlayers.Remove(this);
+        NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
+        
+        networkManager.RoomPlayers.Remove(this);
     }
 
     public void OnPlayerOrderChanged(int oldValue, int newValue)
@@ -96,10 +86,17 @@ public class LobbyRoomPlayer : NetworkBehaviour
     {
         PlayerIndex = order;
     }
+    
     [Command]
     public void SetDisplayNameCommand(string displayName)
     {
         DisplayName = displayName;
+        
+        NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
+
+        //Update player profile to match
+        PlayerProfile playerProfile = networkManager.GetPlayerProfileFromConnection(connectionToClient);
+        playerProfile.m_displayName = displayName;
     }
 
     [Command]
