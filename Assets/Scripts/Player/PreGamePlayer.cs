@@ -6,9 +6,10 @@ using UnityEngine;
 public class PreGamePlayer : NetworkBehaviour
 {
     [SyncVar]
-    private string m_displayName;
+    public string DisplayName = "";
 
-    public string DisplayName => m_displayName;
+    [SyncVar] 
+    public bool HasSelectedElement = false;
     
     public override void OnStartClient()
     {
@@ -23,6 +24,12 @@ public class PreGamePlayer : NetworkBehaviour
     [Server]
     public void SetDisplayName(string displayName)
     {
-        m_displayName = displayName;
+        DisplayName = displayName;
+    }
+
+    [Command]
+    public void SelectElement()
+    {
+        HasSelectedElement = true;
     }
 }
