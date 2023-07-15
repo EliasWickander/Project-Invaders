@@ -129,7 +129,7 @@ namespace CustomToolkit.UI
                 NavigateBackScreen();
             }
         }
-
+        
         public void NavigateBackPanel()
         {
             if (ActiveScreen == null)
@@ -153,6 +153,15 @@ namespace CustomToolkit.UI
                 m_screenStack.Pop();
                     
                 ActiveScreen.SetVisible(true);
+            }
+        }
+        
+        public void Reset()
+        {
+            if (ActiveScreen != null)
+            {
+                ActiveScreen.SetVisible(false);
+                m_screenStack.Clear();
             }
         }
     }

@@ -111,7 +111,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
         if(!IsLeader)
             return;
 
-        NetworkManagerCustom.Instance.StartGame();
+        NetworkManagerCustom.Instance.StartPreGame();
     }
 
     [ClientRpc]

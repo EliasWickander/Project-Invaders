@@ -10,6 +10,9 @@ public class PreGamePlayer : NetworkBehaviour
 
     [SyncVar] 
     public bool HasSelectedElement = false;
+
+    [SerializeField] 
+    private OnGameStartedEvent m_onGameStartedEvent;
     
     public override void OnStartClient()
     {
@@ -31,5 +34,17 @@ public class PreGamePlayer : NetworkBehaviour
     public void SelectElement()
     {
         HasSelectedElement = true;
+
+        NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
+        
+        if(networkManager.CanStartGame())
+            networkManager.StartGame();
+    }
+
+    [ClientRpc]
+    public void OnGameStarted()
+    {
+        if(m_onGameStartedEvent != null)
+            m_onGameStartedEvent.Raise(new OnGameStartedEventData());
     }
 }

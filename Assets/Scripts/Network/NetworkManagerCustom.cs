@@ -18,7 +18,6 @@ public struct CreateLobbyPlayerMessage : NetworkMessage
 
 public class NetworkManagerCustom : NetworkManager
 {
-
     public static NetworkManagerCustom Instance => singleton as NetworkManagerCustom;
     
     [SerializeField]
@@ -313,7 +312,7 @@ public class NetworkManagerCustom : NetworkManager
     /// <summary>
     /// Start game
     /// </summary>
-    public void StartGame()
+    public void StartPreGame()
     {
         //If starting from lobby, change scene to game on server side
         if (SceneManager.GetActiveScene().path == m_lobbyScene)
@@ -358,5 +357,44 @@ public class NetworkManagerCustom : NetworkManager
         }
 
         return m_playerProfiles[connection];
+    }
+
+    public void StartGame()
+    {
+        Debug.LogError("start game");
+
+        foreach (PreGamePlayer preGamePlayer in PreGamePlayers)
+        {
+            preGamePlayer.OnGameStarted();
+
+            //Replace pre-game player with game player
+            PlayerProfile playerProfile = GetPlayerProfileFromConnection(preGamePlayer.connectionToClient);
+
+            if (playerProfile != null)
+            {
+                GameObject oldPlayerObject = playerProfile.m_connection.identity.gameObject;
+                
+                Player gamePlayerInstance = Instantiate(m_gamePlayerPrefab);
+                gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
+            
+                NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
+                
+                Destroy(oldPlayerObject, 0.1f);
+            }
+        }
+    }
+    
+    public bool CanStartGame()
+    {
+        if (!Utils.IsSceneActive(m_gameScene) || PreGamePlayers.Count <= 0)
+            return false;
+        
+        foreach (PreGamePlayer preGamePlayer in PreGamePlayers)
+        {
+            if (!preGamePlayer.HasSelectedElement)
+                return false;
+        }
+
+        return true;
     }
 }
