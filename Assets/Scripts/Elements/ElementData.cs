@@ -9,4 +9,9 @@ public class ElementData : ScriptableObject
     private Sprite m_icon;
 
     public Sprite Icon => m_icon;
+
+    [SerializeField] 
+    private bool m_isLocked = false;
+
+    public bool IsLocked => m_isLocked;
 }

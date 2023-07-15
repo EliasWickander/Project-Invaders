@@ -37,6 +37,22 @@ public class SelectableElementViewModel : ViewModel
         }
     }
 
+    private PropertyChangedEventArgs m_isLockedProp = new PropertyChangedEventArgs(nameof(IsLocked));
+    private bool m_isLocked = false;
+
+    [Binding]
+    public bool IsLocked
+    {
+        get
+        {
+            return m_isLocked;
+        }
+        set
+        {
+            m_isLocked = value;
+            OnPropertyChanged(m_isLockedProp);
+        }
+    }
     public event Action<SelectableElementViewModel> OnSelected;
     
     [Binding]

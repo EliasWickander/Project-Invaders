@@ -92,6 +92,7 @@ public class ElementSelectionGridViewModel : ViewModelMonoBehaviour
         SelectableElementViewModel selectableElementInstance = new SelectableElementViewModel();
         selectableElementInstance.Data = data;
         selectableElementInstance.Icon = data.Icon;
+        selectableElementInstance.IsLocked = data.IsLocked;
         selectableElementInstance.OnSelected += OnElementSelected;
         
         SelectableElements.Add(selectableElementInstance);
