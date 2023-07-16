@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PreGamePlayer : NetworkBehaviour
 {
@@ -12,7 +13,7 @@ public class PreGamePlayer : NetworkBehaviour
     public bool HasSelectedElement = false;
 
     [SerializeField] 
-    private OnGameStartedEvent m_onGameStartedEvent;
+    private OnPreGameEndedEvent m_onPreGameEndedEvent;
     
     public override void OnStartClient()
     {
@@ -44,7 +45,7 @@ public class PreGamePlayer : NetworkBehaviour
     [ClientRpc]
     public void OnGameStarted()
     {
-        if(m_onGameStartedEvent != null)
-            m_onGameStartedEvent.Raise(new OnGameStartedEventData());
+        if(m_onPreGameEndedEvent != null)
+            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {m_isOwned = isOwned, m_connectionType = ConnectionType.Client});
     }
 }

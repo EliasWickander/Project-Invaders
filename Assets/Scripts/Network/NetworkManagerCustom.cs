@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class PlayerProfile
 {
@@ -61,13 +63,18 @@ public class NetworkManagerCustom : NetworkManager
 
     [Header("Pre Game Events")] 
     public OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameEvent;
+    public OnPreGameEndedEvent m_onPreGameEndedEvent;
     
+    [Header("Game Events")]
+    public OnGameStartedEvent m_onGameStartedEvent;
     public List<LobbyRoomPlayer> LobbyPlayers { get; } = new List<LobbyRoomPlayer>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
     public List<Player> GamePlayers { get; } = new List<Player>();
 
     private Dictionary<NetworkConnectionToClient, PlayerProfile> m_playerProfiles = new Dictionary<NetworkConnectionToClient, PlayerProfile>();
 
+    private List<Transform> m_availableStartPoints;
+    
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -268,6 +275,31 @@ public class NetworkManagerCustom : NetworkManager
     }
     
     /// <summary>
+    /// Called when player joins game
+    /// </summary>
+    /// <param name="player"></param>
+    public void OnPlayerJoinedGame(Player player, bool calledOnServer = false)
+    {
+        if(player == null)
+            return;
+        
+        GamePlayers.Add(player);
+
+        if (calledOnServer)
+        {
+            if (GamePlayers.Count >= PreGamePlayers.Count)
+            {
+                //All players connected to game. Start game for real
+                if(m_onGameStartedEvent != null)
+                    m_onGameStartedEvent.Raise(new OnGameStartedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server});
+
+                foreach (Player gamePlayer in GamePlayers)
+                    gamePlayer.OnGameStarted();
+            }
+        }
+    }
+
+    /// <summary>
     /// Disconnects client from server
     /// </summary>
     public void DisconnectClient()
@@ -306,6 +338,8 @@ public class NetworkManagerCustom : NetworkManager
             preGamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
             NetworkServer.ReplacePlayerForConnection(connection, preGamePlayerInstance.gameObject, true);
+
+            m_availableStartPoints = new List<Transform>(startPositions);
         }
     }
     
@@ -361,27 +395,38 @@ public class NetworkManagerCustom : NetworkManager
 
     public void StartGame()
     {
-        Debug.LogError("start game");
+        Debug.LogError("starting game");
 
         foreach (PreGamePlayer preGamePlayer in PreGamePlayers)
         {
-            preGamePlayer.OnGameStarted();
-
             //Replace pre-game player with game player
             PlayerProfile playerProfile = GetPlayerProfileFromConnection(preGamePlayer.connectionToClient);
 
             if (playerProfile != null)
             {
                 GameObject oldPlayerObject = playerProfile.m_connection.identity.gameObject;
+
+                Transform startPoint = GetStartPosition();
+
+                Player gamePlayerInstance = startPoint != null
+                    ? Instantiate(m_gamePlayerPrefab, startPoint.position, startPoint.rotation) 
+                    : Instantiate(m_gamePlayerPrefab, Vector3.zero, Quaternion.identity);
+
+                gamePlayerInstance.SpawnTransform = startPoint;
+                DisableStartPoint(startPoint);
                 
-                Player gamePlayerInstance = Instantiate(m_gamePlayerPrefab);
                 gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
                 NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
-                
+
                 Destroy(oldPlayerObject, 0.1f);
             }
+            
+            preGamePlayer.OnGameStarted();
         }
+        
+        if(m_onPreGameEndedEvent != null)
+            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server});
     }
     
     public bool CanStartGame()
@@ -396,5 +441,39 @@ public class NetworkManagerCustom : NetworkManager
         }
 
         return true;
+    }
+
+    public override Transform GetStartPosition()
+    {
+        if (m_availableStartPoints.Count > 0)
+            return m_availableStartPoints[Random.Range(0, m_availableStartPoints.Count - 1)];
+        
+        return null;
+    }
+
+    public void EnableStartPoint(Transform startPoint)
+    {
+        if (m_availableStartPoints.Contains(startPoint) || !startPositions.Contains(startPoint))
+        {
+            Debug.LogWarning("Attempting to enable invalid start point. Something is wrong", gameObject);
+            return;
+        }
+
+        m_availableStartPoints.Add(startPoint);
+    }
+    
+    public void DisableStartPoint(Transform startPoint)
+    {
+        if (!m_availableStartPoints.Contains(startPoint))
+        {
+            Debug.Log(startPoint);
+            
+            foreach(var t in m_availableStartPoints)
+                Debug.Log(t);
+            Debug.LogWarning("Attempting to disable invalid start point. Something is wrong", gameObject);
+            return;
+        }
+
+        m_availableStartPoints.Remove(startPoint);
     }
 }

@@ -59,7 +59,7 @@ MonoBehaviour:
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 0}
   autoCreatePlayer: 0
-  playerSpawnMethod: 0
+  playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 1504603375154782704, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
   - {fileID: 859866044766110532, guid: 63c264dad49c91f43af70b53540b88bf, type: 3}
@@ -92,6 +92,8 @@ MonoBehaviour:
   m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
   m_onPlayerJoinedLobbyEvent: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
   m_onPlayerJoinedPreGameEvent: {fileID: 11400000, guid: 943b361259162ca47a35ea0f8927af29, type: 2}
+  m_onPreGameEndedEvent: {fileID: 11400000, guid: 29055f72a1adb7548a1d5133a635cbc2, type: 2}
+  m_onGameStartedEvent: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0

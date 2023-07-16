@@ -1,42 +1,68 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] 
-    private Player m_player;
-
-    [SerializeField] 
     private int m_startTerritoryRadius = 2;
     
     private WorldGrid m_worldGrid;
-
-    private void Start()
+    
+    public void OnGameStart()
     {
         m_worldGrid = WorldGrid.Instance;
         
-        SpawnPlayer();
+        foreach (Player player in NetworkManagerCustom.Instance.GamePlayers)
+        {
+            player.OnSpawnedEventServer += OnPlayerSpawnedServer;
+            player.OnDeathEventServer += OnPlayerDeath;
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        if(NetworkManagerCustom.Instance == null)
+            return;
+        
+        foreach (Player player in NetworkManagerCustom.Instance.GamePlayers)
+        {
+            player.OnSpawnedEventServer -= OnPlayerSpawnedServer;
+            player.OnDeathEventServer -= OnPlayerDeath;
+        }
     }
 
-    private void SpawnPlayer()
+    private void SpawnPlayer(Player player)
     {
-        if(m_player == null)
+        if(player == null)
             return;
 
-        int randX = Random.Range(m_startTerritoryRadius, m_worldGrid.Grid.GridSize.x - m_startTerritoryRadius);
-        int randY = Random.Range(m_startTerritoryRadius, m_worldGrid.Grid.GridSize.y - m_startTerritoryRadius);
+        Transform spawnPoint = NetworkManagerCustom.Instance.GetStartPosition();
         
-        WorldGridNode spawnNode = m_worldGrid.Grid.GetNode(randX, randY);
-
-        Player playerInstance = Instantiate(m_player, spawnNode.m_worldPosition, Quaternion.identity);
+        player.transform.position = spawnPoint.position;
         
-        SetOwnerArea(playerInstance, spawnNode);
-        
+        player.OnSpawned(spawnPoint);
     }
 
+    private void OnPlayerSpawnedServer(Player player)
+    {
+        NetworkManagerCustom.Instance.DisableStartPoint(player.SpawnTransform);
+        
+        WorldGridNode spawnNode = m_worldGrid.Grid.GetNode(player.SpawnTransform.position);
+        
+        //SetOwnerArea(player, spawnNode);
+    }
+
+    private void OnPlayerDeath(Player player)
+    {
+        NetworkManagerCustom.Instance.EnableStartPoint(player.SpawnTransform);
+        
+        SpawnPlayer(player);
+    }
+    
     private void SetOwnerArea(Player player, WorldGridNode sourceNode)
     {
         List<WorldGridNode> nodesWithinRadius = GetNodesWithinRadius(sourceNode, m_startTerritoryRadius);

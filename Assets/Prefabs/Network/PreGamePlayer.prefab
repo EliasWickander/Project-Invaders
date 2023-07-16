@@ -50,7 +50,7 @@ MonoBehaviour:
   syncInterval: 0
   DisplayName: 
   HasSelectedElement: 0
-  m_onGameStartedEvent: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
+  m_onPreGameEndedEvent: {fileID: 11400000, guid: 29055f72a1adb7548a1d5133a635cbc2, type: 2}
 --- !u!114 &4935261231814499844
 MonoBehaviour:
   m_ObjectHideFlags: 0

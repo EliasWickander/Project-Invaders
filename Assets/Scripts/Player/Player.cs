@@ -12,6 +12,9 @@ public class Player : NetworkBehaviour
 
     public PlayerData PlayerData => m_playerData;
 
+    [SerializeField] 
+    private OnGameStartedEvent m_onGameStartedEvent;
+    
     [SyncVar] 
     private string m_displayName;
     
@@ -21,8 +24,6 @@ public class Player : NetworkBehaviour
     public string PlayerId => m_playerId;
 
     private CustomPlayerInput m_playerInput;
-    
-    private WorldGrid m_worldGrid;
 
     private WorldGridNode m_currentNode = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
@@ -32,7 +33,23 @@ public class Player : NetworkBehaviour
     private List<WorldGridNode> m_nodeTrail = new List<WorldGridNode>();
 
     public List<WorldGridNode> m_ownedNodes = new List<WorldGridNode>();
-    
+
+    private Transform m_spawnTransform = null;
+
+    public Transform SpawnTransform
+    {
+        get
+        {
+            return m_spawnTransform;
+        }
+        set
+        {
+            m_spawnTransform = value;
+        }
+    }
+
+    public event Action<Player> OnSpawnedEventServer; 
+    public event Action<Player> OnDeathEventServer; 
     private void Awake()
     {
         m_playerInput = new CustomPlayerInput();
@@ -53,14 +70,33 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        m_worldGrid = WorldGrid.Instance;
+        m_currentNode = WorldGrid.Instance.Grid.GetNode(transform.position);
+    }
 
-        m_currentNode = m_worldGrid.Grid.GetNode(transform.position);
+    [Server]
+    public void OnSpawned(Transform spawnTransform)
+    {
+        SpawnTransform = spawnTransform;
+        
+        OnSpawnedEventServer?.Invoke(this);
+    }
+
+    [Server]
+    public void Kill()
+    {
+        OnDeathEventServer?.Invoke(this);
+    }
+
+    [ClientRpc]
+    public void OnGameStarted()
+    {
+        if(m_onGameStartedEvent != null)
+            m_onGameStartedEvent.Raise(new OnGameStartedEventData() {m_isOwned = isOwned, m_connectionType = ConnectionType.Client});
     }
 
     public override void OnStartClient()
     {
-        NetworkManagerCustom.Instance.GamePlayers.Add(this);
+        NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
     }
 
     public override void OnStopClient()
@@ -86,7 +122,8 @@ public class Player : NetworkBehaviour
         {
             if (m_moveTimer >= m_playerData.MoveSpeed)
             {
-                WorldGridNode targetNode = m_worldGrid.Grid.GetNeighbour(m_currentNode, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
+                WorldGrid worldGrid = WorldGrid.Instance;
+                WorldGridNode targetNode = worldGrid.Grid.GetNeighbour(m_currentNode, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
 
                 if (targetNode != null && targetNode != m_currentNode)
                 {
@@ -158,7 +195,9 @@ public class Player : NetworkBehaviour
         {
             for (int y = minY; y <= maxY; y++)
             {
-                WorldGridNode currentNode = m_worldGrid.Grid.GetNode(x, y);
+                WorldGrid worldGrid = WorldGrid.Instance;
+                
+                WorldGridNode currentNode = worldGrid.Grid.GetNode(x, y);
 
                 // If the current node is within the enclosed area, add it to the result
                 if (!nodesWithinEnclosedArea.Contains(currentNode))
