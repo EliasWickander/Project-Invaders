@@ -35,6 +35,7 @@ public class PlayerSpawner : MonoBehaviour
         }
     }
 
+    [Server]
     private void SpawnPlayer(Player player)
     {
         if(player == null)
@@ -51,7 +52,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         NetworkManagerCustom.Instance.DisableStartPoint(player.SpawnTransform);
         
-        WorldGridNode spawnNode = m_worldGrid.Grid.GetNode(player.SpawnTransform.position);
+        WorldGridTile spawnTile = m_worldGrid.GetTile(player.SpawnTransform.position);
         
         //SetOwnerArea(player, spawnNode);
     }
@@ -63,33 +64,33 @@ public class PlayerSpawner : MonoBehaviour
         SpawnPlayer(player);
     }
     
-    private void SetOwnerArea(Player player, WorldGridNode sourceNode)
+    private void SetOwnerArea(Player player, WorldGridTile sourceTile)
     {
-        List<WorldGridNode> nodesWithinRadius = GetNodesWithinRadius(sourceNode, m_startTerritoryRadius);
+        List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, m_startTerritoryRadius);
 
-        foreach (WorldGridNode node in nodesWithinRadius)
+        foreach (WorldGridTile node in nodesWithinRadius)
         {
             node.SetOwner(player);
         }
     }
     
-    public List<WorldGridNode> GetNodesWithinRadius(WorldGridNode sourceNode, int radius)
+    public List<WorldGridTile> GetNodesWithinRadius(WorldGridTile sourceTile, int radius)
     {
-        List<WorldGridNode> nodesWithinRadius = new List<WorldGridNode>();
-        Queue<(WorldGridNode node, int distance)> queue = new Queue<(WorldGridNode, int)>();
-        HashSet<WorldGridNode> visited = new HashSet<WorldGridNode>();
+        List<WorldGridTile> nodesWithinRadius = new List<WorldGridTile>();
+        Queue<(WorldGridTile node, int distance)> queue = new Queue<(WorldGridTile, int)>();
+        HashSet<WorldGridTile> visited = new HashSet<WorldGridTile>();
 
-        queue.Enqueue((sourceNode, 0));
-        visited.Add(sourceNode);
+        queue.Enqueue((sourceTile, 0));
+        visited.Add(sourceTile);
 
         while (queue.Count > 0)
         {
-            (WorldGridNode currentNode, int distance) = queue.Dequeue();
+            (WorldGridTile currentNode, int distance) = queue.Dequeue();
             nodesWithinRadius.Add(currentNode);
 
             if (distance < radius)
             {
-                foreach (WorldGridNode neighborNode in m_worldGrid.Grid.GetNeighbours(currentNode))
+                foreach (WorldGridTile neighborNode in m_worldGrid.GetNeighbours(currentNode))
                 {
                     if (!visited.Contains(neighborNode))
                     {

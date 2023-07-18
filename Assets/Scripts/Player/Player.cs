@@ -25,14 +25,14 @@ public class Player : NetworkBehaviour
 
     private CustomPlayerInput m_playerInput;
 
-    private WorldGridNode m_currentNode = null;
+    private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
 
     private float m_moveTimer = 0;
 
-    private List<WorldGridNode> m_nodeTrail = new List<WorldGridNode>();
+    private List<WorldGridTile> m_nodeTrail = new List<WorldGridTile>();
 
-    public List<WorldGridNode> m_ownedNodes = new List<WorldGridNode>();
+    public List<WorldGridTile> m_ownedNodes = new List<WorldGridTile>();
 
     private Transform m_spawnTransform = null;
 
@@ -70,7 +70,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        m_currentNode = WorldGrid.Instance.Grid.GetNode(transform.position);
+        m_currentTile = WorldGrid.Instance.GetTile(transform.position);
     }
 
     [Server]
@@ -123,11 +123,11 @@ public class Player : NetworkBehaviour
             if (m_moveTimer >= m_playerData.MoveSpeed)
             {
                 WorldGrid worldGrid = WorldGrid.Instance;
-                WorldGridNode targetNode = worldGrid.Grid.GetNeighbour(m_currentNode, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
+                WorldGridTile targetTile = worldGrid.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
 
-                if (targetNode != null && targetNode != m_currentNode)
+                if (targetTile != null && targetTile != m_currentTile)
                 {
-                    StepOnNode(targetNode);
+                    StepOnNode(targetTile);
                 }
                 
                 m_moveTimer = 0;
@@ -139,19 +139,19 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void StepOnNode(WorldGridNode node)
+    private void StepOnNode(WorldGridTile tile)
     {
-        m_currentNode = node;
+        m_currentTile = tile;
         
-        transform.position = node.m_worldPosition;
+        transform.position = tile.transform.position;
 
         transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
 
-        if (node.m_ownerPlayerId != PlayerId)
+        if (tile.m_ownerPlayerId != PlayerId)
         {
-            node.SetTrail(this);
+            tile.SetTrail(this);
             
-            m_nodeTrail.Add(node);
+            m_nodeTrail.Add(tile);
         }
         else
         {
@@ -168,7 +168,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private List<WorldGridNode> GetNodesWithinTrail(List<WorldGridNode> trail)
+    private List<WorldGridTile> GetNodesWithinTrail(List<WorldGridTile> trail)
     {
         // Identify the minimum and maximum X and Y coordinates
         int minX = int.MaxValue;
@@ -176,7 +176,7 @@ public class Player : NetworkBehaviour
         int maxX = int.MinValue;
         int maxY = int.MinValue;
 
-        foreach (WorldGridNode node in trail)
+        foreach (WorldGridTile node in trail)
         {
             if (node.m_gridPos.x < minX)
                 minX = node.m_gridPos.x;
@@ -188,7 +188,7 @@ public class Player : NetworkBehaviour
                 maxY = node.m_gridPos.y;
         }
 
-        List<WorldGridNode> nodesWithinEnclosedArea = new List<WorldGridNode>();
+        List<WorldGridTile> nodesWithinEnclosedArea = new List<WorldGridTile>();
 
         // Iterate over all nodes within the bounding box defined by the minimum and maximum coordinates
         for (int x = minX; x <= maxX; x++)
@@ -197,12 +197,12 @@ public class Player : NetworkBehaviour
             {
                 WorldGrid worldGrid = WorldGrid.Instance;
                 
-                WorldGridNode currentNode = worldGrid.Grid.GetNode(x, y);
+                WorldGridTile currentTile = worldGrid.GetTile(x, y);
 
                 // If the current node is within the enclosed area, add it to the result
-                if (!nodesWithinEnclosedArea.Contains(currentNode))
+                if (!nodesWithinEnclosedArea.Contains(currentTile))
                 {
-                    nodesWithinEnclosedArea.Add(currentNode);
+                    nodesWithinEnclosedArea.Add(currentTile);
                 }
             }
         }

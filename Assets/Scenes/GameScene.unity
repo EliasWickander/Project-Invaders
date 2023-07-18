@@ -884,12 +884,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41bfcd6459d35fe47b6fdb81271e5d18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_persistentBetweenScenes: 0
   m_debug: 1
-  m_debugNodeColor: {r: 0, g: 1, b: 1, a: 1}
+  m_debugTileColor: {r: 0, g: 1, b: 1, a: 1}
   m_tilePrefab: {fileID: 5749873640972505703, guid: 062322eb3fc0e5a4c8b389465881cb42, type: 3}
   m_worldSize: {x: 10, y: 10}
-  m_nodeRadius: 0.2
+  m_tileHalfSize: 0.2
 --- !u!4 &1812582134
 Transform:
   m_ObjectHideFlags: 0
