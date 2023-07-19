@@ -415,6 +415,7 @@ public class NetworkManagerCustom : NetworkManager
                 gamePlayerInstance.SpawnTransform = startPoint;
                 DisableStartPoint(startPoint);
                 
+                gamePlayerInstance.SetPlayerId(Guid.NewGuid().ToString());
                 gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
                 NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
@@ -466,10 +467,6 @@ public class NetworkManagerCustom : NetworkManager
     {
         if (!m_availableStartPoints.Contains(startPoint))
         {
-            Debug.Log(startPoint);
-            
-            foreach(var t in m_availableStartPoints)
-                Debug.Log(t);
             Debug.LogWarning("Attempting to disable invalid start point. Something is wrong", gameObject);
             return;
         }

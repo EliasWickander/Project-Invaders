@@ -17,11 +17,9 @@ public class Player : NetworkBehaviour
     
     [SyncVar] 
     private string m_displayName;
-    
-    [SerializeField] 
-    private string m_playerId = "Player";
 
-    public string PlayerId => m_playerId;
+    [SyncVar]
+    public string PlayerId;
     
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
@@ -77,6 +75,8 @@ public class Player : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        GameClient.Instance.GameWorld.AddPlayerToWorld(this);
+        
         NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
 
         //Add input controller if locally owned player object
@@ -92,6 +92,7 @@ public class Player : NetworkBehaviour
         NetworkManagerCustom.Instance.GamePlayers.Remove(this);
     }
 
+    [Command]
     public void SetMoveDirection(Vector3 dir)
     {
         m_currentMoveDirection = dir;
@@ -99,9 +100,11 @@ public class Player : NetworkBehaviour
     
     private void Update()
     {
-        HandleMovement();
+        if(isServer)
+            HandleMovement();
     }
 
+    [Server]
     private void HandleMovement()
     {
         if (m_currentMoveDirection != Vector3.zero)
@@ -113,7 +116,7 @@ public class Player : NetworkBehaviour
 
                 if (targetTile != null && targetTile != m_currentTile)
                 {
-                    StepOnNode(targetTile);
+                    StepOnNode(targetTile.m_gridPos);
                 }
                 
                 m_moveTimer = 0;
@@ -125,15 +128,18 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void StepOnNode(WorldGridTile tile)
+    [Server]
+    private void StepOnNode(Vector2Int nodePos)
     {
+        WorldGridTile tile = WorldGrid.Instance.GetTile(nodePos.x, nodePos.y);
+        
         m_currentTile = tile;
         
         transform.position = tile.transform.position;
 
         transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
 
-        if (tile.m_ownerPlayerId != PlayerId)
+        if (tile.OwnerPlayerId != PlayerId)
         {
             tile.SetTrail(this);
             
@@ -146,7 +152,7 @@ public class Player : NetworkBehaviour
             
             foreach (var nodeToOwn in GetNodesWithinTrail(m_nodeTrail))
             {
-                if(nodeToOwn.m_ownerPlayerId != PlayerId)
+                if(nodeToOwn.OwnerPlayerId != PlayerId)
                     nodeToOwn.SetOwner(this);
             }
 
@@ -200,5 +206,11 @@ public class Player : NetworkBehaviour
     public void SetDisplayName(string displayName)
     {
         m_displayName = displayName;
+    }
+
+    [Server]
+    public void SetPlayerId(string id)
+    {
+        PlayerId = id;
     }
 }

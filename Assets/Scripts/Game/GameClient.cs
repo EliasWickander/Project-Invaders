@@ -9,4 +9,13 @@ public class GameClient : Singleton<GameClient>
     private GameData m_gameData;
 
     public GameData GameData => m_gameData;
+    
+    public GameWorld GameWorld { get; private set; }
+
+    protected override void OnSingletonAwake()
+    {
+        base.OnSingletonAwake();
+
+        GameWorld = new GameWorld();
+    }
 }
