@@ -190,6 +190,7 @@ MonoBehaviour:
   m_playerData: {fileID: 11400000, guid: 76a46e6f1b569fa43a7eec1be3e0d7db, type: 2}
   m_onGameStartedEvent: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
   m_playerId: Player
+  m_ownedNodes: []
 --- !u!114 &880514592980709446
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -22,9 +22,7 @@ public class Player : NetworkBehaviour
     private string m_playerId = "Player";
 
     public string PlayerId => m_playerId;
-
-    private CustomPlayerInput m_playerInput;
-
+    
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
 
@@ -49,24 +47,7 @@ public class Player : NetworkBehaviour
     }
 
     public event Action<Player> OnSpawnedEventServer; 
-    public event Action<Player> OnDeathEventServer; 
-    private void Awake()
-    {
-        m_playerInput = new CustomPlayerInput();
-    }
-
-    private void OnEnable()
-    {
-        m_playerInput.Enable();
-
-        m_playerInput.Movement.Movement.performed += OnMovementPerformed;
-    }
-
-    private void OnDisable()
-    {
-        m_playerInput.Disable();
-        m_playerInput.Movement.Movement.performed -= OnMovementPerformed;
-    }
+    public event Action<Player> OnDeathEventServer;
 
     private void Start()
     {
@@ -97,6 +78,13 @@ public class Player : NetworkBehaviour
     public override void OnStartClient()
     {
         NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
+
+        //Add input controller if locally owned player object
+        if (isOwned)
+        {
+            PlayerInputController inputController = gameObject.AddComponent<PlayerInputController>();
+            inputController.SetTarget(this);
+        }
     }
 
     public override void OnStopClient()
@@ -104,11 +92,9 @@ public class Player : NetworkBehaviour
         NetworkManagerCustom.Instance.GamePlayers.Remove(this);
     }
 
-    private void OnMovementPerformed(InputAction.CallbackContext value)
+    public void SetMoveDirection(Vector3 dir)
     {
-        Vector2 inputDir = value.ReadValue<Vector2>();
-
-        m_currentMoveDirection = new Vector3(inputDir.x, 0, inputDir.y);
+        m_currentMoveDirection = dir;
     }
     
     private void Update()

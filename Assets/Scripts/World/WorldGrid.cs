@@ -11,7 +11,7 @@ public class WorldGrid : MonoBehaviour
     [SerializeField] 
     private bool m_debug = true;
 
-    [FormerlySerializedAs("m_debugNodeColor")] [SerializeField] 
+    [SerializeField] 
     private Color m_debugTileColor = Color.cyan;
 
 	[SerializeField] 
@@ -20,7 +20,7 @@ public class WorldGrid : MonoBehaviour
     [SerializeField]
     private Vector2 m_worldSize = new Vector2(10, 10);
 
-    [FormerlySerializedAs("m_nodeRadius")] [SerializeField] 
+    [SerializeField] 
     private float m_tileHalfSize = 1;
     public float TileHalfSize => m_tileHalfSize;
 
