@@ -25,7 +25,7 @@ public class WorldGridTile : WorldGridNode
         UpdateMaterial(player.PlayerData.TerritoryMaterial);
     }
     
-    public void SetTrail(Player player)
+    public void SetPendingOwner(Player player)
     {
         PendingOwnerPlayerId = player.PlayerId;
         

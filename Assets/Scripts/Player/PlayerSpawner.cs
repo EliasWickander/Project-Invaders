@@ -10,11 +10,11 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] 
     private int m_startTerritoryRadius = 2;
     
-    private PlayArea m_playArea;
+    private PlayGrid m_playGrid;
     
     public void OnGameStart()
     {
-        m_playArea = PlayArea.Instance;
+        m_playGrid = PlayGrid.Instance;
         
         foreach (Player player in NetworkManagerCustom.Instance.GamePlayers)
         {
@@ -52,7 +52,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         NetworkManagerCustom.Instance.DisableStartPoint(player.SpawnTransform);
         
-        WorldGridTile spawnTile = m_playArea.GetNode(player.SpawnTransform.position);
+        WorldGridTile spawnTile = m_playGrid.GetNode(player.SpawnTransform.position);
         
         //SetOwnerArea(player, spawnNode);
     }
@@ -90,7 +90,7 @@ public class PlayerSpawner : MonoBehaviour
 
             if (distance < radius)
             {
-                foreach (WorldGridTile neighborNode in m_playArea.GetNeighbours(currentNode))
+                foreach (WorldGridTile neighborNode in m_playGrid.GetNeighbours(currentNode))
                 {
                     if (!visited.Contains(neighborNode))
                     {

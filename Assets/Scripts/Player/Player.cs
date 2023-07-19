@@ -49,7 +49,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        m_currentTile = PlayArea.Instance.GetNode(transform.position);
+        m_currentTile = PlayGrid.Instance.GetNode(transform.position);
     }
 
     [Server]
@@ -111,8 +111,8 @@ public class Player : NetworkBehaviour
         {
             if (m_moveTimer >= m_playerData.MoveSpeed)
             {
-                PlayArea playArea = PlayArea.Instance;
-                WorldGridTile targetTile = playArea.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
+                PlayGrid playGrid = PlayGrid.Instance;
+                WorldGridTile targetTile = playGrid.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
 
                 if (targetTile != null && targetTile != m_currentTile)
                 {
@@ -131,29 +131,31 @@ public class Player : NetworkBehaviour
     [Server]
     private void StepOnNode(Vector2Int nodePos)
     {
-        WorldGridTile tile = PlayArea.Instance.GetNode(nodePos.x, nodePos.y);
+        PlayGrid playGrid = PlayGrid.Instance;
+        WorldGridTile tile = playGrid.GetNode(nodePos.x, nodePos.y);
         
         m_currentTile = tile;
         
         transform.position = tile.transform.position;
-
         transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
 
         if (tile.OwnerPlayerId != PlayerId)
         {
-            tile.SetTrail(this);
-            
+            //If walking on tile that's not owned, add it to trail
+            playGrid.SetTilePendingOwner(nodePos, PlayerId);
+
             m_nodeTrail.Add(tile);
         }
         else
         {
+            //If walking on tile that's owned, add all nodes within trailed area to owned tiles
             if(m_nodeTrail.Count <= 0)
                 return;
             
             foreach (var nodeToOwn in GetNodesWithinTrail(m_nodeTrail))
             {
                 if(nodeToOwn.OwnerPlayerId != PlayerId)
-                    nodeToOwn.SetOwner(this);
+                    playGrid.SetTileOwner(nodePos, PlayerId);
             }
 
             m_nodeTrail.Clear();
@@ -187,9 +189,9 @@ public class Player : NetworkBehaviour
         {
             for (int y = minY; y <= maxY; y++)
             {
-                PlayArea playArea = PlayArea.Instance;
+                PlayGrid playGrid = PlayGrid.Instance;
                 
-                WorldGridTile currentTile = playArea.GetNode(x, y);
+                WorldGridTile currentTile = playGrid.GetNode(x, y);
 
                 // If the current node is within the enclosed area, add it to the result
                 if (!nodesWithinEnclosedArea.Contains(currentTile))
