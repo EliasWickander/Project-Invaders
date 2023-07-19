@@ -6,7 +6,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class WorldGrid : MonoBehaviour
+public class PlayArea : MonoBehaviour
 {
     [SerializeField] 
     private bool m_debug = true;
@@ -24,7 +24,7 @@ public class WorldGrid : MonoBehaviour
     private float m_tileHalfSize = 1;
     public float TileHalfSize => m_tileHalfSize;
 
-    public static WorldGrid Instance { get; private set; }
+    public static PlayArea Instance { get; private set; }
 
     public WorldGridTile[,] Tiles => m_tiles;
     private WorldGridTile[,] m_tiles;

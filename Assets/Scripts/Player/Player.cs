@@ -49,7 +49,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        m_currentTile = WorldGrid.Instance.GetTile(transform.position);
+        m_currentTile = PlayArea.Instance.GetTile(transform.position);
     }
 
     [Server]
@@ -111,8 +111,8 @@ public class Player : NetworkBehaviour
         {
             if (m_moveTimer >= m_playerData.MoveSpeed)
             {
-                WorldGrid worldGrid = WorldGrid.Instance;
-                WorldGridTile targetTile = worldGrid.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
+                PlayArea playArea = PlayArea.Instance;
+                WorldGridTile targetTile = playArea.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
 
                 if (targetTile != null && targetTile != m_currentTile)
                 {
@@ -131,7 +131,7 @@ public class Player : NetworkBehaviour
     [Server]
     private void StepOnNode(Vector2Int nodePos)
     {
-        WorldGridTile tile = WorldGrid.Instance.GetTile(nodePos.x, nodePos.y);
+        WorldGridTile tile = PlayArea.Instance.GetTile(nodePos.x, nodePos.y);
         
         m_currentTile = tile;
         
@@ -187,9 +187,9 @@ public class Player : NetworkBehaviour
         {
             for (int y = minY; y <= maxY; y++)
             {
-                WorldGrid worldGrid = WorldGrid.Instance;
+                PlayArea playArea = PlayArea.Instance;
                 
-                WorldGridTile currentTile = worldGrid.GetTile(x, y);
+                WorldGridTile currentTile = playArea.GetTile(x, y);
 
                 // If the current node is within the enclosed area, add it to the result
                 if (!nodesWithinEnclosedArea.Contains(currentTile))

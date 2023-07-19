@@ -13,26 +13,25 @@ namespace CustomToolkit.AdvancedTypes
 	public class Grid<TNode> where TNode : GridNode, new()
 	{
 		public delegate void OnNodeCreatedDelegate(TNode node);
-
 		private OnNodeCreatedDelegate OnNodeCreated;
 
-		public Vector2 GridWorldSize => m_gridWorldSize;
 		private Vector2 m_gridWorldSize = new Vector2(10, 10);
+		public Vector2 GridWorldSize => m_gridWorldSize;
 
-		public float NodeRadius => m_nodeRadius;
 		private float m_nodeRadius = 0.2f;
+		public float NodeRadius => m_nodeRadius;
 
-		public TNode[,] Nodes => m_nodes;
 		private TNode[,] m_nodes;
-		
-		public Vector2Int GridSize => m_gridSize;
+		public TNode[,] Nodes => m_nodes;
+
 		private Vector2Int m_gridSize;
+		public Vector2Int GridSize => m_gridSize;
 
-		public Vector3 OriginPoint => m_originPoint;
 		private Vector3 m_originPoint = Vector3.zero;
+		public Vector3 OriginPoint => m_originPoint;
 
-		public float NodeDiameter => m_nodeDiameter;
 		private float m_nodeDiameter;
+		public float NodeDiameter => m_nodeDiameter;
 
 		/// <summary>
 		/// Constructor
