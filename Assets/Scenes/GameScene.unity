@@ -727,7 +727,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1247819596}
   - component: {fileID: 1247819595}
-  - component: {fileID: 1247819597}
+  - component: {fileID: 1247819598}
   m_Layer: 0
   m_Name: PlayerSpawner
   m_TagString: Untagged
@@ -763,7 +763,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1247819597
+--- !u!114 &1247819598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -772,17 +772,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1247819594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92d21e3ebef700546ba38c109dd70ad5, type: 3}
+  m_Script: {fileID: 11500000, guid: 55c09d40cec35cd46a3519f6de874778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
+  m_event: {fileID: 11400000, guid: a0156f93c581c8a44be56d29ca4b3563, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1247819595}
         m_TargetAssemblyTypeName: PlayerSpawner, Assembly-CSharp
-        m_MethodName: OnGameStart
-        m_Mode: 1
+        m_MethodName: OnPlayerCreated
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

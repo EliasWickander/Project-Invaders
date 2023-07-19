@@ -142,7 +142,7 @@ public class Player : NetworkBehaviour
         if (tile.OwnerPlayerId != PlayerId)
         {
             //If walking on tile that's not owned, add it to trail
-            playGrid.SetTilePendingOwner(nodePos, PlayerId);
+            playGrid.SetTilePendingOwner(tile.m_gridPos, PlayerId);
 
             m_nodeTrail.Add(tile);
         }
@@ -155,7 +155,7 @@ public class Player : NetworkBehaviour
             foreach (var nodeToOwn in GetNodesWithinTrail(m_nodeTrail))
             {
                 if(nodeToOwn.OwnerPlayerId != PlayerId)
-                    playGrid.SetTileOwner(nodePos, PlayerId);
+                    playGrid.SetTileOwner(tile.m_gridPos, PlayerId);
             }
 
             m_nodeTrail.Clear();

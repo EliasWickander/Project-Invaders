@@ -64,8 +64,9 @@ public class NetworkManagerCustom : NetworkManager
     [Header("Pre Game Events")] 
     public OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameEvent;
     public OnPreGameEndedEvent m_onPreGameEndedEvent;
-    
-    [Header("Game Events")]
+
+    [Header("Game Events")] 
+    public OnPlayerCreatedEvent m_onPlayerCreatedEvent;
     public OnGameStartedEvent m_onGameStartedEvent;
     public List<LobbyRoomPlayer> LobbyPlayers { get; } = new List<LobbyRoomPlayer>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
@@ -412,15 +413,15 @@ public class NetworkManagerCustom : NetworkManager
                     ? Instantiate(m_gamePlayerPrefab, startPoint.position, startPoint.rotation) 
                     : Instantiate(m_gamePlayerPrefab, Vector3.zero, Quaternion.identity);
 
-                gamePlayerInstance.SpawnTransform = startPoint;
-                DisableStartPoint(startPoint);
-                
                 gamePlayerInstance.SetPlayerId(Guid.NewGuid().ToString());
                 gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
                 NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
 
                 Destroy(oldPlayerObject, 0.1f);
+                
+                if(m_onPlayerCreatedEvent != null)
+                    m_onPlayerCreatedEvent.Raise(new OnPlayerCreatedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server, m_player = gamePlayerInstance, m_spawnTransform = startPoint});
             }
             
             preGamePlayer.OnGameStarted();

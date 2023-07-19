@@ -12,15 +12,18 @@ public class PlayerSpawner : MonoBehaviour
     
     private PlayGrid m_playGrid;
     
-    public void OnGameStart()
+    private void Start()
     {
         m_playGrid = PlayGrid.Instance;
+    }
+
+    public void OnPlayerCreated(OnPlayerCreatedEventData data)
+    {
+        Player player = data.m_player;
+        player.OnSpawnedEventServer += OnPlayerSpawnedServer;
+        player.OnDeathEventServer += OnPlayerDeath;
         
-        foreach (Player player in NetworkManagerCustom.Instance.GamePlayers)
-        {
-            player.OnSpawnedEventServer += OnPlayerSpawnedServer;
-            player.OnDeathEventServer += OnPlayerDeath;
-        }
+        player.OnSpawned(data.m_spawnTransform);
     }
     
     private void OnDestroy()
@@ -34,7 +37,7 @@ public class PlayerSpawner : MonoBehaviour
             player.OnDeathEventServer -= OnPlayerDeath;
         }
     }
-
+    
     [Server]
     private void SpawnPlayer(Player player)
     {
@@ -54,7 +57,7 @@ public class PlayerSpawner : MonoBehaviour
         
         WorldGridTile spawnTile = m_playGrid.GetNode(player.SpawnTransform.position);
         
-        //SetOwnerArea(player, spawnNode);
+        SetOwnerArea(player, spawnTile);
     }
 
     private void OnPlayerDeath(Player player)
@@ -68,9 +71,9 @@ public class PlayerSpawner : MonoBehaviour
     {
         List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, m_startTerritoryRadius);
 
-        foreach (WorldGridTile node in nodesWithinRadius)
+        foreach (WorldGridTile tile in nodesWithinRadius)
         {
-            node.SetOwner(player);
+            m_playGrid.SetTileOwner(tile.m_gridPos, player.PlayerId);
         }
     }
     

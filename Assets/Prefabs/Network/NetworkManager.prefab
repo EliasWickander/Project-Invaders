@@ -93,6 +93,7 @@ MonoBehaviour:
   m_onPlayerJoinedLobbyEvent: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
   m_onPlayerJoinedPreGameEvent: {fileID: 11400000, guid: 943b361259162ca47a35ea0f8927af29, type: 2}
   m_onPreGameEndedEvent: {fileID: 11400000, guid: 29055f72a1adb7548a1d5133a635cbc2, type: 2}
+  m_onPlayerCreatedEvent: {fileID: 11400000, guid: a0156f93c581c8a44be56d29ca4b3563, type: 2}
   m_onGameStartedEvent: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
