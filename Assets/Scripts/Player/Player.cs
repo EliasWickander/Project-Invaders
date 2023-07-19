@@ -49,7 +49,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        m_currentTile = PlayArea.Instance.GetTile(transform.position);
+        m_currentTile = PlayArea.Instance.GetNode(transform.position);
     }
 
     [Server]
@@ -131,7 +131,7 @@ public class Player : NetworkBehaviour
     [Server]
     private void StepOnNode(Vector2Int nodePos)
     {
-        WorldGridTile tile = PlayArea.Instance.GetTile(nodePos.x, nodePos.y);
+        WorldGridTile tile = PlayArea.Instance.GetNode(nodePos.x, nodePos.y);
         
         m_currentTile = tile;
         
@@ -189,7 +189,7 @@ public class Player : NetworkBehaviour
             {
                 PlayArea playArea = PlayArea.Instance;
                 
-                WorldGridTile currentTile = playArea.GetTile(x, y);
+                WorldGridTile currentTile = playArea.GetNode(x, y);
 
                 // If the current node is within the enclosed area, add it to the result
                 if (!nodesWithinEnclosedArea.Contains(currentTile))

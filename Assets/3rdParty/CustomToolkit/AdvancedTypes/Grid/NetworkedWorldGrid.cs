@@ -7,6 +7,12 @@ namespace CustomToolkit.AdvancedTypes
     public abstract class NetworkedWorldGrid<TNode> : NetworkBehaviour where TNode : WorldGridNode, new()
     {
         [SerializeField] 
+        private bool m_debug = false;
+        
+        [SerializeField] 
+        private Color m_debugTileColor = Color.cyan;
+        
+        [SerializeField] 
         private bool m_createOnAwake = true;
 
         [SerializeField] 
@@ -41,8 +47,7 @@ namespace CustomToolkit.AdvancedTypes
                 return;
             }
 			
-            m_gridSize.x = Mathf.RoundToInt(m_gridWorldSize.x/ NodeDiameter);
-            m_gridSize.y = Mathf.RoundToInt(m_gridWorldSize.y/ NodeDiameter);
+            CalcGridSize();
 			
             m_nodes = new TNode[m_gridSize.x, m_gridSize.y];
 
@@ -183,7 +188,13 @@ namespace CustomToolkit.AdvancedTypes
 	    
             return neighbours;
         }
-		
+
+        private void CalcGridSize()
+        {
+            m_gridSize.x = Mathf.RoundToInt(m_gridWorldSize.x/ NodeDiameter);
+            m_gridSize.y = Mathf.RoundToInt(m_gridWorldSize.y/ NodeDiameter);
+        }
+        
         protected virtual void OnNodeCreated(TNode node)
         {
 			
@@ -192,6 +203,30 @@ namespace CustomToolkit.AdvancedTypes
         protected Vector3 GetWorldPointFromGridPoint(int x, int y)
         {
             return transform.position + Vector3.right * (x * NodeDiameter + m_nodeRadius) + Vector3.forward * (y * NodeDiameter + m_nodeRadius);
+        }
+        
+        private void OnDrawGizmos()
+        {
+            if(!m_debug)
+                return;
+        
+            CalcGridSize();
+
+            Gizmos.color = m_debugTileColor;
+        
+            float bias = 0.02f;
+
+            for (int x = 0; x < GridSize.x; x++)
+            {
+                for (int y = 0; y < GridSize.y; y++)
+                {
+                    Vector3 worldPoint = GetWorldPointFromGridPoint(x, y);
+                
+                    Gizmos.DrawCube(worldPoint, new Vector3(NodeDiameter - bias, 0.1f, NodeDiameter - bias));
+                }
+            }
+        
+            Gizmos.color = Color.white;
         }
     }
 }

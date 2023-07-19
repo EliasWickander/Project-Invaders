@@ -1,15 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using CustomToolkit.AdvancedTypes;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class WorldGridTile : MonoBehaviour
+public class WorldGridTile : WorldGridNode
 {
     [SerializeField] 
     private MeshRenderer m_meshRenderer;
-    
-    public Vector2Int m_gridPos;
 
     public string OwnerPlayerId = null;
     public string PendingOwnerPlayerId = null;

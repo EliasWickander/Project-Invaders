@@ -52,7 +52,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         NetworkManagerCustom.Instance.DisableStartPoint(player.SpawnTransform);
         
-        WorldGridTile spawnTile = m_playArea.GetTile(player.SpawnTransform.position);
+        WorldGridTile spawnTile = m_playArea.GetNode(player.SpawnTransform.position);
         
         //SetOwnerArea(player, spawnNode);
     }
