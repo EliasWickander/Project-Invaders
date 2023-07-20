@@ -185,7 +185,7 @@ RectTransform:
   - {fileID: 1604587337703461321}
   - {fileID: 8057002482164417990}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -225,6 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc84a989ffabdde468f4e569971ccb06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_listenType: 1
   m_event: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
   m_response:
     m_PersistentCalls:
@@ -241,7 +242,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_subject: 1
 --- !u!114 &9125183517114116178
 MonoBehaviour:
   m_ObjectHideFlags: 0

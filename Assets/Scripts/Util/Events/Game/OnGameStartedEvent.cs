@@ -1,8 +1,8 @@
 using CustomToolkit.Events;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "OnGameStartedEvent", menuName = "Custom/Events/OnGameStartedEvent")]
-public class OnGameStartedEvent : GameEvent<OnGameStartedEventData>
+[CreateAssetMenu(fileName = "OnGameStartedEvent", menuName = "Custom/NetworkEvents/OnGameStartedEvent")]
+public class OnGameStartedEvent : NetworkGameEvent<OnGameStartedEventData>
 {
 
 }

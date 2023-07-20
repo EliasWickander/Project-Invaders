@@ -45,7 +45,10 @@ public class PreGamePlayer : NetworkBehaviour
     [ClientRpc]
     public void OnGameStarted()
     {
+        if(!isOwned)
+            return;
+        
         if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {});
+            m_onPreGameEndedEvent.Raise(ConnectionType.Client, new OnPreGameEndedEventData() {});
     }
 }

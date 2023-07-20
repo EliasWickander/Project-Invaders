@@ -92,7 +92,7 @@ public class NetworkManagerCustom : NetworkManager
         NetworkClient.Send(createLobbyPlayerMsg);
         
         if(m_onClientConnectedEvent)
-            m_onClientConnectedEvent.Raise();;
+            m_onClientConnectedEvent.Raise();
     }
 
     public override void OnClientDisconnect()
@@ -257,7 +257,7 @@ public class NetworkManagerCustom : NetworkManager
         LobbyPlayers.Add(player);
 
         if(m_onPlayerJoinedLobbyEvent != null)
-            m_onPlayerJoinedLobbyEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = player});
+            m_onPlayerJoinedLobbyEvent.Raise(ConnectionType.Client, new OnPlayerJoinedLobbyEventData() {m_player = player});
     }
 
     /// <summary>
@@ -292,7 +292,7 @@ public class NetworkManagerCustom : NetworkManager
             {
                 //All players connected to game. Start game for real
                 if(m_onGameStartedEvent != null)
-                    m_onGameStartedEvent.Raise(new OnGameStartedEventData() { });
+                    m_onGameStartedEvent.Raise(ConnectionType.Client, new OnGameStartedEventData() { });
 
                 foreach (Player gamePlayer in GamePlayers)
                     gamePlayer.OnGameStarted();
@@ -421,14 +421,14 @@ public class NetworkManagerCustom : NetworkManager
                 Destroy(oldPlayerObject, 0.1f);
                 
                 if(m_onPlayerCreatedEvent != null)
-                    m_onPlayerCreatedEvent.Raise(new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
+                    m_onPlayerCreatedEvent.Raise(ConnectionType.Server, new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
             }
             
             preGamePlayer.OnGameStarted();
         }
         
         if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {});
+            m_onPreGameEndedEvent.Raise(ConnectionType.Server, new OnPreGameEndedEventData() {});
     }
     
     public bool CanStartGame()

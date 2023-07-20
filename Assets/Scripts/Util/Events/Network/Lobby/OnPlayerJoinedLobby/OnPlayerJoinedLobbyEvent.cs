@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using CustomToolkit.Events;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "OnPlayerJoinedLobby", menuName = "Custom/Events/Network/OnPlayerJoinedLobbyEvent")]
-public class OnPlayerJoinedLobbyEvent : GameEvent<OnPlayerJoinedLobbyEventData> { }
+[CreateAssetMenu(fileName = "OnPlayerJoinedLobby", menuName = "Custom/NetworkEvents/OnPlayerJoinedLobbyEvent")]
+public class OnPlayerJoinedLobbyEvent : NetworkGameEvent<OnPlayerJoinedLobbyEventData> { }

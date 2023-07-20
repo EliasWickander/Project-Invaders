@@ -4,7 +4,7 @@ using CustomToolkit.AdvancedTypes;
 using Mirror;
 using UnityEngine;
 
-public class GameClient : NetworkedSingleton<GameClient>
+public class GameClient : Singleton<GameClient>
 {
     [SerializeField] 
     private GameData m_gameData;

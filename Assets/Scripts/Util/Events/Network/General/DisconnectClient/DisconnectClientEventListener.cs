@@ -1,6 +1,6 @@
 ﻿using CustomToolkit.Events;
 
-public class DisconnectClientEventListener : GameEventListener<DisconnectClientEventData, DisconnectClientEvent>
+public class DisconnectClientEventListener : NetworkGameEventListener<DisconnectClientEventData, DisconnectClientEvent>
 {
     
 }

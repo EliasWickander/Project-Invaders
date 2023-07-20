@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace CustomToolkit.Events
 {
-    public abstract class NetworkGameEventListener<TType, TEvent> : MonoBehaviour, IGameEventListener<TType> where TEvent : GameEvent<TType>
+    public abstract class NetworkGameEventListener<TType, TEvent> : MonoBehaviour, INetworkGameEventListener<TType> where TEvent : NetworkGameEvent<TType>
     {
         [SerializeField] 
         private ConnectionType m_listenType;
@@ -23,34 +23,13 @@ namespace CustomToolkit.Events
             if(m_event != null)
                 m_event.UnregisterListener(this);
         }
-
-        public virtual void OnEventRaised(TType value)
+        
+        public void OnEventRaised(ConnectionType type, TType value)
         {
-            if(!IsEnabled())
+            if(type != m_listenType)
                 return;
             
             m_response?.Invoke(value);
-        }
-
-        /// <summary>
-        /// Is connection of the type this event is listening for
-        /// </summary>
-        /// <returns></returns>
-        private bool IsEnabled()
-        {
-            NetworkIdentity netIdentity = GameClient.Instance.netIdentity;
-
-            switch (m_listenType)
-            {
-                case ConnectionType.Server:
-                    return netIdentity.isServer;
-                case ConnectionType.Client:
-                    return netIdentity.isLocalPlayer;
-                case ConnectionType.Both:
-                    return netIdentity.isServer || netIdentity.isLocalPlayer;
-            }
-
-            return false;
         }
     }
 }

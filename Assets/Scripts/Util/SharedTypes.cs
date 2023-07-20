@@ -6,12 +6,4 @@ public enum ConnectionType
 {
     Server,
     Client,
-    Both
-}
-
-public enum SubjectType
-{
-    Self,
-    Other,
-    Both
 }
