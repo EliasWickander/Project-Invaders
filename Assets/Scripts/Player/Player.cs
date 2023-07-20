@@ -70,7 +70,7 @@ public class Player : NetworkBehaviour
     public void OnGameStarted()
     {
         if(m_onGameStartedEvent != null)
-            m_onGameStartedEvent.Raise(new OnGameStartedEventData() {m_isOwned = isOwned, m_connectionType = ConnectionType.Client});
+            m_onGameStartedEvent.Raise(new OnGameStartedEventData() {});
     }
 
     public override void OnStartClient()

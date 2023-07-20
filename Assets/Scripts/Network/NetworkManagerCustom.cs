@@ -292,7 +292,7 @@ public class NetworkManagerCustom : NetworkManager
             {
                 //All players connected to game. Start game for real
                 if(m_onGameStartedEvent != null)
-                    m_onGameStartedEvent.Raise(new OnGameStartedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server});
+                    m_onGameStartedEvent.Raise(new OnGameStartedEventData() { });
 
                 foreach (Player gamePlayer in GamePlayers)
                     gamePlayer.OnGameStarted();
@@ -421,14 +421,14 @@ public class NetworkManagerCustom : NetworkManager
                 Destroy(oldPlayerObject, 0.1f);
                 
                 if(m_onPlayerCreatedEvent != null)
-                    m_onPlayerCreatedEvent.Raise(new OnPlayerCreatedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server, m_player = gamePlayerInstance, m_spawnTransform = startPoint});
+                    m_onPlayerCreatedEvent.Raise(new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
             }
             
             preGamePlayer.OnGameStarted();
         }
         
         if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {m_isOwned = true, m_connectionType = ConnectionType.Server});
+            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {});
     }
     
     public bool CanStartGame()

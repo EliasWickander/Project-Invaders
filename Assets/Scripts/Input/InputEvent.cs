@@ -21,6 +21,7 @@ public class InputEvent : MonoBehaviour
     public UnityEvent<InputAction.CallbackContext> m_event;
 
     private InputAction m_selectedAction;
+
     private void OnEnable()
     {
         m_selectedAction = m_inputAsset.FindAction(m_selectedActionGuid);

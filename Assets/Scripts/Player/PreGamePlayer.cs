@@ -46,6 +46,6 @@ public class PreGamePlayer : NetworkBehaviour
     public void OnGameStarted()
     {
         if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {m_isOwned = isOwned, m_connectionType = ConnectionType.Client});
+            m_onPreGameEndedEvent.Raise(new OnPreGameEndedEventData() {});
     }
 }
