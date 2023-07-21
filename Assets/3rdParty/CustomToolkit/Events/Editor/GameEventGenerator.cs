@@ -8,15 +8,12 @@ using UnityEngine;
 
 public class GameEventGenerator : EditorWindow
 {
-    bool groupEnabled;
-    bool myBool = true;
-    float myFloat = 1.23f;
-
     private string m_gameEventName;
     private string m_gameEventType;
     private string m_targetDir;
 
     private const string c_defaultTargetDir = "Assets/Scripts/Util/GameEvents";
+    
     [MenuItem("Custom Tools/Game Event Generator")]
     public static void ShowWindow()
     {
