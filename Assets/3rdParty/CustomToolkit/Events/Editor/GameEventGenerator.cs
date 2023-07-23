@@ -12,6 +12,9 @@ public class GameEventGenerator : EditorWindow
     private string m_gameEventType;
     private string m_targetDir;
 
+    private bool m_serverEvent = true;
+    private bool m_clientEvent = true;
+    
     private const string c_defaultTargetDir = "Assets/Scripts/Util/GameEvents";
     
     [MenuItem("Custom Tools/Game Event Generator")]
@@ -43,15 +46,34 @@ public class GameEventGenerator : EditorWindow
             {
                 m_targetDir = c_defaultTargetDir;
             }
-
-            Debug.Log(path);
         }
+        
         EditorGUILayout.EndHorizontal();
 
+        float originalLabelWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = 50;
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        
+        m_serverEvent = EditorGUILayout.Toggle("Server", m_serverEvent);
+        m_clientEvent = EditorGUILayout.Toggle("Client", m_clientEvent);
+        
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUIUtility.labelWidth = originalLabelWidth;
+
+        bool canGenerate = m_serverEvent || m_clientEvent;
+        
+        EditorGUI.BeginDisabledGroup(!canGenerate);
+        
         if (GUILayout.Button("Generate"))
         {
             Generate();
         }
+        
+        EditorGUI.EndDisabledGroup();
     }
 
     private void Generate()
@@ -67,42 +89,93 @@ public class GameEventGenerator : EditorWindow
             Debug.LogError("GameEventGenerator Error: Failed to generate. Reason: Invalid Target Directory");
             return;
         }
-        
+
         if (string.IsNullOrEmpty(m_gameEventType))
-            GenerateVoidEvent();
+        {
+            if(m_serverEvent)
+                GenerateVoidServerEvent();
+            
+            if(m_clientEvent)
+                GenerateVoidClientEvent();   
+        }
         else
-            GenerateTypedEvent();
+        {
+            if(m_serverEvent)
+                GenerateTypedServerEvent();
+            
+            if(m_clientEvent)
+                GenerateTypedClientEvent();   
+        }
     }
 
-    private void GenerateTypedEvent()
+    private void GenerateTypedClientEvent()
     {
+        string dirPath = $"{m_targetDir}/{m_gameEventName}/Client";
+        
         //Event
-        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"{m_gameEventName}Event\", menuName = \"Custom/Game Events/{m_gameEventName}Event\")]\npublic class {m_gameEventName}Event : GameEvent<{m_gameEventType}> {{ }}";
-        CreateFileFromText(gameEventAsText, $"{m_gameEventName}Event", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"Client_{m_gameEventName}Event\", menuName = \"Custom/Game Events/Client/{m_gameEventName}Event\")]\npublic class Client_{m_gameEventName}Event : GameEvent<{m_gameEventType}> {{ }}";
+        CreateFileFromText(gameEventAsText, $"Client_{m_gameEventName}Event", dirPath);
 
         //Event Listener
-        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class {m_gameEventName}EventListener : GameEventListener<{m_gameEventType}, {m_gameEventName}Event> {{ }}";
-        CreateFileFromText(gameEventListenerAsText, $"{m_gameEventName}EventListener", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class Client_{m_gameEventName}EventListener : GameEventListener<{m_gameEventType}, Client_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventListenerAsText, $"Client_{m_gameEventName}EventListener", dirPath);
         
         //Event Trigger
-        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class {m_gameEventName}EventTrigger : GameEventTrigger<{m_gameEventType}, {m_gameEventName}Event> {{ }}";
-        CreateFileFromText(gameEventTriggerAsText, $"{m_gameEventName}EventTrigger", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class Client_{m_gameEventName}EventTrigger : GameEventTrigger<{m_gameEventType}, Client_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventTriggerAsText, $"Client_{m_gameEventName}EventTrigger", dirPath);
     }
 
-    private void GenerateVoidEvent()
+    private void GenerateVoidClientEvent()
     {
+        string dirPath = $"{m_targetDir}/{m_gameEventName}/Client";
+        
         //Event
-        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"{m_gameEventName}Event\", menuName = \"Custom/Game Events/{m_gameEventName}Event\")]\npublic class {m_gameEventName}Event : GameEvent {{ }}";
-        CreateFileFromText(gameEventAsText, $"{m_gameEventName}Event", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"Client_{m_gameEventName}Event\", menuName = \"Custom/Game Events/Client/{m_gameEventName}Event\")]\npublic class Client_{m_gameEventName}Event : GameEvent {{ }}";
+        CreateFileFromText(gameEventAsText, $"Client_{m_gameEventName}Event", dirPath);
 
         //Event Listener
-        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class {m_gameEventName}EventListener : GameEventListener<{m_gameEventName}Event> {{ }}";
-        CreateFileFromText(gameEventListenerAsText, $"{m_gameEventName}EventListener", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class Client_{m_gameEventName}EventListener : GameEventListener<Client_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventListenerAsText, $"Client_{m_gameEventName}EventListener", dirPath);
         
         //Event Trigger
-        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class {m_gameEventName}EventTrigger : GameEventTrigger<{m_gameEventName}Event> {{ }}";
-        CreateFileFromText(gameEventTriggerAsText, $"{m_gameEventName}EventTrigger", $"{m_targetDir}/{m_gameEventName}");
+        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class Client_{m_gameEventName}EventTrigger : GameEventTrigger<Client_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventTriggerAsText, $"Client_{m_gameEventName}EventTrigger", dirPath);
     }
+    
+    private void GenerateTypedServerEvent()
+    {
+        string dirPath = $"{m_targetDir}/{m_gameEventName}/Server";
+        
+        //Event
+        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"Server_{m_gameEventName}Event\", menuName = \"Custom/Game Events/Server/{m_gameEventName}Event\")]\npublic class Server_{m_gameEventName}Event : GameEvent<{m_gameEventType}> {{ }}";
+        CreateFileFromText(gameEventAsText, $"Server_{m_gameEventName}Event", dirPath);
+
+        //Event Listener
+        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class Server_{m_gameEventName}EventListener : GameEventListener<{m_gameEventType}, Server_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventListenerAsText, $"Server_{m_gameEventName}EventListener", dirPath);
+        
+        //Event Trigger
+        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class Server_{m_gameEventName}EventTrigger : GameEventTrigger<{m_gameEventType}, Server_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventTriggerAsText, $"Server_{m_gameEventName}EventTrigger", dirPath);
+    }
+
+    private void GenerateVoidServerEvent()
+    {
+        string dirPath = $"{m_targetDir}/{m_gameEventName}/Server";
+        
+        //Event
+        string gameEventAsText = $"using CustomToolkit.Events;\nusing UnityEngine;\n\n[CreateAssetMenu(fileName = \"Server_{m_gameEventName}Event\", menuName = \"Custom/Game Events/Server/{m_gameEventName}Event\")]\npublic class Server_{m_gameEventName}Event : GameEvent {{ }}";
+        CreateFileFromText(gameEventAsText, $"Server_{m_gameEventName}Event", dirPath);
+
+        //Event Listener
+        string gameEventListenerAsText = $"using CustomToolkit.Events;\n\npublic class Server_{m_gameEventName}EventListener : GameEventListener<Server_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventListenerAsText, $"Server_{m_gameEventName}EventListener", dirPath);
+        
+        //Event Trigger
+        string gameEventTriggerAsText = $"using CustomToolkit.Events;\n\npublic class Server_{m_gameEventName}EventTrigger : GameEventTrigger<Server_{m_gameEventName}Event> {{ }}";
+        CreateFileFromText(gameEventTriggerAsText, $"Server_{m_gameEventName}EventTrigger", dirPath);
+    }
+    
     private void CreateFileFromText(string fileAsText, string fileName, string directory)
     {
         string filePath = $"{directory}/{fileName}.cs";
