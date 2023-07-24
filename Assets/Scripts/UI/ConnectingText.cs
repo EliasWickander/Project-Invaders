@@ -28,9 +28,9 @@ public class ConnectingText : MonoBehaviour
     {
         m_connectingText.text = "Couldn't connect to server: Connection closed";
     }
-    public void OnClientError(TransportError error)
+    public void OnClientError(OnClientErrorEventData data)
     {
-        switch (error)
+        switch (data.m_transportError)
         {
             case TransportError.DnsResolve:
             {

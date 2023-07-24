@@ -1,0 +1,3 @@
+using CustomToolkit.Events;
+
+public class Client_OnClientConnectionAttemptEventTrigger : GameEventTrigger<OnClientConnectionAttemptEventData, Client_OnClientConnectionAttemptEvent> { }

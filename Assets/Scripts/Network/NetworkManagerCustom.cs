@@ -5,6 +5,7 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class PlayerProfile
@@ -48,26 +49,28 @@ public class NetworkManagerCustom : NetworkManager
     private Player m_gamePlayerPrefab;
     
     [Header("Network Events")]
-    public OnStartHostAttemptEvent m_onStartHostAttemptEvent;
-    public OnStartHostEvent m_onStartHostEvent;
-    public OnClientConnectionAttemptEvent m_onClientConnectionAttemptEvent;
-    public OnClientConnectedEvent m_onClientConnectedEvent;
-    public OnClientDisconnectedEvent m_onClientDisconnectedEvent;
-    public OnClientErrorEvent m_onClientErrorEvent;
-    public OnServerConnectedEvent m_onServerConnectedEvent;
-    public OnServerAddPlayerEvent m_onServerAddPlayerEvent;
-    public OnServerDisconnectedEvent m_onServerDisconnectedEvent;
+    public Client_OnStartHostAttemptEvent m_onStartHostAttemptEvent;
+    public Client_OnStartHostEvent m_onStartHostEvent;
+    public Client_OnClientConnectionAttemptEvent m_onClientConnectionAttemptEvent;
+    public Client_OnClientConnectedEvent m_onClientConnectedClientEvent;
+    public Client_OnClientDisconnectedEvent m_onClientDisconnectedClientEvent;
+    public Client_OnClientErrorEvent m_onClientErrorEvent;
+    
+    public Server_OnClientConnectedEvent m_onClientConnectedServerEvent;
+    public Server_OnClientDisconnectedEvent m_onClientDisconnectedServerEvent;
     
     [Header("Lobby Events")]
-    public OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyEvent;
+    public Client_OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyClientEvent;
+    public Server_OnPlayerJoinedLobbyEvent m_onPlayerJoinedLobbyServerEvent;
 
     [Header("Pre Game Events")] 
-    public OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameEvent;
-    public OnPreGameEndedEvent m_onPreGameEndedEvent;
+    public Client_OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameClientEvent;
+    public Server_OnPlayerJoinedPreGameEvent m_onPlayerJoinedPreGameServerEvent;
+    public Server_OnPreGameEndedEvent m_onPreGameEndedServerEvent;
 
     [Header("Game Events")] 
-    public OnPlayerCreatedEvent m_onPlayerCreatedEvent;
-    public OnGameStartedEvent m_onGameStartedEvent;
+    public Server_OnPlayerCreatedEvent m_onPlayerCreatedServerEvent;
+    public Server_OnGameStartedEvent m_onGameStartedServerEvent;
     public List<LobbyRoomPlayer> LobbyPlayers { get; } = new List<LobbyRoomPlayer>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
     public List<Player> GamePlayers { get; } = new List<Player>();
@@ -91,16 +94,16 @@ public class NetworkManagerCustom : NetworkManager
         CreateLobbyPlayerMessage createLobbyPlayerMsg = new CreateLobbyPlayerMessage();
         NetworkClient.Send(createLobbyPlayerMsg);
         
-        if(m_onClientConnectedEvent)
-            m_onClientConnectedEvent.Raise();
+        if(m_onClientConnectedClientEvent)
+            m_onClientConnectedClientEvent.Raise(new OnClientConnectedEventData());
     }
 
     public override void OnClientDisconnect()
     {
         base.OnClientDisconnect();
 
-        if(m_onClientDisconnectedEvent)
-            m_onClientDisconnectedEvent.Raise(new OnClientDisconnectedEventData() {m_wasSelf = true, m_isLocalScope = true});
+        if(m_onClientDisconnectedClientEvent)
+            m_onClientDisconnectedClientEvent.Raise(new OnClientDisconnectedEventData());
     }
 
     public override void OnClientError(TransportError error, string reason)
@@ -109,7 +112,7 @@ public class NetworkManagerCustom : NetworkManager
 
         Debug.Log(error + " " + reason);
         if(m_onClientErrorEvent)
-            m_onClientErrorEvent.Raise(error);
+            m_onClientErrorEvent.Raise(new OnClientErrorEventData() {m_transportError = error});
     }
 
     /// <summary>
@@ -127,8 +130,8 @@ public class NetworkManagerCustom : NetworkManager
             return;
         }
 
-        if(m_onServerConnectedEvent != null)
-            m_onServerConnectedEvent.Raise(new OnServerConnectedEventData() {m_connection = conn});
+        if(m_onClientConnectedServerEvent != null)
+            m_onClientConnectedServerEvent.Raise(new OnClientConnectedEventData());
     }
 
     /// <summary>
@@ -168,8 +171,8 @@ public class NetworkManagerCustom : NetworkManager
             }
         }
 
-        if(m_onServerDisconnectedEvent != null)
-            m_onServerDisconnectedEvent.Raise(new OnServerDisconnectedEventData() {m_connection = conn});
+        if(m_onClientDisconnectedServerEvent != null)
+            m_onClientDisconnectedServerEvent.Raise(new OnClientDisconnectedEventData());
         
         base.OnServerDisconnect(conn);
     }
@@ -189,7 +192,7 @@ public class NetworkManagerCustom : NetworkManager
         base.OnStartHost();
         
         if(m_onStartHostEvent)
-            m_onStartHostEvent.Raise();
+            m_onStartHostEvent.Raise(new OnStartHostEventData());
     }
 
     public void NotifyLobbyPlayersClientDisconnected(int clientIndex)
@@ -207,7 +210,7 @@ public class NetworkManagerCustom : NetworkManager
             return;
 
         if(m_onStartHostAttemptEvent)
-            m_onStartHostAttemptEvent.Raise();
+            m_onStartHostAttemptEvent.Raise(new OnStartHostAttemptEventData());
 
         StartCoroutine(HostLobbyAsync());
     }
@@ -232,7 +235,7 @@ public class NetworkManagerCustom : NetworkManager
         networkAddress = ip;
         
         if(m_onClientConnectionAttemptEvent)
-            m_onClientConnectionAttemptEvent.Raise();
+            m_onClientConnectionAttemptEvent.Raise(new OnClientConnectionAttemptEventData());
 
         StartCoroutine(JoinLobbyAsync());
     }
@@ -256,8 +259,8 @@ public class NetworkManagerCustom : NetworkManager
         
         LobbyPlayers.Add(player);
 
-        if(m_onPlayerJoinedLobbyEvent != null)
-            m_onPlayerJoinedLobbyEvent.Raise(ConnectionType.Client, new OnPlayerJoinedLobbyEventData() {m_player = player});
+        if(m_onPlayerJoinedLobbyClientEvent != null)
+            m_onPlayerJoinedLobbyClientEvent.Raise(new OnPlayerJoinedLobbyEventData() { m_player = player});
     }
 
     /// <summary>
@@ -271,8 +274,8 @@ public class NetworkManagerCustom : NetworkManager
         
         PreGamePlayers.Add(player);
 
-        if(m_onPlayerJoinedPreGameEvent != null)
-            m_onPlayerJoinedPreGameEvent.Raise(new OnPlayerJoinedPreGameEventData() {m_player = player});
+        if(m_onPlayerJoinedPreGameClientEvent != null)
+            m_onPlayerJoinedPreGameClientEvent.Raise(new OnPlayerJoinedPreGameEventData() {m_player = player});
     }
     
     /// <summary>
@@ -291,8 +294,8 @@ public class NetworkManagerCustom : NetworkManager
             if (GamePlayers.Count >= PreGamePlayers.Count)
             {
                 //All players connected to game. Start game for real
-                if(m_onGameStartedEvent != null)
-                    m_onGameStartedEvent.Raise(ConnectionType.Client, new OnGameStartedEventData() { });
+                if(m_onGameStartedServerEvent != null)
+                    m_onGameStartedServerEvent.Raise(new OnGameStartedEventData() { });
 
                 foreach (Player gamePlayer in GamePlayers)
                     gamePlayer.OnGameStarted();
@@ -339,7 +342,10 @@ public class NetworkManagerCustom : NetworkManager
             preGamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
             NetworkServer.ReplacePlayerForConnection(connection, preGamePlayerInstance.gameObject, true);
-
+            
+            if(m_onPlayerJoinedPreGameServerEvent != null)
+                m_onPlayerJoinedPreGameServerEvent.Raise(new OnPlayerJoinedPreGameEventData() {m_player = preGamePlayerInstance});
+            
             m_availableStartPoints = new List<Transform>(startPositions);
         }
     }
@@ -376,6 +382,9 @@ public class NetworkManagerCustom : NetworkManager
         NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
         
         m_playerProfiles.Add(conn, new PlayerProfile() {m_connection = conn, m_displayName = "Placeholder_Name"});
+        
+        if(m_onPlayerJoinedLobbyServerEvent != null)
+            m_onPlayerJoinedLobbyServerEvent.Raise(new OnPlayerJoinedLobbyEventData() {m_player = lobbyPlayerInstance});
     }
 
     /// <summary>
@@ -420,15 +429,15 @@ public class NetworkManagerCustom : NetworkManager
 
                 Destroy(oldPlayerObject, 0.1f);
                 
-                if(m_onPlayerCreatedEvent != null)
-                    m_onPlayerCreatedEvent.Raise(ConnectionType.Server, new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
+                if(m_onPlayerCreatedServerEvent != null)
+                    m_onPlayerCreatedServerEvent.Raise(new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
             }
             
             preGamePlayer.OnGameStarted();
         }
         
-        if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(ConnectionType.Server, new OnPreGameEndedEventData() {});
+        if(m_onPreGameEndedServerEvent != null)
+            m_onPreGameEndedServerEvent.Raise(new OnPreGameEndedEventData() {});
     }
     
     public bool CanStartGame()

@@ -11,9 +11,9 @@ public class Player : NetworkBehaviour
     private PlayerData m_playerData;
 
     public PlayerData PlayerData => m_playerData;
-
+    
     [SerializeField] 
-    private OnGameStartedEvent m_onGameStartedEvent;
+    private Client_OnGameStartedEvent m_onGameStartedClientEvent;
     
     [SyncVar] 
     private string m_displayName;
@@ -43,10 +43,10 @@ public class Player : NetworkBehaviour
             m_spawnTransform = value;
         }
     }
-
+    
     public event Action<Player> OnSpawnedEventServer; 
     public event Action<Player> OnDeathEventServer;
-
+    
     private void Start()
     {
         m_currentTile = PlayGrid.Instance.GetNode(transform.position);
@@ -69,8 +69,11 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void OnGameStarted()
     {
-        if(m_onGameStartedEvent != null)
-            m_onGameStartedEvent.Raise(ConnectionType.Client, new OnGameStartedEventData() {});
+        if(!isOwned)
+            return;
+        
+        if(m_onGameStartedClientEvent != null)
+            m_onGameStartedClientEvent.Raise(new OnGameStartedEventData() {});
     }
 
     public override void OnStartClient()

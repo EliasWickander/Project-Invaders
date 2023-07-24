@@ -13,7 +13,7 @@ public class PreGamePlayer : NetworkBehaviour
     public bool HasSelectedElement = false;
 
     [SerializeField] 
-    private OnPreGameEndedEvent m_onPreGameEndedEvent;
+    private Client_OnPreGameEndedEvent m_onPreGameEndedClientEvent;
     
     public override void OnStartClient()
     {
@@ -48,7 +48,7 @@ public class PreGamePlayer : NetworkBehaviour
         if(!isOwned)
             return;
         
-        if(m_onPreGameEndedEvent != null)
-            m_onPreGameEndedEvent.Raise(ConnectionType.Client, new OnPreGameEndedEventData() {});
+        if(m_onPreGameEndedClientEvent != null)
+            m_onPreGameEndedClientEvent.Raise(new OnPreGameEndedEventData() {});
     }
 }

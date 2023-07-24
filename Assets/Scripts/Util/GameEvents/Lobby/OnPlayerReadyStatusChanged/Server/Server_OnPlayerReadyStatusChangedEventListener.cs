@@ -1,0 +1,3 @@
+using CustomToolkit.Events;
+
+public class Server_OnPlayerReadyStatusChangedEventListener : GameEventListener<OnPlayerReadyStatusChangedEventData, Server_OnPlayerReadyStatusChangedEvent> { }

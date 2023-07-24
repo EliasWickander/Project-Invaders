@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3612089695151286049}
   - component: {fileID: 3129844648246217782}
   - component: {fileID: 4921770832255139380}
-  - component: {fileID: 8740801261713598595}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -81,20 +80,21 @@ MonoBehaviour:
   m_lobbyPlayerPrefab: {fileID: 9214188552314703482, guid: cba3cd854a9885c4ab3d2d26836562f0, type: 3}
   m_preGamePlayerPrefab: {fileID: 472075276746226264, guid: 63c264dad49c91f43af70b53540b88bf, type: 3}
   m_gamePlayerPrefab: {fileID: 7343631015343462473, guid: ef864599084422e4db54150709ecd4d2, type: 3}
-  m_onStartHostAttemptEvent: {fileID: 11400000, guid: 62305c44588ccc143a8ce21636848ca7, type: 2}
-  m_onStartHostEvent: {fileID: 11400000, guid: 0f3fd24998353144f865b20b854e48c3, type: 2}
-  m_onClientConnectionAttemptEvent: {fileID: 11400000, guid: fcf9c78aaa123cc42a484c0f79ed9b0e, type: 2}
-  m_onClientConnectedEvent: {fileID: 11400000, guid: d485b03cf4f51a54c967e4ed390d9405, type: 2}
-  m_onClientDisconnectedEvent: {fileID: 11400000, guid: 5f4ee208592e42846b3237e73c5b9c62, type: 2}
-  m_onClientErrorEvent: {fileID: 11400000, guid: bd33ce8192dca2948b464dc96029fbd2, type: 2}
-  m_onServerConnectedEvent: {fileID: 11400000, guid: 69e8b94e50ee8df419818e5dd2d2cb48, type: 2}
-  m_onServerAddPlayerEvent: {fileID: 11400000, guid: 8a182423925611046882ccb57b3cf65b, type: 2}
-  m_onServerDisconnectedEvent: {fileID: 11400000, guid: b8effed366126da48872ec62840b20f5, type: 2}
-  m_onPlayerJoinedLobbyEvent: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
-  m_onPlayerJoinedPreGameEvent: {fileID: 11400000, guid: 943b361259162ca47a35ea0f8927af29, type: 2}
-  m_onPreGameEndedEvent: {fileID: 11400000, guid: 29055f72a1adb7548a1d5133a635cbc2, type: 2}
-  m_onPlayerCreatedEvent: {fileID: 11400000, guid: a0156f93c581c8a44be56d29ca4b3563, type: 2}
-  m_onGameStartedEvent: {fileID: 11400000, guid: b0b16f1144e4c3a4da493ab1e9be815e, type: 2}
+  m_onStartHostAttemptEvent: {fileID: 11400000, guid: 4de477e6c74128041bf42c0e70a99275, type: 2}
+  m_onStartHostEvent: {fileID: 11400000, guid: 28b42b79f2a226742ae27f6277ca188d, type: 2}
+  m_onClientConnectionAttemptEvent: {fileID: 11400000, guid: 29a85719a7f7ec546979c18a1ba3660a, type: 2}
+  m_onClientConnectedClientEvent: {fileID: 11400000, guid: f8b5367ea1d17754798303f9613bc947, type: 2}
+  m_onClientDisconnectedClientEvent: {fileID: 11400000, guid: 518523c4dc929224f8bb73451ef0cde6, type: 2}
+  m_onClientErrorEvent: {fileID: 11400000, guid: ecacfb50a3ea16c48add8f3be90230db, type: 2}
+  m_onClientConnectedServerEvent: {fileID: 11400000, guid: 8ea78c9bf7a02bb44841444f2cf9b1ca, type: 2}
+  m_onClientDisconnectedServerEvent: {fileID: 11400000, guid: 880bcf1916f04304a8af7f73a6a6c43f, type: 2}
+  m_onPlayerJoinedLobbyClientEvent: {fileID: 11400000, guid: 2284262a0ab7250468f0c1cb1b5d115f, type: 2}
+  m_onPlayerJoinedLobbyServerEvent: {fileID: 11400000, guid: e2eae2cc8e11abc46a395ac95f1a60f3, type: 2}
+  m_onPlayerJoinedPreGameClientEvent: {fileID: 11400000, guid: 08274bc193b5cdb4c900bf84174b0f55, type: 2}
+  m_onPlayerJoinedPreGameServerEvent: {fileID: 11400000, guid: 19d381d1e0cea2d429e0a7541cdca0f8, type: 2}
+  m_onPreGameEndedServerEvent: {fileID: 11400000, guid: f43e8006bcb3efa4a8cabcdfb7da0222, type: 2}
+  m_onPlayerCreatedServerEvent: {fileID: 11400000, guid: 422d2d6729894e041a23b696c4812242, type: 2}
+  m_onGameStartedServerEvent: {fileID: 11400000, guid: 42216ce4d3bbb234bac23cc4aaa8f342, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,32 +124,3 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
---- !u!114 &8740801261713598595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3612089695151286053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c42365286f3b4c0d8e5fc1f53819d84c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_listenType: 1
-  m_event: {fileID: 11400000, guid: 15d7909ee5a1dcc44bbc1d314e2cf75c, type: 2}
-  m_response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3129844648246217782}
-        m_TargetAssemblyTypeName: NetworkManagerCustom, Assembly-CSharp
-        m_MethodName: DisconnectClient
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2

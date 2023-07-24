@@ -78,11 +78,6 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
         Sync();
     }
 
-    public void OnPlayerOrderChanged(OnPlayerOrderChangedEventData data)
-    {
-
-    }
-
     public void OnPlayerDisconnect()
     {
         Sync();

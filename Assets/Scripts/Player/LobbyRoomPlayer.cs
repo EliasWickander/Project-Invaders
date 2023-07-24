@@ -8,18 +8,22 @@ using UnityEngine.UI;
 public class LobbyRoomPlayer : NetworkBehaviour
 {
     [SerializeField] 
-    private OnPlayerOrderChangedEvent m_onPlayerOrderChangedEvent;
+    private Client_OnClientDisconnectedEvent m_onClientDisconnectedClientEvent;
 
     [SerializeField] 
-    private OnClientDisconnectedEvent m_onClientDisconnectedEvent;
+    private Client_OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedClientEvent;
+    
+    [SerializeField] 
+    private Server_OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedServerEvent;
 
     [SerializeField] 
-    private OnPlayerDisplayNameChangedEvent m_onDisplayNameChangedEvent;
-
+    private Client_OnPlayerReadyStatusChangedEvent m_onPlayerReadyStatusChangedClientEvent;
+    
     [SerializeField] 
-    private OnPlayerReadyStatusChangedEvent m_onReadyStatusChangedEvent;
+    private Server_OnPlayerReadyStatusChangedEvent m_onPlayerReadyStatusChangedServerEvent;
 
-    [SyncVar(hook = nameof(OnPlayerOrderChanged))]
+    //
+    [SyncVar]
     public int PlayerIndex = -1;
     
     [SyncVar(hook = nameof(OnDisplayNameChanged))]
@@ -63,22 +67,16 @@ public class LobbyRoomPlayer : NetworkBehaviour
         networkManager.LobbyPlayers.Remove(this);
     }
 
-    public void OnPlayerOrderChanged(int oldValue, int newValue)
-    {
-        if(m_onPlayerOrderChangedEvent != null)
-            m_onPlayerOrderChangedEvent.Raise(new OnPlayerOrderChangedEventData() {m_playerIndex = oldValue, m_oldOrder = oldValue, m_newOrder = newValue});
-    }
-    
     public void OnReadyStatusChanged(bool oldValue, bool newValue)
     {
-        if(m_onReadyStatusChangedEvent != null)
-            m_onReadyStatusChangedEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = PlayerIndex, m_oldReadyStatus = oldValue, m_newReadyStatus = newValue});
+        if(m_onPlayerReadyStatusChangedClientEvent != null)
+            m_onPlayerReadyStatusChangedClientEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = PlayerIndex, m_newReadyStatus = newValue});
     }
 
     public void OnDisplayNameChanged(string oldValue, string newValue)
     {
-        if(m_onDisplayNameChangedEvent != null)
-            m_onDisplayNameChangedEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = PlayerIndex, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
+        if(m_onDisplayNameChangedClientEvent != null)
+            m_onDisplayNameChangedClientEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = PlayerIndex, m_oldDisplayName = oldValue, m_newDisplayName = newValue});
     }
 
     [Command]
@@ -90,6 +88,8 @@ public class LobbyRoomPlayer : NetworkBehaviour
     [Command]
     public void SetDisplayNameCommand(string displayName)
     {
+        string oldDisplayName = displayName;
+        
         DisplayName = displayName;
         
         NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
@@ -97,12 +97,18 @@ public class LobbyRoomPlayer : NetworkBehaviour
         //Update player profile to match
         PlayerProfile playerProfile = networkManager.GetPlayerProfileFromConnection(connectionToClient);
         playerProfile.m_displayName = displayName;
+        
+        if(m_onDisplayNameChangedServerEvent != null)
+            m_onDisplayNameChangedServerEvent.Raise(new OnPlayerDisplayNameChangedEventData() {m_playerIndex = PlayerIndex, m_oldDisplayName = oldDisplayName, m_newDisplayName = displayName});
     }
 
     [Command]
     public void ToggleReadyCommand()
     {
         IsReady = !IsReady;
+        
+        if(m_onPlayerReadyStatusChangedServerEvent != null)
+            m_onPlayerReadyStatusChangedServerEvent.Raise(new OnPlayerReadyStatusChangedEventData() {m_playerIndex = PlayerIndex, m_newReadyStatus = IsReady});
     }
 
     [Command]
@@ -117,8 +123,8 @@ public class LobbyRoomPlayer : NetworkBehaviour
     [ClientRpc]
     public void HandleClientDisconnected(int clientIndex)
     {
-        if(m_onClientDisconnectedEvent != null)
-            m_onClientDisconnectedEvent.Raise(new OnClientDisconnectedEventData() {m_wasSelf = false, m_isLocalScope = isOwned});
+        if(m_onClientDisconnectedClientEvent != null)
+            m_onClientDisconnectedClientEvent.Raise(new OnClientDisconnectedEventData());
 
         if (PlayerIndex > clientIndex)
             PlayerIndex--;

@@ -1,0 +1,3 @@
+using CustomToolkit.Events;
+
+public class Client_OnPlayerDisplayNameChangedEventTrigger : GameEventTrigger<OnPlayerDisplayNameChangedEventData, Client_OnPlayerDisplayNameChangedEvent> { }

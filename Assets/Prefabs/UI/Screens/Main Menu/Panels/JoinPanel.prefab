@@ -1038,7 +1038,7 @@ GameObject:
   - component: {fileID: 2363739063287837364}
   - component: {fileID: 5120697793759289782}
   - component: {fileID: 5120697793759289783}
-  - component: {fileID: 4991208796947230087}
+  - component: {fileID: 6671223298960948292}
   - component: {fileID: 693543070768706884}
   m_Layer: 5
   m_Name: JoinPanel
@@ -1061,7 +1061,7 @@ RectTransform:
   m_Children:
   - {fileID: 5120697794642617040}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1119,7 +1119,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4991208796947230087
+--- !u!114 &6671223298960948292
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1128,15 +1128,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5120697793759289777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6df9f8d058ec7b14f911be92ff2711a2, type: 3}
+  m_Script: {fileID: 11500000, guid: ea916f71b7029e540a5a175b1515286d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: fcf9c78aaa123cc42a484c0f79ed9b0e, type: 2}
+  m_event: {fileID: 11400000, guid: 29a85719a7f7ec546979c18a1ba3660a, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 693543070768706884}
-        m_TargetAssemblyTypeName: UINavigateToTrigger, Assembly-CSharp
+        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
         m_MethodName: Trigger
         m_Mode: 1
         m_Arguments:
@@ -1162,6 +1162,7 @@ MonoBehaviour:
   m_target: 1
   m_screenData: {fileID: 0}
   m_panelData: {fileID: 11400000, guid: 41c0c4323a214d84ba1a28978fee97ed, type: 2}
+  m_openWithPanel: 0
 --- !u!1 &5120697794286314848
 GameObject:
   m_ObjectHideFlags: 0
