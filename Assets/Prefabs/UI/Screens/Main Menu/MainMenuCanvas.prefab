@@ -1265,6 +1265,7 @@ GameObject:
   - component: {fileID: 6043698207368596529}
   - component: {fileID: 6043698207368596528}
   - component: {fileID: 6043698207368596531}
+  - component: {fileID: 1783516723701280902}
   - component: {fileID: 778279578920210973}
   m_Layer: 5
   m_Name: MainMenuCanvas
@@ -1370,6 +1371,34 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1783516723701280902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6043698207368596530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4437531449e33dd44a739096303fe1da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_event: {fileID: 11400000, guid: 4de477e6c74128041bf42c0e70a99275, type: 2}
+  m_response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 778279578920210973}
+        m_TargetAssemblyTypeName: CustomToolkit.UI.UINavigateToTrigger, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &778279578920210973
 MonoBehaviour:
   m_ObjectHideFlags: 0

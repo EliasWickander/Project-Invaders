@@ -72,7 +72,7 @@ RectTransform:
   m_Children:
   - {fileID: 3745552330896349546}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 2018653029034969587}
   - component: {fileID: 3118895191987592147}
   - component: {fileID: 795970546588922045}
-  - component: {fileID: 8811300017178766848}
+  - component: {fileID: 2220797611974519369}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -613,7 +613,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8811300017178766848}
+      - m_Target: {fileID: 2220797611974519369}
         m_TargetAssemblyTypeName: CustomToolkit.Events.GameEventTrigger`2[[DisconnectClientEventData,
           Assembly-CSharp
         m_MethodName: Trigger
@@ -626,7 +626,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8811300017178766848
+--- !u!114 &2220797611974519369
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -635,10 +635,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6067197878864472653}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a3024929a42de34d9cd101f8b11bfb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ae4dbc84d6c4224fb95151da3808019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 15d7909ee5a1dcc44bbc1d314e2cf75c, type: 2}
+  m_event: {fileID: 11400000, guid: adb11a1533e334f4dba3a7e9877b5fa1, type: 2}
 --- !u!1 &6415913869677448833
 GameObject:
   m_ObjectHideFlags: 0

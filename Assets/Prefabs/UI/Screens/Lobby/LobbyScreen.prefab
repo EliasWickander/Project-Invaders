@@ -970,11 +970,10 @@ GameObject:
   - component: {fileID: 6043698207368596529}
   - component: {fileID: 6043698207368596528}
   - component: {fileID: 6043698207368596531}
-  - component: {fileID: 3291616898861269825}
-  - component: {fileID: 8308621830490918835}
-  - component: {fileID: 829475469871515942}
-  - component: {fileID: 8064064865348817876}
-  - component: {fileID: 118231449550375087}
+  - component: {fileID: 5961126206848256569}
+  - component: {fileID: 6930229146523203436}
+  - component: {fileID: 6471258394802989499}
+  - component: {fileID: 1043499417204736693}
   m_Layer: 5
   m_Name: LobbyScreen
   m_TagString: Untagged
@@ -1096,7 +1095,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3291616898861269825
+--- !u!114 &5961126206848256569
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1105,16 +1104,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6043698207368596530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc84a989ffabdde468f4e569971ccb06, type: 3}
+  m_Script: {fileID: 11500000, guid: 15f3afdeb805241439fc6acc0fe5add2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_listenType: 1
-  m_event: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
+  m_event: {fileID: 11400000, guid: 2284262a0ab7250468f0c1cb1b5d115f, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
-        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
         m_MethodName: OnPlayerJoinedLobby
         m_Mode: 0
         m_Arguments:
@@ -1125,7 +1123,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8308621830490918835
+--- !u!114 &6930229146523203436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1134,15 +1132,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6043698207368596530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dec3a0cad09248488208134bc949481, type: 3}
+  m_Script: {fileID: 11500000, guid: 37be1c90b03da944ea58146160f93e11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 1ae6f54c1abd6fe46a229bec60b5f1a2, type: 2}
+  m_event: {fileID: 11400000, guid: df1ac66926f175a4d87d55b46fff9be3, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
-        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
         m_MethodName: OnPlayerDisplayNameChanged
         m_Mode: 0
         m_Arguments:
@@ -1153,7 +1151,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &829475469871515942
+--- !u!114 &6471258394802989499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1162,15 +1160,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6043698207368596530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feb748afb77b6a64aae908655d2d2a73, type: 3}
+  m_Script: {fileID: 11500000, guid: b5031d101109d5d45b9484eb933d1a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 8aeac3383b786df448867e16bfed9c66, type: 2}
+  m_event: {fileID: 11400000, guid: 7030b83fefd5c5e44b03a10cceaa16b9, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
-        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
         m_MethodName: OnPlayerReadyStatusChanged
         m_Mode: 0
         m_Arguments:
@@ -1181,7 +1179,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8064064865348817876
+--- !u!114 &1043499417204736693
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1190,45 +1188,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 6043698207368596530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfd09afbd29150e4f89b569cbd19323a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e3630f576b41bb4fac07c5461eaa15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 2ae93b40977632f4ba4dc523815604d3, type: 2}
-  m_response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5519943580622141746}
-        m_TargetAssemblyTypeName: GameLobby, Assembly-CSharp
-        m_MethodName: OnPlayerOrderChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &118231449550375087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6043698207368596530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0c73dc54fdcfad478230fe8f9b15831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 5f4ee208592e42846b3237e73c5b9c62, type: 2}
+  m_event: {fileID: 11400000, guid: 518523c4dc929224f8bb73451ef0cde6, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5519943580622141746}
         m_TargetAssemblyTypeName: GameLobbyViewModel, Assembly-CSharp
         m_MethodName: OnPlayerDisconnect
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

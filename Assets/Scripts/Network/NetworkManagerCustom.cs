@@ -93,7 +93,7 @@ public class NetworkManagerCustom : NetworkManager
         //Create lobby player when client connects (assumes player can only connect to lobby)
         CreateLobbyPlayerMessage createLobbyPlayerMsg = new CreateLobbyPlayerMessage();
         NetworkClient.Send(createLobbyPlayerMsg);
-        
+
         if(m_onClientConnectedClientEvent)
             m_onClientConnectedClientEvent.Raise(new OnClientConnectedEventData());
     }

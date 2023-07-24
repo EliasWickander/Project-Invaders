@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 180807527214787923}
   - component: {fileID: 8193425421908985675}
   - component: {fileID: 1835965272334778813}
-  - component: {fileID: 7372439521620332554}
+  - component: {fileID: 5195582517770593593}
   - component: {fileID: 9125183517114116178}
   m_Layer: 0
   m_Name: LoadingPanel
@@ -213,7 +213,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5902872748404184191}
   m_CullTransparentMesh: 1
---- !u!114 &7372439521620332554
+--- !u!114 &5195582517770593593
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -222,11 +222,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5902872748404184191}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc84a989ffabdde468f4e569971ccb06, type: 3}
+  m_Script: {fileID: 11500000, guid: 277231c35925e3e4a9db0f5c227540d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_listenType: 1
-  m_event: {fileID: 11400000, guid: 8a067e8b21af74d4b8dbf248869f6324, type: 2}
+  m_event: {fileID: 11400000, guid: f8b5367ea1d17754798303f9613bc947, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:

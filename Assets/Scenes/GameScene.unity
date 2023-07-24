@@ -177,10 +177,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 225883442}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68e82d7532ce43c48a404297696137a9, type: 3}
+  m_Script: {fileID: 11500000, guid: eb1b9320c3b0f954d9a70707ddbc8063, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 29055f72a1adb7548a1d5133a635cbc2, type: 2}
+  m_event: {fileID: 11400000, guid: 5e1d71c5e3a197f4d937de4534795922, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
@@ -196,8 +196,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_listenType: 1
-  m_subjectType: 0
 --- !u!1 &502478376
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,7 +725,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1247819596}
   - component: {fileID: 1247819595}
-  - component: {fileID: 1247819598}
+  - component: {fileID: 1247819597}
   m_Layer: 0
   m_Name: PlayerSpawner
   m_TagString: Untagged
@@ -763,7 +761,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1247819598
+--- !u!114 &1247819597
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -772,10 +770,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1247819594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55c09d40cec35cd46a3519f6de874778, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b517cd1f3af28c4cb0e3f8720579a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: a0156f93c581c8a44be56d29ca4b3563, type: 2}
+  m_event: {fileID: 11400000, guid: 422d2d6729894e041a23b696c4812242, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:
@@ -791,8 +789,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_listenType: 0
-  m_subjectType: 0
 --- !u!1 &1377363094
 GameObject:
   m_ObjectHideFlags: 0

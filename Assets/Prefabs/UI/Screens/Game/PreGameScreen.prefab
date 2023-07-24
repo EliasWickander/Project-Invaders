@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 1568393096154452522}
   - component: {fileID: 2118719979892529429}
   - component: {fileID: 7164339517747904765}
-  - component: {fileID: 8374075399205010171}
+  - component: {fileID: 7819528094570319546}
   m_Layer: 0
   m_Name: PreGameScreen
   m_TagString: Untagged
@@ -326,7 +326,7 @@ MonoBehaviour:
   viewAdapterOptions: {fileID: 0}
   viewModelPropertyName: ElementSelectionGridViewModel.SelectedElement
   viewPropertyName: PreGameScreenViewModel.SelectedElement
---- !u!114 &8374075399205010171
+--- !u!114 &7819528094570319546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -335,10 +335,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1593353446277885452}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cab60d0c40d4e8f9e8ff63a35302480, type: 3}
+  m_Script: {fileID: 11500000, guid: f4727ddf143cad54eaf5cdc59d9bcc4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_event: {fileID: 11400000, guid: 943b361259162ca47a35ea0f8927af29, type: 2}
+  m_event: {fileID: 11400000, guid: 08274bc193b5cdb4c900bf84174b0f55, type: 2}
   m_response:
     m_PersistentCalls:
       m_Calls:

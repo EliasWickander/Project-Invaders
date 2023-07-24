@@ -15,4 +15,3 @@ MonoBehaviour:
   m_uiScreenPrefab: {fileID: 8220531737411850694, guid: 250178164687e204eb10d83efcf4778d, type: 3}
   m_panels:
   - {fileID: 11400000, guid: 0e2e0bd15023f2a44bb657545f04e60e, type: 2}
-  - {fileID: 11400000, guid: 6ab183d38fe52f647bf263a914741914, type: 2}

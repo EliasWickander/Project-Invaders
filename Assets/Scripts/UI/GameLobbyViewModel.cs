@@ -78,7 +78,7 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
         Sync();
     }
 
-    public void OnPlayerDisconnect()
+    public void OnPlayerDisconnect(OnClientDisconnectedEventData data)
     {
         Sync();
     }
