@@ -1,34 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using CustomToolkit.AdvancedTypes;
-using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class WorldGridTile : WorldGridNode
 {
     [SerializeField] 
     private MeshRenderer m_meshRenderer;
 
-    public string OwnerPlayerId = null;
-    public string PendingOwnerPlayerId = null;
+    private TileStatus m_tileStatus = new TileStatus();
+    public TileStatus TileStatus => m_tileStatus;
+
+    private Material m_defaultMaterial;
+
+    private void Awake()
+    {
+        m_defaultMaterial = m_meshRenderer.material;
+    }
 
     public void UpdateMaterial(Material material)
     {
         m_meshRenderer.material = material;
     }
 
-    public void SetOwner(Player player)
+    public void SetStatus(TileStatus status)
     {
-        OwnerPlayerId = player.PlayerId;
-        
-        UpdateMaterial(player.PlayerData.TerritoryMaterial);
-    }
-    
-    public void SetPendingOwner(Player player)
-    {
-        PendingOwnerPlayerId = player.PlayerId;
-        
-        UpdateMaterial(player.PlayerData.TrailMaterial);
+        m_tileStatus = status;
+
+        if (!string.IsNullOrEmpty(m_tileStatus.PendingOwnerPlayerId))
+        {
+            Player pendingPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(status.PendingOwnerPlayerId);
+            
+            if(pendingPlayer != null)
+                UpdateMaterial(pendingPlayer.PlayerData.TrailMaterial);
+        }
+        else if(!string.IsNullOrEmpty(m_tileStatus.OwnerPlayerId))
+        {
+            Player ownerPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(status.OwnerPlayerId);
+            
+            if(ownerPlayer != null)
+                UpdateMaterial(ownerPlayer.PlayerData.TerritoryMaterial);
+        }
+        else
+        {
+            UpdateMaterial(m_defaultMaterial);
+        }
     }
 }

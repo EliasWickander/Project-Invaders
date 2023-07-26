@@ -22,7 +22,7 @@ public class GameWorld
             Debug.LogError($"Player Id {player.PlayerId} is already associated with another player. Something is wrong");
             return;
         }
-        
+
         Players.Add(player.PlayerId, player);
     }
     

@@ -75,12 +75,10 @@ public class Player : NetworkBehaviour
         if(m_onGameStartedClientEvent != null)
             m_onGameStartedClientEvent.Raise(new OnGameStartedEventData() {});
     }
-
+    
     public override void OnStartClient()
     {
         GameClient.Instance.GameWorld.AddPlayerToWorld(this);
-        
-        NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
 
         //Add input controller if locally owned player object
         if (isOwned)
@@ -88,6 +86,8 @@ public class Player : NetworkBehaviour
             PlayerInputController inputController = gameObject.AddComponent<PlayerInputController>();
             inputController.SetTarget(this);
         }
+        
+        NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
     }
 
     public override void OnStopClient()
@@ -141,12 +141,12 @@ public class Player : NetworkBehaviour
         
         transform.position = tile.transform.position;
         transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
-
-        if (tile.OwnerPlayerId != PlayerId)
+        
+        if (tile.TileStatus.OwnerPlayerId != PlayerId)
         {
-            //If walking on tile that's not owned, add it to trail
             playGrid.SetTilePendingOwner(tile.m_gridPos, PlayerId);
-
+            
+            //If walking on tile that's not owned, add it to trail
             m_nodeTrail.Add(tile);
         }
         else
@@ -157,7 +157,7 @@ public class Player : NetworkBehaviour
             
             foreach (var nodeToOwn in GetNodesWithinTrail(m_nodeTrail))
             {
-                if(nodeToOwn.OwnerPlayerId != PlayerId)
+                if(nodeToOwn.TileStatus.OwnerPlayerId != PlayerId)
                     playGrid.SetTileOwner(tile.m_gridPos, PlayerId);
             }
 

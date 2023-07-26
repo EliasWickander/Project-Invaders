@@ -96,6 +96,8 @@ MonoBehaviour:
   m_onPreGameEndedServerEvent: {fileID: 11400000, guid: f43e8006bcb3efa4a8cabcdfb7da0222, type: 2}
   m_onPlayerCreatedServerEvent: {fileID: 11400000, guid: 422d2d6729894e041a23b696c4812242, type: 2}
   m_onGameStartedServerEvent: {fileID: 11400000, guid: 42216ce4d3bbb234bac23cc4aaa8f342, type: 2}
+  m_onPlayerJoinedGameClientEvent: {fileID: 11400000, guid: 02133ecf2ce4aa743995ed41b6995781, type: 2}
+  m_onPlayerJoinedGameServerEvent: {fileID: 11400000, guid: 12d7a4630acb2824e90ee6ce1efc39f4, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0

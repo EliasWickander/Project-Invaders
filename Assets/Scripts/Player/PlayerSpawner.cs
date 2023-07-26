@@ -22,8 +22,11 @@ public class PlayerSpawner : MonoBehaviour
         Player player = data.m_player;
         player.OnSpawnedEventServer += OnPlayerSpawnedServer;
         player.OnDeathEventServer += OnPlayerDeath;
-        
-        player.OnSpawned(data.m_spawnTransform);
+    }
+
+    public void OnPlayerJoinedGame(OnPlayerJoinedGameEventData data)
+    {
+        data.m_player.OnSpawned(data.m_player.SpawnTransform);
     }
     
     private void OnDestroy()

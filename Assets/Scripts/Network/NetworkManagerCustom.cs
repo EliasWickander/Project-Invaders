@@ -71,6 +71,8 @@ public class NetworkManagerCustom : NetworkManager
     [Header("Game Events")] 
     public Server_OnPlayerCreatedEvent m_onPlayerCreatedServerEvent;
     public Server_OnGameStartedEvent m_onGameStartedServerEvent;
+    public Client_OnPlayerJoinedGameEvent m_onPlayerJoinedGameClientEvent;
+    public Server_OnPlayerJoinedGameEvent m_onPlayerJoinedGameServerEvent;
     public List<LobbyRoomPlayer> LobbyPlayers { get; } = new List<LobbyRoomPlayer>();
     public List<PreGamePlayer> PreGamePlayers { get; } = new List<PreGamePlayer>();
     public List<Player> GamePlayers { get; } = new List<Player>();
@@ -288,9 +290,12 @@ public class NetworkManagerCustom : NetworkManager
             return;
         
         GamePlayers.Add(player);
-
+        
         if (calledOnServer)
         {
+            if(m_onPlayerJoinedGameServerEvent != null)
+                m_onPlayerJoinedGameServerEvent.Raise(new OnPlayerJoinedGameEventData() {m_player = player});
+            
             if (GamePlayers.Count >= PreGamePlayers.Count)
             {
                 //All players connected to game. Start game for real
@@ -300,6 +305,11 @@ public class NetworkManagerCustom : NetworkManager
                 foreach (Player gamePlayer in GamePlayers)
                     gamePlayer.OnGameStarted();
             }
+        }
+        else
+        {
+            if(m_onPlayerJoinedGameClientEvent != null)
+                m_onPlayerJoinedGameClientEvent.Raise(new OnPlayerJoinedGameEventData() {m_player = player});
         }
     }
 
@@ -405,13 +415,13 @@ public class NetworkManagerCustom : NetworkManager
 
     public void StartGame()
     {
-        Debug.LogError("starting game");
-
+        List<Transform> startPointsUsed = new List<Transform>();
+        
         foreach (PreGamePlayer preGamePlayer in PreGamePlayers)
         {
             //Replace pre-game player with game player
             PlayerProfile playerProfile = GetPlayerProfileFromConnection(preGamePlayer.connectionToClient);
-
+            
             if (playerProfile != null)
             {
                 GameObject oldPlayerObject = playerProfile.m_connection.identity.gameObject;
@@ -422,19 +432,30 @@ public class NetworkManagerCustom : NetworkManager
                     ? Instantiate(m_gamePlayerPrefab, startPoint.position, startPoint.rotation) 
                     : Instantiate(m_gamePlayerPrefab, Vector3.zero, Quaternion.identity);
 
+                if (startPoint != null)
+                {
+                    startPointsUsed.Add(startPoint);
+                    DisableStartPoint(startPoint);
+                    gamePlayerInstance.SpawnTransform = startPoint;
+                }
+                
                 gamePlayerInstance.SetPlayerId(Guid.NewGuid().ToString());
                 gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
             
                 NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
 
                 Destroy(oldPlayerObject, 0.1f);
-                
+
                 if(m_onPlayerCreatedServerEvent != null)
                     m_onPlayerCreatedServerEvent.Raise(new OnPlayerCreatedEventData() {m_player = gamePlayerInstance, m_spawnTransform = startPoint});
             }
             
             preGamePlayer.OnGameStarted();
         }
+
+        //Temporarily enable start point until we disable it the normal way through player spawner. Done to prevent start point disable two times
+        foreach (Transform startPoint in startPointsUsed)
+            EnableStartPoint(startPoint);
         
         if(m_onPreGameEndedServerEvent != null)
             m_onPreGameEndedServerEvent.Raise(new OnPreGameEndedEventData() {});
