@@ -40,7 +40,11 @@ public class PlayerInputController : MonoBehaviour
     private void OnMovementPerformed(InputAction.CallbackContext value)
     {
         Vector2 inputDir = value.ReadValue<Vector2>();
-
+        
+        //Only register movement inputs that go horizontally or vertically
+        if(inputDir != Vector2.left && inputDir != Vector2.right && inputDir != Vector2.up && inputDir != Vector2.down)
+            return;
+        
         Vector3 inputMoveDir = new Vector3(inputDir.x, 0, inputDir.y);
         
         //Don't allow movement in opposite direction of current

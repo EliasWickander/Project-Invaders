@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a95307cf7d6720489269476fae03d62, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  m_trailMaterial: {fileID: 2100000, guid: daf5a42904e6dbf43a1bd77b5fc7c6db, type: 2}
+  m_trailMaterial: {fileID: 2100000, guid: 93d7a07d3a7b9844aa3b91534fb19ee4, type: 2}
   m_territoryMaterial: {fileID: 2100000, guid: daf5a42904e6dbf43a1bd77b5fc7c6db, type: 2}
   m_moveSpeed: 0.1
