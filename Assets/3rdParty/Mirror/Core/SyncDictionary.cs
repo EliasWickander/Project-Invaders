@@ -5,7 +5,7 @@ namespace Mirror
 {
     public class SyncIDictionary<TKey, TValue> : SyncObject, IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     {
-        public delegate void SyncDictionaryChanged(Operation op, TKey key, TValue item);
+        public delegate void SyncDictionaryChanged(Operation op, TKey key, TValue oldValue, TValue newValue);
 
         protected readonly IDictionary<TKey, TValue> objects;
 
@@ -65,7 +65,7 @@ namespace Mirror
             this.objects = objects;
         }
 
-        void AddOperation(Operation op, TKey key, TValue item, bool checkAccess)
+        void AddOperation(Operation op, TKey key, TValue oldItem, TValue newItem, bool checkAccess)
         {
             if (checkAccess && IsReadOnly)
             {
@@ -76,7 +76,7 @@ namespace Mirror
             {
                 operation = op,
                 key = key,
-                item = item
+                item = newItem
             };
 
             if (IsRecording())
@@ -85,7 +85,7 @@ namespace Mirror
                 OnDirty?.Invoke();
             }
 
-            Callback?.Invoke(op, key, item);
+            Callback?.Invoke(op, key, oldItem, newItem);
         }
 
         public override void OnSerializeAll(NetworkWriter writer)
@@ -165,14 +165,15 @@ namespace Mirror
                 // that we have not applied yet
                 bool apply = changesAhead == 0;
                 TKey key = default;
-                TValue item = default;
+                TValue oldItem = default;
+                TValue newItem = default;
 
                 switch (operation)
                 {
                     case Operation.OP_ADD:
                     case Operation.OP_SET:
                         key = reader.Read<TKey>();
-                        item = reader.Read<TValue>();
+                        newItem = reader.Read<TValue>();
                         if (apply)
                         {
                             // add dirty + changes.
@@ -181,13 +182,14 @@ namespace Mirror
                             // write, even for ClientToServer (for broadcasting).
                             if (ContainsKey(key))
                             {
-                                objects[key] = item; // assign after ContainsKey check
-                                AddOperation(Operation.OP_SET, key, item, false);
+                                oldItem = objects[key];
+                                objects[key] = newItem; // assign after ContainsKey check
+                                AddOperation(Operation.OP_SET, key, oldItem, newItem, false);
                             }
                             else
                             {
-                                objects[key] = item; // assign after ContainsKey check
-                                AddOperation(Operation.OP_ADD, key, item, false);
+                                objects[key] = newItem; // assign after ContainsKey check
+                                AddOperation(Operation.OP_ADD, key, default, newItem, false);
                             }
                         }
                         break;
@@ -200,7 +202,7 @@ namespace Mirror
                             // ClientToServer needs to set dirty in server OnDeserialize.
                             // no access check: server OnDeserialize can always
                             // write, even for ClientToServer (for broadcasting).
-                            AddOperation(Operation.OP_CLEAR, default, default, false);
+                            AddOperation(Operation.OP_CLEAR, default,  default, default, false);
                         }
                         break;
 
@@ -208,14 +210,14 @@ namespace Mirror
                         key = reader.Read<TKey>();
                         if (apply)
                         {
-                            if (objects.TryGetValue(key, out item))
+                            if (objects.TryGetValue(key, out oldItem))
                             {
                                 // add dirty + changes.
                                 // ClientToServer needs to set dirty in server OnDeserialize.
                                 // no access check: server OnDeserialize can always
                                 // write, even for ClientToServer (for broadcasting).
                                 objects.Remove(key);
-                                AddOperation(Operation.OP_REMOVE, key, item, false);
+                                AddOperation(Operation.OP_REMOVE, key, oldItem, default, false);
                             }
                         }
                         break;
@@ -232,7 +234,7 @@ namespace Mirror
         public void Clear()
         {
             objects.Clear();
-            AddOperation(Operation.OP_CLEAR, default, default, true);
+            AddOperation(Operation.OP_CLEAR, default, default, default, true);
         }
 
         public bool ContainsKey(TKey key) => objects.ContainsKey(key);
@@ -241,7 +243,7 @@ namespace Mirror
         {
             if (objects.TryGetValue(key, out TValue item) && objects.Remove(key))
             {
-                AddOperation(Operation.OP_REMOVE, key, item, true);
+                AddOperation(Operation.OP_REMOVE, key, item, default, true);
                 return true;
             }
             return false;
@@ -254,13 +256,14 @@ namespace Mirror
             {
                 if (ContainsKey(i))
                 {
+                    TValue oldItem = objects[i];
                     objects[i] = value;
-                    AddOperation(Operation.OP_SET, i, value, true);
+                    AddOperation(Operation.OP_SET, i, oldItem, value, true);
                 }
                 else
                 {
                     objects[i] = value;
-                    AddOperation(Operation.OP_ADD, i, value, true);
+                    AddOperation(Operation.OP_ADD, i, default, value, true);
                 }
             }
         }
@@ -270,7 +273,7 @@ namespace Mirror
         public void Add(TKey key, TValue value)
         {
             objects.Add(key, value);
-            AddOperation(Operation.OP_ADD, key, value, true);
+            AddOperation(Operation.OP_ADD, key, default, value, true);
         }
 
         public void Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
@@ -304,7 +307,7 @@ namespace Mirror
             bool result = objects.Remove(item.Key);
             if (result)
             {
-                AddOperation(Operation.OP_REMOVE, item.Key, item.Value, true);
+                AddOperation(Operation.OP_REMOVE, item.Key, item.Value, default, true);
             }
             return result;
         }

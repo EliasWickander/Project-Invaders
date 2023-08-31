@@ -1,39 +1,73 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class PlayerAddedEventArgs
+{
+    public Player m_player;
+}
+
+public class PlayerRemovedEventArgs
+{
+    public Player m_player;
+}
 public class GameWorld
 {
-    public Dictionary<string, Player> Players { get; set; } = new Dictionary<string, Player>();
+    //Player id to player object
+    private Dictionary<string, Player> PlayersDictionary { get; set; } = new Dictionary<string, Player>();
+    public List<Player> Players { get; set; } = new List<Player>();
 
+    public static event EventHandler<PlayerAddedEventArgs> OnPlayerAddedEvent; 
+    public static event EventHandler<PlayerRemovedEventArgs> OnPlayerRemovedEvent; 
     public void AddPlayerToWorld(Player player)
     {
         if(player == null)
             return;
         
-        if (Players.ContainsValue(player))
+        if (PlayersDictionary.ContainsValue(player))
         {
             Debug.LogError($"Player {player} already added to world");
             return;
         }
 
-        if (Players.ContainsKey(player.PlayerId))
+        if (PlayersDictionary.ContainsKey(player.PlayerId))
         {
             Debug.LogError($"Player Id {player.PlayerId} is already associated with another player. Something is wrong");
             return;
         }
 
-        Players.Add(player.PlayerId, player);
+        Players.Add(player);
+        PlayersDictionary.Add(player.PlayerId, player);
+        
+        OnPlayerAddedEvent?.Invoke(this, new PlayerAddedEventArgs() {m_player = player});
+    }
+
+    public void RemovePlayerFromWorld(Player player)
+    {
+        if(player == null)
+            return;
+        
+        if (!PlayersDictionary.ContainsKey(player.PlayerId))
+        {
+            Debug.LogError($"Player {player} is not added to world. Something is wrong");
+            return;
+        }
+
+        Players.Remove(player);
+        PlayersDictionary.Remove(player.PlayerId);
+        
+        OnPlayerRemovedEvent?.Invoke(this, new PlayerRemovedEventArgs() {m_player = player});
     }
     
     public Player GetPlayerFromId(string id)
     {
-        if (!Players.ContainsKey(id))
+        if (!PlayersDictionary.ContainsKey(id))
         {
             Debug.LogError("No player associated with id " + id);
             return null;
         }
 
-        return Players[id];
+        return PlayersDictionary[id];
     }
 }

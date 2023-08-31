@@ -82,12 +82,12 @@ namespace Mirror.Examples.MultipleMatch
         }
 
         [ClientCallback]
-        public void UpdateWins(SyncDictionary<NetworkIdentity, MatchPlayerData>.Operation op, NetworkIdentity key, MatchPlayerData matchPlayerData)
+        public void UpdateWins(SyncDictionary<NetworkIdentity, MatchPlayerData>.Operation op, NetworkIdentity key, MatchPlayerData oldMatchPlayerData, MatchPlayerData newMatchPlayerData)
         {
             if (key.gameObject.GetComponent<NetworkIdentity>().isLocalPlayer)
-                winCountLocal.text = $"Player {matchPlayerData.playerIndex}\n{matchPlayerData.wins}";
+                winCountLocal.text = $"Player {newMatchPlayerData.playerIndex}\n{newMatchPlayerData.wins}";
             else
-                winCountOpponent.text = $"Player {matchPlayerData.playerIndex}\n{matchPlayerData.wins}";
+                winCountOpponent.text = $"Player {newMatchPlayerData.playerIndex}\n{newMatchPlayerData.wins}";
         }
 
         [Command(requiresAuthority = false)]

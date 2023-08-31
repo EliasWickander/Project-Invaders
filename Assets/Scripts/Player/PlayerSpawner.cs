@@ -76,7 +76,7 @@ public class PlayerSpawner : MonoBehaviour
 
         foreach (WorldGridTile tile in nodesWithinRadius)
         {
-            m_playGrid.SetTileOwner(tile.m_gridPos, player.PlayerId);
+            PlayGrid.Instance.SetTileOwner(tile.m_gridPos, player.PlayerId);
         }
     }
     
