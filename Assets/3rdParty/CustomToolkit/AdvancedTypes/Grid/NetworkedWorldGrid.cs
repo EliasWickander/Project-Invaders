@@ -63,7 +63,7 @@ namespace CustomToolkit.AdvancedTypes
 					
                     m_nodes[x, y] = newNode;
 
-                    OnNodeCreated(m_nodes[x, y]);
+                    OnTileCreated(m_nodes[x, y]);
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace CustomToolkit.AdvancedTypes
         /// </summary>
         /// <param name="node">Node to get neighbours of</param>
         /// <returns>Returns neighbouring nodes</returns>
-        public List<TNode> GetNeighbours(TNode node)
+        public List<TNode> GetNeighbours(TNode node, bool includeDiagonal = true)
         {
             List<TNode> neighbours = new List<TNode>();
 	    
@@ -154,28 +154,34 @@ namespace CustomToolkit.AdvancedTypes
             {
                 //Left
                 neighbours.Add(GetNeighbour(node, new Vector2Int(-1, 0)));
+
+                if (includeDiagonal)
+                {
+                    //Left Down
+                    if(node.m_gridPos.y > 0)
+                        neighbours.Add(GetNeighbour(node, new Vector2Int(-1, -1)));
 	        
-                //Left Down
-                if(node.m_gridPos.y > 0)
-                    neighbours.Add(GetNeighbour(node, new Vector2Int(-1, -1)));
-	        
-                //Left Up
-                if(node.m_gridPos.y < m_gridSize.y - 1)
-                    neighbours.Add(GetNeighbour(node, new Vector2Int(-1, 1)));
+                    //Left Up
+                    if(node.m_gridPos.y < m_gridSize.y - 1)
+                        neighbours.Add(GetNeighbour(node, new Vector2Int(-1, 1)));   
+                }
             }
 
             if (node.m_gridPos.x < m_gridSize.x - 1)
             {
                 //Right
                 neighbours.Add(GetNeighbour(node, new Vector2Int(1, 0)));
+
+                if (includeDiagonal)
+                {
+                    //Right Down
+                    if(node.m_gridPos.y > 0)
+                        neighbours.Add(GetNeighbour(node, new Vector2Int(1, -1)));
 	        
-                //Right Down
-                if(node.m_gridPos.y > 0)
-                    neighbours.Add(GetNeighbour(node, new Vector2Int(1, -1)));
-	        
-                //Right Up
-                if(node.m_gridPos.y < m_gridSize.y - 1)
-                    neighbours.Add(GetNeighbour(node, new Vector2Int(1, 1)));
+                    //Right Up
+                    if(node.m_gridPos.y < m_gridSize.y - 1)
+                        neighbours.Add(GetNeighbour(node, new Vector2Int(1, 1)));   
+                }
             }
 	    
             //Down
@@ -195,7 +201,7 @@ namespace CustomToolkit.AdvancedTypes
             m_gridSize.y = Mathf.RoundToInt(m_gridWorldSize.y/ NodeDiameter);
         }
         
-        protected virtual void OnNodeCreated(TNode node)
+        protected virtual void OnTileCreated(TNode node)
         {
 			
         }

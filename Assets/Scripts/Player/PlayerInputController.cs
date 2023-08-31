@@ -41,6 +41,12 @@ public class PlayerInputController : MonoBehaviour
     {
         Vector2 inputDir = value.ReadValue<Vector2>();
 
-        m_player.SetMoveDirection(new Vector3(inputDir.x, 0, inputDir.y));
+        Vector3 inputMoveDir = new Vector3(inputDir.x, 0, inputDir.y);
+        
+        //Don't allow movement in opposite direction of current
+        if(inputMoveDir == -m_player.CurrentMoveDirection)
+            return;
+
+        m_player.SetMoveDirection(inputMoveDir);
     }
 }
