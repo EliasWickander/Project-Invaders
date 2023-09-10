@@ -156,14 +156,13 @@ public class TileManager : MonoBehaviour
             Debug.LogError("Player can not be null in OnTileSteppedOnEventData", gameObject);
             return;   
         }
-
-        PlayGrid playGrid = PlayGrid.Instance;
-        WorldGridTile tile = playGrid.GetNode(data.m_tilePos.x, data.m_tilePos.y);
+        
+        WorldGridTile tile = m_grid.GetNode(data.m_tilePos.x, data.m_tilePos.y);
         string playerId = data.m_player.PlayerId;
         
         if (tile.TileStatus.OwnerPlayerId != playerId)
         {
-            playGrid.SetTilePendingOwner(tile.m_gridPos, playerId);
+            m_grid.SetTilePendingOwner(tile.m_gridPos, playerId);
         }
         else
         {
@@ -180,13 +179,11 @@ public class TileManager : MonoBehaviour
 
     private void FillEnclosedTiles(string playerId, List<WorldGridTile> loop)
     {
-        PlayGrid playGrid = PlayGrid.Instance;
-
         //If loop is the same as trail, we failed to enclose a loop. Just fill trail tiles
         if (loop.Count == m_trailTiles[playerId].Count)
         {
             foreach (var trailTile in loop)
-                playGrid.SetTileOwner(trailTile.m_gridPos, playerId);
+                m_grid.SetTileOwner(trailTile.m_gridPos, playerId);
             
             return;
         }
@@ -196,8 +193,8 @@ public class TileManager : MonoBehaviour
         
         foreach (WorldGridTile tile in loop)
         {
-            WorldGridTile upNeighbour = playGrid.GetNeighbour(tile, Vector2Int.up);
-            WorldGridTile downNeighbour = playGrid.GetNeighbour(tile, Vector2Int.down);
+            WorldGridTile upNeighbour = m_grid.GetNeighbour(tile, Vector2Int.up);
+            WorldGridTile downNeighbour = m_grid.GetNeighbour(tile, Vector2Int.down);
 
             if ((upNeighbour != null && loop.Contains(upNeighbour)) || (downNeighbour != null && loop.Contains(downNeighbour)))
             {
@@ -211,27 +208,27 @@ public class TileManager : MonoBehaviour
         //Fill all enclosed nodes
         foreach (KeyValuePair<int, List<WorldGridTile>> tentativeConnection in potentialConnections)
         {
-            Tuple<WorldGridTile, WorldGridTile> xConnection = FindFurthestTiles(tentativeConnection.Value);
+            (WorldGridTile, WorldGridTile) xConnection = FindFurthestTiles(tentativeConnection.Value);
             
             WorldGridTile first = xConnection.Item1;
             WorldGridTile second = xConnection.Item2;
 
             Vector2Int fillDirection = second.m_gridPos.x > first.m_gridPos.x ? Vector2Int.right : Vector2Int.left;
             
-            WorldGridTile current = playGrid.GetNeighbour(first, fillDirection);
+            WorldGridTile current = m_grid.GetNeighbour(first, fillDirection);
             
             while (current != null && current != second)
             {
-                playGrid.SetTileOwner(current.m_gridPos, playerId);
+                m_grid.SetTileOwner(current.m_gridPos, playerId);
 
-                current = playGrid.GetNeighbour(current, fillDirection);
+                current = m_grid.GetNeighbour(current, fillDirection);
             }
         }
 
         //All enclosed nodes are filled. Now fill trail loop
         foreach (var trailTile in loop)
         {
-            playGrid.SetTileOwner(trailTile.m_gridPos, playerId);
+            m_grid.SetTileOwner(trailTile.m_gridPos, playerId);
         }
     }
 
@@ -251,19 +248,16 @@ public class TileManager : MonoBehaviour
          }
      }
      
-    private Tuple<WorldGridTile, WorldGridTile> FindFurthestTiles(List<WorldGridTile> tiles)
+    private (WorldGridTile, WorldGridTile) FindFurthestTiles(List<WorldGridTile> tiles)
     {
-        if (tiles == null)
-            return null;
-
-        if (tiles.Count <= 0)
-            return null;
-
+        if (tiles == null || tiles.Count <= 0)
+            return (null, null);
+        
         if (tiles.Count == 1)
-            return Tuple.Create(tiles[0], tiles[0]);
+            return (tiles[0], tiles[0]);
 
         if (tiles.Count == 2)
-            return Tuple.Create(tiles[0], tiles[1]);
+            return (tiles[0], tiles[1]);
         
         WorldGridTile first = null;
         WorldGridTile second = null;
@@ -283,7 +277,7 @@ public class TileManager : MonoBehaviour
             }
         }
 
-        return Tuple.Create(first, second);
+        return (first, second);
     }
 
     public List<WorldGridTile> GetOwnedTiles(string playerId)
