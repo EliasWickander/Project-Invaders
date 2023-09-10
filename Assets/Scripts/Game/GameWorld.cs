@@ -12,14 +12,23 @@ public class PlayerRemovedEventArgs
 {
     public Player m_player;
 }
+
 public class GameWorld
 {
+    public Pathfinding Pathfinding { get; private set; }
+
     //Player id to player object
     private Dictionary<string, Player> PlayersDictionary { get; set; } = new Dictionary<string, Player>();
     public List<Player> Players { get; set; } = new List<Player>();
 
     public static event EventHandler<PlayerAddedEventArgs> OnPlayerAddedEvent; 
     public static event EventHandler<PlayerRemovedEventArgs> OnPlayerRemovedEvent; 
+    
+    public GameWorld()
+    {
+        Pathfinding = new Pathfinding();
+    }
+    
     public void AddPlayerToWorld(Player player)
     {
         if(player == null)
