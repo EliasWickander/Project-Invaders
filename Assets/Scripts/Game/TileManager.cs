@@ -24,6 +24,12 @@ public class TileManager : MonoBehaviour
     [SerializeField]
     private Client_OnTileStatusChangedEvent m_onTileStatusChangedClientEvent;
     
+    [SerializeField] 
+    private Server_OnPlayerSpawnedEvent m_onPlayerSpawnedServerEvent;
+
+    [SerializeField] 
+    private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
+
     private PlayGrid m_grid;
 
     private Dictionary<string, PlayerTileTracker> m_playerTileTrackers = new Dictionary<string, PlayerTileTracker>();
@@ -44,10 +50,16 @@ public class TileManager : MonoBehaviour
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.RegisterListener(OnTileStatusChangedClient);
         
+        if(m_onPlayerSpawnedServerEvent != null)
+            m_onPlayerSpawnedServerEvent.RegisterListener(OnPlayerSpawned);
+        
+        if(m_onPlayerKilledServerEvent != null)
+            m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilled);
+        
         GameWorld.OnPlayerAddedEvent += OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent += OnPlayerRemoved;
     }
-    
+
     private void OnDisable()
     {
         if(m_onTileSteppedOnServerEvent != null)
@@ -58,6 +70,12 @@ public class TileManager : MonoBehaviour
         
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.UnregisterListener(OnTileStatusChangedClient);
+        
+        if(m_onPlayerSpawnedServerEvent != null)
+            m_onPlayerSpawnedServerEvent.UnregisterListener(OnPlayerSpawned);
+        
+        if(m_onPlayerKilledServerEvent != null)
+            m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilled);
         
         GameWorld.OnPlayerAddedEvent -= OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent -= OnPlayerRemoved;
@@ -74,39 +92,104 @@ public class TileManager : MonoBehaviour
     {
         string removedPlayerId = e.m_player.PlayerId;
         
-        if (m_playerTileTrackers.TryGetValue(removedPlayerId, out var tileTracker))
-        {
-            if (NetworkServer.active && !e.m_player.isOwned)
-            {
-                //Remove all trail tiles
-                List<WorldGridTile> trailTiles = tileTracker.m_trailTiles;
-				
-                for(int i = trailTiles.Count - 1; i >= 0; i--)
-                {
-                    WorldGridTile trailTile = trailTiles[i];
-                    
-                    TileStatus oldStatus = trailTile.TileStatus;
-					TileStatus newStatus = new TileStatus() {PendingOwnerPlayerId = null, OwnerPlayerId = oldStatus.OwnerPlayerId};
-                    
-                    m_grid.SetTileStatus(trailTile.m_gridPos, newStatus);
-                }		
-                
-                //Remove all owned tiles
-                List<WorldGridTile> ownedTiles = tileTracker.m_ownedTiles;
+        if (NetworkServer.active && !e.m_player.isOwned)
+            ClearAssociatedTiles(removedPlayerId);
 
-                for(int i = ownedTiles.Count - 1; i >= 0; i--)
-                {
-                    WorldGridTile ownedTile = ownedTiles[i];
-                    
-                    TileStatus oldStatus = ownedTile.TileStatus;
-                    TileStatus newStatus = new TileStatus() {PendingOwnerPlayerId = oldStatus.PendingOwnerPlayerId, OwnerPlayerId = null};
-                    
-                    m_grid.SetTileStatus(ownedTile.m_gridPos, newStatus);
-                }
+        if(m_playerTileTrackers.ContainsKey(removedPlayerId))
+            m_playerTileTrackers.Remove(removedPlayerId);
+    }
+
+    private void ClearAssociatedTiles(string playerId)
+    {
+        if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+        {
+            //Remove all trail tiles
+            List<WorldGridTile> trailTiles = tileTracker.m_trailTiles;
+
+            for (int i = trailTiles.Count - 1; i >= 0; i--)
+            {
+                WorldGridTile trailTile = trailTiles[i];
+
+                TileStatus oldStatus = trailTile.TileStatus;
+                TileStatus newStatus = new TileStatus()
+                    { PendingOwnerPlayerId = null, OwnerPlayerId = oldStatus.OwnerPlayerId };
+
+                m_grid.SetTileStatus(trailTile.m_gridPos, newStatus);
             }
 
-            m_playerTileTrackers.Remove(removedPlayerId);
+            //Remove all owned tiles
+            List<WorldGridTile> ownedTiles = tileTracker.m_ownedTiles;
+
+            for (int i = ownedTiles.Count - 1; i >= 0; i--)
+            {
+                WorldGridTile ownedTile = ownedTiles[i];
+
+                TileStatus oldStatus = ownedTile.TileStatus;
+                TileStatus newStatus = new TileStatus()
+                    { PendingOwnerPlayerId = oldStatus.PendingOwnerPlayerId, OwnerPlayerId = null };
+
+                m_grid.SetTileStatus(ownedTile.m_gridPos, newStatus);
+            }
         }
+    }
+    
+    [Server]
+    private void OnPlayerSpawned(OnPlayerSpawnedGameEventData data)
+    {
+        Player spawnedPlayer = data.m_player;
+        Transform spawnTransform = spawnedPlayer.SpawnTransform;
+        WorldGridTile spawnTile = spawnedPlayer.SpawnTile;
+        
+        NetworkManagerCustom.Instance.DisableStartPoint(spawnTransform);
+
+        SetOwnerArea(spawnedPlayer, spawnTile, data.m_startTerritoryRadius);
+    }
+    
+    [Server]
+    private void OnPlayerKilled(OnPlayerKilledGameEventData data)
+    {
+        Player killedPlayer = data.m_player;
+        NetworkManagerCustom.Instance.EnableStartPoint(killedPlayer.SpawnTransform);
+        
+        ClearAssociatedTiles(killedPlayer.PlayerId);
+    }
+    
+    private void SetOwnerArea(Player player, WorldGridTile sourceTile, int radius)
+    {
+        List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, radius);
+
+        foreach (WorldGridTile tile in nodesWithinRadius)
+            PlayGrid.Instance.SetTileOwner(tile.m_gridPos, player.PlayerId);
+    }
+    
+    public List<WorldGridTile> GetNodesWithinRadius(WorldGridTile sourceTile, int radius)
+    {
+        List<WorldGridTile> nodesWithinRadius = new List<WorldGridTile>();
+        Queue<(WorldGridTile node, int distance)> queue = new Queue<(WorldGridTile, int)>();
+        HashSet<WorldGridTile> visited = new HashSet<WorldGridTile>();
+
+        queue.Enqueue((sourceTile, 0));
+        visited.Add(sourceTile);
+
+        while (queue.Count > 0)
+        {
+            (WorldGridTile currentNode, int distance) = queue.Dequeue();
+            nodesWithinRadius.Add(currentNode);
+
+            if (distance < radius)
+            {
+                foreach (WorldGridTile neighborNode in m_grid.GetNeighbours(currentNode))
+                {
+                    if (!visited.Contains(neighborNode))
+                    {
+                        visited.Add(neighborNode);
+                        queue.Enqueue((neighborNode, distance + 1));
+                    }
+                }
+            }
+        }
+
+        return nodesWithinRadius;
     }
     
     private void OnTileStatusChangedClient(OnTileStatusChangedEventData data)
@@ -193,6 +276,10 @@ public class TileManager : MonoBehaviour
         
         if (tile.TileStatus.OwnerPlayerId != playerId)
         {
+            //If walking on own trail, 
+            if (tile.TileStatus.PendingOwnerPlayerId == playerId)
+                return;
+            
             m_grid.SetTilePendingOwner(tile.m_gridPos, playerId);
         }
         else

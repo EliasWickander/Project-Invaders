@@ -8,37 +8,53 @@ using Random = UnityEngine.Random;
 public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] 
-    private int m_startTerritoryRadius = 2;
+    private float m_respawnDuration = 2;
     
+    [SerializeField] 
+    private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
     private PlayGrid m_playGrid;
-    
+
+    private void OnEnable()
+    {
+        if(m_onPlayerKilledServerEvent != null)
+            m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilled);
+    }
+
+    private void OnDisable()
+    {
+        if(m_onPlayerKilledServerEvent != null)
+            m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilled);
+    }
+
     private void Start()
     {
         m_playGrid = PlayGrid.Instance;
     }
-
-    public void OnPlayerCreated(OnPlayerCreatedEventData data)
+    
+    private void OnPlayerKilled(OnPlayerKilledGameEventData data)
     {
-        Player player = data.m_player;
-        player.OnSpawnedEventServer += OnPlayerSpawnedServer;
-        player.OnDeathEventServer += OnPlayerDeath;
-    }
-
-    public void OnPlayerJoinedGame(OnPlayerJoinedGameEventData data)
-    {
-        data.m_player.OnSpawned(data.m_player.SpawnTransform);
+        StartCoroutine(SpawnPlayer(data.m_player, m_respawnDuration));
     }
     
-    private void OnDestroy()
+    public void OnPlayerJoinedGame(OnPlayerJoinedGameEventData data)
     {
-        if(NetworkManagerCustom.Instance == null)
-            return;
+        Player player = data.m_player;
+        Transform spawnTransform = player.SpawnTransform;
+        WorldGridTile spawnTile = m_playGrid.GetNode(spawnTransform.position);
         
-        foreach (Player player in NetworkManagerCustom.Instance.GamePlayers)
+        data.m_player.OnSpawned(spawnTransform, spawnTile);
+    }
+
+    private IEnumerator SpawnPlayer(Player player, float delay)
+    {
+        if (delay <= 0)
         {
-            player.OnSpawnedEventServer -= OnPlayerSpawnedServer;
-            player.OnDeathEventServer -= OnPlayerDeath;
+            SpawnPlayer(player);
+            yield return null;
         }
+
+        yield return new WaitForSeconds(delay);
+        SpawnPlayer(player);
     }
     
     [Server]
@@ -47,66 +63,13 @@ public class PlayerSpawner : MonoBehaviour
         if(player == null)
             return;
 
-        Transform spawnPoint = NetworkManagerCustom.Instance.GetStartPosition();
+        Transform spawnTransform = NetworkManagerCustom.Instance.GetStartPosition();
+        Vector3 spawnPos = spawnTransform.position;
         
-        player.transform.position = spawnPoint.position;
+        WorldGridTile spawnTile = m_playGrid.GetNode(spawnPos);
         
-        player.OnSpawned(spawnPoint);
-    }
-
-    private void OnPlayerSpawnedServer(Player player)
-    {
-        NetworkManagerCustom.Instance.DisableStartPoint(player.SpawnTransform);
+        player.transform.position = spawnPos;
         
-        WorldGridTile spawnTile = m_playGrid.GetNode(player.SpawnTransform.position);
-        
-        SetOwnerArea(player, spawnTile);
-    }
-
-    private void OnPlayerDeath(Player player)
-    {
-        NetworkManagerCustom.Instance.EnableStartPoint(player.SpawnTransform);
-        
-        SpawnPlayer(player);
-    }
-    
-    private void SetOwnerArea(Player player, WorldGridTile sourceTile)
-    {
-        List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, m_startTerritoryRadius);
-
-        foreach (WorldGridTile tile in nodesWithinRadius)
-        {
-            PlayGrid.Instance.SetTileOwner(tile.m_gridPos, player.PlayerId);
-        }
-    }
-    
-    public List<WorldGridTile> GetNodesWithinRadius(WorldGridTile sourceTile, int radius)
-    {
-        List<WorldGridTile> nodesWithinRadius = new List<WorldGridTile>();
-        Queue<(WorldGridTile node, int distance)> queue = new Queue<(WorldGridTile, int)>();
-        HashSet<WorldGridTile> visited = new HashSet<WorldGridTile>();
-
-        queue.Enqueue((sourceTile, 0));
-        visited.Add(sourceTile);
-
-        while (queue.Count > 0)
-        {
-            (WorldGridTile currentNode, int distance) = queue.Dequeue();
-            nodesWithinRadius.Add(currentNode);
-
-            if (distance < radius)
-            {
-                foreach (WorldGridTile neighborNode in m_playGrid.GetNeighbours(currentNode))
-                {
-                    if (!visited.Contains(neighborNode))
-                    {
-                        visited.Add(neighborNode);
-                        queue.Enqueue((neighborNode, distance + 1));
-                    }
-                }
-            }
-        }
-
-        return nodesWithinRadius;
+        player.OnSpawned(spawnTransform, spawnTile);
     }
 }
