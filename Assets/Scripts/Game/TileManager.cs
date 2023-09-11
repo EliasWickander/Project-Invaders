@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+public class PlayerTileTracker
+{
+    public string m_playerId;
+    public List<WorldGridTile> m_ownedTiles = new List<WorldGridTile>();
+    public List<WorldGridTile> m_trailTiles = new List<WorldGridTile>();
+}
+
 public class TileManager : MonoBehaviour
 {
     [SerializeField] 
@@ -18,10 +25,9 @@ public class TileManager : MonoBehaviour
     private Client_OnTileStatusChangedEvent m_onTileStatusChangedClientEvent;
     
     private PlayGrid m_grid;
-    
-    private Dictionary<string, List<WorldGridTile>> m_ownedTiles = new Dictionary<string, List<WorldGridTile>>();
-    private Dictionary<string, List<WorldGridTile>> m_trailTiles = new Dictionary<string, List<WorldGridTile>>();
-    
+
+    private Dictionary<string, PlayerTileTracker> m_playerTileTrackers = new Dictionary<string, PlayerTileTracker>();
+
     private void Start()
     {
         m_grid = PlayGrid.Instance;
@@ -59,48 +65,47 @@ public class TileManager : MonoBehaviour
 
     private void OnPlayerAdded(object sender, PlayerAddedEventArgs e)
     {
-        if(!m_trailTiles.ContainsKey(e.m_player.PlayerId))
-            m_trailTiles.Add(e.m_player.PlayerId, new List<WorldGridTile>());
-		
-        if(!m_ownedTiles.ContainsKey(e.m_player.PlayerId))
-            m_ownedTiles.Add(e.m_player.PlayerId, new List<WorldGridTile>());
+        string addedPlayerId = e.m_player.PlayerId;
+        
+        m_playerTileTrackers.TryAdd(addedPlayerId, new PlayerTileTracker() {m_playerId = addedPlayerId});
     }
 	
     private void OnPlayerRemoved(object sender, PlayerRemovedEventArgs e)
     {
-        if (m_trailTiles.ContainsKey(e.m_player.PlayerId))
+        string removedPlayerId = e.m_player.PlayerId;
+        
+        if (m_playerTileTrackers.TryGetValue(removedPlayerId, out var tileTracker))
         {
             if (NetworkServer.active && !e.m_player.isOwned)
             {
-                List<WorldGridTile> trailTiles = new List<WorldGridTile>(m_trailTiles[e.m_player.PlayerId]);
+                //Remove all trail tiles
+                List<WorldGridTile> trailTiles = tileTracker.m_trailTiles;
 				
-                foreach (WorldGridTile trailTile in trailTiles)
+                for(int i = trailTiles.Count - 1; i >= 0; i--)
                 {
+                    WorldGridTile trailTile = trailTiles[i];
+                    
                     TileStatus oldStatus = trailTile.TileStatus;
 					TileStatus newStatus = new TileStatus() {PendingOwnerPlayerId = null, OwnerPlayerId = oldStatus.OwnerPlayerId};
                     
                     m_grid.SetTileStatus(trailTile.m_gridPos, newStatus);
                 }		
-            }
-			
-            m_trailTiles.Remove(e.m_player.PlayerId);	
-        }
+                
+                //Remove all owned tiles
+                List<WorldGridTile> ownedTiles = tileTracker.m_ownedTiles;
 
-        if (m_ownedTiles.ContainsKey(e.m_player.PlayerId))
-        {
-            if (NetworkServer.active && !e.m_player.isOwned)
-            {
-                List<WorldGridTile> ownedTiles = new List<WorldGridTile>(m_ownedTiles[e.m_player.PlayerId]);
-
-                foreach (WorldGridTile ownedTile in ownedTiles)
+                for(int i = ownedTiles.Count - 1; i >= 0; i--)
                 {
+                    WorldGridTile ownedTile = ownedTiles[i];
+                    
                     TileStatus oldStatus = ownedTile.TileStatus;
                     TileStatus newStatus = new TileStatus() {PendingOwnerPlayerId = oldStatus.PendingOwnerPlayerId, OwnerPlayerId = null};
+                    
                     m_grid.SetTileStatus(ownedTile.m_gridPos, newStatus);
                 }
             }
-			
-            m_ownedTiles.Remove(e.m_player.PlayerId);	
+
+            m_playerTileTrackers.Remove(removedPlayerId);
         }
     }
     
@@ -119,33 +124,59 @@ public class TileManager : MonoBehaviour
         WorldGridTile tile = data.m_tile;
         TileStatus oldStatus = data.m_oldStatus;
         TileStatus newStatus = data.m_newStatus;
-        
-        //Remove old trail tile association
-        if (!string.IsNullOrEmpty(oldStatus.PendingOwnerPlayerId) && oldStatus.PendingOwnerPlayerId != newStatus.PendingOwnerPlayerId)
+
+        string oldPendingOwnerId = oldStatus.PendingOwnerPlayerId;
+        string newPendingOwnerId = newStatus.PendingOwnerPlayerId;
+
+        string oldOwnerId = oldStatus.OwnerPlayerId;
+        string newOwnerId = newStatus.OwnerPlayerId;
+
+        //There is a new pending owner
+        if (oldPendingOwnerId != newPendingOwnerId)
         {
-            if(m_trailTiles[oldStatus.PendingOwnerPlayerId].Contains(tile))
-                m_trailTiles[oldStatus.PendingOwnerPlayerId].Remove(tile);   
+            //Remove old trail tile association
+            if (!string.IsNullOrEmpty(oldPendingOwnerId))
+            {
+                if (m_playerTileTrackers.TryGetValue(oldPendingOwnerId, out var tileTracker))
+                {
+                    if (tileTracker.m_trailTiles.Contains(tile))
+                        tileTracker.m_trailTiles.Remove(tile);
+                }
+            }   
+            
+            //Add new trail tile association
+            if (!string.IsNullOrEmpty(newPendingOwnerId))
+            {
+                if (m_playerTileTrackers.TryGetValue(newPendingOwnerId, out var tileTracker))
+                {
+                    if (!tileTracker.m_trailTiles.Contains(tile))
+                        tileTracker.m_trailTiles.Add(tile);
+                }
+            }   
         }
 
-        //Add new trail tile association
-        if (!string.IsNullOrEmpty(newStatus.PendingOwnerPlayerId) && oldStatus.PendingOwnerPlayerId != newStatus.PendingOwnerPlayerId)
+        //There is a new owner
+        if (oldOwnerId != newOwnerId)
         {
-            if(!m_trailTiles[newStatus.PendingOwnerPlayerId].Contains(tile))
-                m_trailTiles[newStatus.PendingOwnerPlayerId].Add(tile);   
-        }
-
-        //Remove old owned tile association
-        if (!string.IsNullOrEmpty(oldStatus.OwnerPlayerId) && oldStatus.OwnerPlayerId != newStatus.OwnerPlayerId)
-        {
-            if(m_ownedTiles[oldStatus.OwnerPlayerId].Contains(tile))
-                m_ownedTiles[oldStatus.OwnerPlayerId].Remove(tile);   
-        }
-
-        //Add new owned tile association
-        if (!string.IsNullOrEmpty(newStatus.OwnerPlayerId))
-        {
-            if(!m_ownedTiles[newStatus.OwnerPlayerId].Contains(tile))
-                m_ownedTiles[newStatus.OwnerPlayerId].Add(tile);   
+            //Remove old owned tile association
+            if (!string.IsNullOrEmpty(oldOwnerId))
+            {
+                if (m_playerTileTrackers.TryGetValue(oldOwnerId, out var tileTracker))
+                {
+                    if (tileTracker.m_ownedTiles.Contains(tile))
+                        tileTracker.m_ownedTiles.Remove(tile);
+                }
+            }
+            
+            //Add new owned tile association
+            if (!string.IsNullOrEmpty(newOwnerId))
+            {
+                if (m_playerTileTrackers.TryGetValue(newOwnerId, out var tileTracker))
+                {
+                    if (!tileTracker.m_ownedTiles.Contains(tile))
+                        tileTracker.m_ownedTiles.Add(tile);
+                }
+            }
         }
     }
     
@@ -167,20 +198,26 @@ public class TileManager : MonoBehaviour
         else
         {
             //If walking on tile that's owned, add all nodes enclosed by trail to owned tiles
-            if (m_trailTiles[playerId].Count > 0)
+            if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
             {
-                Player player = GameClient.Instance.GameWorld.GetPlayerFromId(playerId);
+                if (tileTracker.m_trailTiles.Count > 0)
+                {
+                    Player player = GameClient.Instance.GameWorld.GetPlayerFromId(playerId);
 
-                EncloseLoop(data.m_player.PlayerId, tile,player.m_lastOwnedTileSteppedOn, m_trailTiles[playerId], out List<WorldGridTile> loop);
-                FillEnclosedTiles(data.m_player.PlayerId, loop);
+                    EncloseLoop(data.m_player.PlayerId, tile,player.m_lastOwnedTileSteppedOn, tileTracker.m_trailTiles, out List<WorldGridTile> loop);
+                    FillEnclosedTiles(data.m_player.PlayerId, loop);   
+                }
             }
         }
     }
 
     private void FillEnclosedTiles(string playerId, List<WorldGridTile> loop)
     {
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+            return;
+        
         //If loop is the same as trail, we failed to enclose a loop. Just fill trail tiles
-        if (loop.Count == m_trailTiles[playerId].Count)
+        if (loop.Count == tileTracker.m_trailTiles.Count)
         {
             foreach (var trailTile in loop)
                 m_grid.SetTileOwner(trailTile.m_gridPos, playerId);
@@ -236,8 +273,11 @@ public class TileManager : MonoBehaviour
      {
          loop = new List<WorldGridTile>(trail);
 
+         if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+             return;
+         
          Pathfinding pathfinding = GameClient.Instance.GameWorld.Pathfinding;
-         List<PathNode> path = pathfinding.FindPath(m_ownedTiles[playerId], startTile, endTile);
+         List<PathNode> path = pathfinding.FindPath(tileTracker.m_ownedTiles, startTile, endTile);
 
          if (path != null)
          {
@@ -282,18 +322,18 @@ public class TileManager : MonoBehaviour
 
     public List<WorldGridTile> GetOwnedTiles(string playerId)
     {
-        if (!m_ownedTiles.ContainsKey(playerId))
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
             return null;
 
-        return m_ownedTiles[playerId];
+        return tileTracker.m_ownedTiles;
     }
 
     public List<WorldGridTile> GetTrailTiles(string playerId)
     {
-        if (!m_trailTiles.ContainsKey(playerId))
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
             return null;
-
-        return m_trailTiles[playerId];
+        
+        return tileTracker.m_trailTiles;
     }
 
 }
