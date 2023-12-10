@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
@@ -12,10 +11,10 @@ public class PlayerTileTracker
 
 public class TileManager : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private Server_OnTileSteppedOnEvent m_onTileSteppedOnServerEvent;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Client_OnTileSteppedOnEvent m_onTileSteppedOnClientEvent;
 
     [SerializeField]
@@ -23,11 +22,11 @@ public class TileManager : MonoBehaviour
 
     [SerializeField]
     private Client_OnTileStatusChangedEvent m_onTileStatusChangedClientEvent;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Server_OnPlayerSpawnedEvent m_onPlayerSpawnedServerEvent;
 
-    [SerializeField] 
+    [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
 
     private PlayGrid m_grid;
@@ -43,19 +42,19 @@ public class TileManager : MonoBehaviour
     {
         if(m_onTileSteppedOnServerEvent != null)
             m_onTileSteppedOnServerEvent.RegisterListener(OnTileSteppedOnServer);
-        
+
         if(m_onTileStatusChangedServerEvent != null)
             m_onTileStatusChangedServerEvent.RegisterListener(OnTileStatusChangedServer);
-        
+
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.RegisterListener(OnTileStatusChangedClient);
-        
+
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.RegisterListener(OnPlayerSpawned);
-        
+
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilled);
-        
+
         GameWorld.OnPlayerAddedEvent += OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent += OnPlayerRemoved;
     }
@@ -64,19 +63,19 @@ public class TileManager : MonoBehaviour
     {
         if(m_onTileSteppedOnServerEvent != null)
             m_onTileSteppedOnServerEvent.UnregisterListener(OnTileSteppedOnServer);
-        
+
         if(m_onTileStatusChangedServerEvent != null)
             m_onTileStatusChangedServerEvent.UnregisterListener(OnTileStatusChangedServer);
-        
+
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.UnregisterListener(OnTileStatusChangedClient);
-        
+
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.UnregisterListener(OnPlayerSpawned);
-        
+
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilled);
-        
+
         GameWorld.OnPlayerAddedEvent -= OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent -= OnPlayerRemoved;
     }
@@ -84,14 +83,14 @@ public class TileManager : MonoBehaviour
     private void OnPlayerAdded(object sender, PlayerAddedEventArgs e)
     {
         string addedPlayerId = e.m_player.PlayerId;
-        
+
         m_playerTileTrackers.TryAdd(addedPlayerId, new PlayerTileTracker() {m_playerId = addedPlayerId});
     }
-	
+
     private void OnPlayerRemoved(object sender, PlayerRemovedEventArgs e)
     {
         string removedPlayerId = e.m_player.PlayerId;
-        
+
         if (NetworkServer.active && !e.m_player.isOwned)
             ClearAssociatedTiles(removedPlayerId);
 
@@ -132,28 +131,28 @@ public class TileManager : MonoBehaviour
             }
         }
     }
-    
+
     [Server]
     private void OnPlayerSpawned(OnPlayerSpawnedGameEventData data)
     {
         Player spawnedPlayer = data.m_player;
         Transform spawnTransform = spawnedPlayer.SpawnTransform;
         WorldGridTile spawnTile = spawnedPlayer.SpawnTile;
-        
+
         NetworkManagerCustom.Instance.DisableStartPoint(spawnTransform);
 
         SetOwnerArea(spawnedPlayer, spawnTile, data.m_startTerritoryRadius);
     }
-    
+
     [Server]
     private void OnPlayerKilled(OnPlayerKilledGameEventData data)
     {
         Player killedPlayer = data.m_player;
         NetworkManagerCustom.Instance.EnableStartPoint(killedPlayer.SpawnTransform);
-        
+
         ClearAssociatedTiles(killedPlayer.PlayerId);
     }
-    
+
     private void SetOwnerArea(Player player, WorldGridTile sourceTile, int radius)
     {
         List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, radius);
@@ -161,7 +160,7 @@ public class TileManager : MonoBehaviour
         foreach (WorldGridTile tile in nodesWithinRadius)
             PlayGrid.Instance.SetTileOwner(tile.m_gridPos, player.PlayerId);
     }
-    
+
     public List<WorldGridTile> GetNodesWithinRadius(WorldGridTile sourceTile, int radius)
     {
         List<WorldGridTile> nodesWithinRadius = new List<WorldGridTile>();
@@ -191,7 +190,7 @@ public class TileManager : MonoBehaviour
 
         return nodesWithinRadius;
     }
-    
+
     private void OnTileStatusChangedClient(OnTileStatusChangedEventData data)
     {
         OnTileStatusChanged(data);
@@ -225,8 +224,8 @@ public class TileManager : MonoBehaviour
                     if (tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Remove(tile);
                 }
-            }   
-            
+            }
+
             //Add new trail tile association
             if (!string.IsNullOrEmpty(newPendingOwnerId))
             {
@@ -235,7 +234,7 @@ public class TileManager : MonoBehaviour
                     if (!tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Add(tile);
                 }
-            }   
+            }
         }
 
         //There is a new owner
@@ -250,7 +249,7 @@ public class TileManager : MonoBehaviour
                         tileTracker.m_ownedTiles.Remove(tile);
                 }
             }
-            
+
             //Add new owned tile association
             if (!string.IsNullOrEmpty(newOwnerId))
             {
@@ -262,24 +261,24 @@ public class TileManager : MonoBehaviour
             }
         }
     }
-    
+
     public void OnTileSteppedOnServer(OnTileSteppedOnEventData data)
     {
         if (data.m_player == null)
         {
             Debug.LogError("Player can not be null in OnTileSteppedOnEventData", gameObject);
-            return;   
+            return;
         }
-        
+
         WorldGridTile tile = m_grid.GetNode(data.m_tilePos.x, data.m_tilePos.y);
         string playerId = data.m_player.PlayerId;
-        
+
         if (tile.TileStatus.OwnerPlayerId != playerId)
         {
-            //If walking on own trail, 
+            //If walking on own trail,
             if (tile.TileStatus.PendingOwnerPlayerId == playerId)
                 return;
-            
+
             m_grid.SetTilePendingOwner(tile.m_gridPos, playerId);
         }
         else
@@ -292,100 +291,149 @@ public class TileManager : MonoBehaviour
                     Player player = GameClient.Instance.GameWorld.GetPlayerFromId(playerId);
 
                     EncloseLoop(data.m_player.PlayerId, tile,player.m_lastOwnedTileSteppedOn, tileTracker.m_trailTiles, out List<WorldGridTile> loop);
-                    FillEnclosedTiles(data.m_player.PlayerId, loop);   
+
+                    FillEnclosedArea(data.m_player.PlayerId, loop);
                 }
             }
         }
     }
 
-    private void FillEnclosedTiles(string playerId, List<WorldGridTile> loop)
+    /// <summary>
+    /// Fill the enclosed area (set ownership) of tiles as defined by loop
+    /// </summary>
+    /// <param name="playerId">Player that will own the filled tiles</param>
+    /// <param name="loop">Loop that defines the enclosed area</param>
+    private void FillEnclosedArea(string playerId, List<WorldGridTile> loop)
     {
-        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
-            return;
-        
-        //If loop is the same as trail, we failed to enclose a loop. Just fill trail tiles
-        if (loop.Count == tileTracker.m_trailTiles.Count)
+        GetBoundsFromLoop(loop, out Vector2Int min, out Vector2Int max);
+
+        //Add spacing by one to include potential edge nodes
+        min.x--;
+        min.y--;
+        max.x++;
+        max.y++;
+
+        List<WorldGridTile> nodesToFill = m_grid.GetNodesInBounds(min, max, true);
+
+        //Get all nodes that we don't want to fill
+        List<WorldGridTile> floodedNodes = new List<WorldGridTile>();
+        Flood(min, min, max, loop, ref floodedNodes);
+
+        //Subtract all nodes in bounds with nodes we don't want to fill
+        foreach (WorldGridTile floodedNode in floodedNodes)
+            nodesToFill.Remove(floodedNode);
+
+        //Fill the rest
+        foreach (WorldGridTile nodeToFill in nodesToFill)
+            m_grid.SetTileOwner(nodeToFill.m_gridPos, playerId);
+    }
+
+    /// <summary>
+    /// Use flood fill algorithm to get all nodes within bounds but outside of enclosed area
+    /// </summary>
+    /// <param name="startPos">Start position of flood fill</param>
+    /// <param name="boundsMin">Min bounds</param>
+    /// <param name="boundsMax">Max bounds</param>
+    /// <param name="loop">Enclosed area loop</param>
+    /// <param name="floodedNodes">Result</param>
+    /// <returns>Did flood succeed?</returns>
+    private bool Flood(Vector2Int startPos, Vector2Int boundsMin, Vector2Int boundsMax, List<WorldGridTile> loop, ref List<WorldGridTile> floodedNodes)
+    {
+        Queue<WorldGridTile> queue = new Queue<WorldGridTile>();
+
+        WorldGridTile startNode = m_grid.GetNode(startPos.x, startPos.y);
+
+        if (startNode == null)
         {
-            foreach (var trailTile in loop)
-                m_grid.SetTileOwner(trailTile.m_gridPos, playerId);
-            
-            return;
+            Debug.LogError("Flood fill failed. Start node was null");
+            return false;
         }
-        
-        //If loop is not the same length as trail, that means we have an actual enclosed loop. Fill all nodes enclosed by this loop
-        Dictionary<int, List<WorldGridTile>> potentialConnections = new Dictionary<int, List<WorldGridTile>>();
-        
+
+        floodedNodes.Add(startNode);
+        queue.Enqueue(startNode);
+
+        while (queue.Count > 0)
+        {
+            WorldGridTile current = queue.Dequeue();
+
+            List<WorldGridTile> neighbours = m_grid.GetNeighbours(current, true, true);
+
+            foreach (WorldGridTile neighbour in neighbours)
+            {
+                if (neighbour.m_gridPos.x < boundsMin.x || neighbour.m_gridPos.y < boundsMin.y || neighbour.m_gridPos.x > boundsMax.x || neighbour.m_gridPos.y > boundsMax.y)
+                    continue;
+
+                if (loop.Contains(neighbour))
+                    continue;
+
+                if (floodedNodes.Contains(neighbour))
+                    continue;
+
+                floodedNodes.Add(neighbour);
+                queue.Enqueue(neighbour);
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Get bounds that contain a loop of tiles
+    /// </summary>
+    /// <param name="loop">Loop</param>
+    /// <param name="min">Min bounds</param>
+    /// <param name="max">Max bounds</param>
+    private void GetBoundsFromLoop(List<WorldGridTile> loop, out Vector2Int min, out Vector2Int max)
+    {
+        min = new Vector2Int(int.MaxValue, int.MaxValue);
+        max = new Vector2Int(int.MinValue, int.MinValue);
+
         foreach (WorldGridTile tile in loop)
         {
-            WorldGridTile upNeighbour = m_grid.GetNeighbour(tile, Vector2Int.up);
-            WorldGridTile downNeighbour = m_grid.GetNeighbour(tile, Vector2Int.down);
+            if (tile.m_gridPos.x < min.x)
+                min.x = tile.m_gridPos.x;
 
-            if ((upNeighbour != null && loop.Contains(upNeighbour)) || (downNeighbour != null && loop.Contains(downNeighbour)))
-            {
-                if (!potentialConnections.ContainsKey(tile.m_gridPos.y))
-                    potentialConnections.Add(tile.m_gridPos.y, new List<WorldGridTile>() {tile});
-                else
-                    potentialConnections[tile.m_gridPos.y].Add(tile);
-            }
-        }
-        
-        //Fill all enclosed nodes
-        foreach (KeyValuePair<int, List<WorldGridTile>> tentativeConnection in potentialConnections)
-        {
-            (WorldGridTile, WorldGridTile) xConnection = FindFurthestTiles(tentativeConnection.Value);
-            
-            WorldGridTile first = xConnection.Item1;
-            WorldGridTile second = xConnection.Item2;
+            if (tile.m_gridPos.y < min.y)
+                min.y = tile.m_gridPos.y;
 
-            Vector2Int fillDirection = second.m_gridPos.x > first.m_gridPos.x ? Vector2Int.right : Vector2Int.left;
-            
-            WorldGridTile current = m_grid.GetNeighbour(first, fillDirection);
-            
-            while (current != null && current != second)
-            {
-                m_grid.SetTileOwner(current.m_gridPos, playerId);
+            if (tile.m_gridPos.x > max.x)
+                max.x = tile.m_gridPos.x;
 
-                current = m_grid.GetNeighbour(current, fillDirection);
-            }
-        }
-
-        //All enclosed nodes are filled. Now fill trail loop
-        foreach (var trailTile in loop)
-        {
-            m_grid.SetTileOwner(trailTile.m_gridPos, playerId);
+            if (tile.m_gridPos.y > max.y)
+                max.y = tile.m_gridPos.y;
         }
     }
 
-     private void EncloseLoop(string playerId, WorldGridTile startTile, WorldGridTile endTile, List<WorldGridTile> trail, out List<WorldGridTile> loop)
-     {
-         loop = new List<WorldGridTile>(trail);
+    private void EncloseLoop(string playerId, WorldGridTile startTile, WorldGridTile endTile, List<WorldGridTile> trail, out List<WorldGridTile> loop)
+    {
+        loop = new List<WorldGridTile>(trail);
 
-         if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
-             return;
-         
-         Pathfinding pathfinding = GameClient.Instance.GameWorld.Pathfinding;
-         List<PathNode> path = pathfinding.FindPath(tileTracker.m_ownedTiles, startTile, endTile);
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+            return;
 
-         if (path != null)
-         {
-             foreach (PathNode pathNode in path)
-             {
-                 loop.Add(pathNode.m_tile);
-             }
-         }
-     }
-     
+        Pathfinding pathfinding = GameClient.Instance.GameWorld.Pathfinding;
+        List<PathNode> path = pathfinding.FindPath(tileTracker.m_ownedTiles, startTile, endTile);
+
+        if (path != null)
+        {
+            foreach (PathNode pathNode in path)
+            {
+                loop.Add(pathNode.m_tile);
+            }
+        }
+    }
+
     private (WorldGridTile, WorldGridTile) FindFurthestTiles(List<WorldGridTile> tiles)
     {
         if (tiles == null || tiles.Count <= 0)
             return (null, null);
-        
+
         if (tiles.Count == 1)
             return (tiles[0], tiles[0]);
 
         if (tiles.Count == 2)
             return (tiles[0], tiles[1]);
-        
+
         WorldGridTile first = null;
         WorldGridTile second = null;
         int maxDistance = 0;
@@ -419,7 +467,7 @@ public class TileManager : MonoBehaviour
     {
         if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
             return null;
-        
+
         return tileTracker.m_trailTiles;
     }
 

@@ -6,34 +6,35 @@ namespace CustomToolkit.AdvancedTypes
     public abstract class WorldGridNode : MonoBehaviour
     {
         public Vector2Int m_gridPos;
+        public bool m_isEdgeNode;
     }
-    
+
     public abstract class WorldGrid<TNode> : MonoBehaviour where TNode : WorldGridNode, new()
     {
-        [SerializeField] 
+        [SerializeField]
         private bool m_debug = false;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private Color m_debugTileColor = Color.cyan;
-        
-        [SerializeField] 
+
+        [SerializeField]
         private bool m_createOnAwake = true;
 
-        [SerializeField] 
+        [SerializeField]
         private TNode m_nodePrefab;
-		
+
         [SerializeField]
         private Vector2 m_gridWorldSize = new Vector2(10, 10);
         public Vector2 GridWorldSize => m_gridWorldSize;
-		
+
         [SerializeField]
         private float m_nodeRadius = 0.2f;
         public float NodeRadius => m_nodeRadius;
         public float NodeDiameter => NodeRadius * 2;
-		
+
         private TNode[,] m_nodes;
         public TNode[,] Nodes => m_nodes;
-		
+
         private Vector2Int m_gridSize;
         public Vector2Int GridSize => m_gridSize;
 
@@ -50,21 +51,21 @@ namespace CustomToolkit.AdvancedTypes
                 Debug.LogError("Cannot create grid. Node Prefab is null");
                 return;
             }
-			
+
             CalcGridSize();
-			
+
             m_nodes = new TNode[m_gridSize.x, m_gridSize.y];
 
-            for (int x = 0; x < m_gridSize.x; x ++) 
+            for (int x = 0; x < m_gridSize.x; x ++)
             {
-                for (int y = 0; y < m_gridSize.y; y ++) 
+                for (int y = 0; y < m_gridSize.y; y ++)
                 {
                     Vector3 worldPoint = GetWorldPointFromGridPoint(x, y);
                     Vector2Int gridPos = new Vector2Int(x, y);
 
                     TNode newNode = Instantiate(m_nodePrefab, worldPoint, Quaternion.identity);
                     newNode.m_gridPos = gridPos;
-					
+
                     m_nodes[x, y] = newNode;
 
                     OnNodeCreated(m_nodes[x, y]);
@@ -79,12 +80,12 @@ namespace CustomToolkit.AdvancedTypes
 
             Vector3 bottomLeftPos = m_nodes[0, 0].transform.position;
             Vector3 topRightPos = m_nodes[m_gridSize.x - 1, m_gridSize.y - 1].transform.position;
-            return position.x >= bottomLeftPos.x - m_nodeRadius 
+            return position.x >= bottomLeftPos.x - m_nodeRadius
                    && position.z >= bottomLeftPos.z - m_nodeRadius
                    && position.x <= topRightPos.x  + m_nodeRadius
                    && position.z <= topRightPos.z + m_nodeRadius;
         }
-		
+
         /// <summary>
         /// Gets node by world position
         /// </summary>
@@ -94,7 +95,7 @@ namespace CustomToolkit.AdvancedTypes
         {
             TNode closestNode = null;
             float closestDist = Mathf.Infinity;
-			
+
             for (int x = 0; x < m_gridSize.x; x++)
             {
                 for (int y = 0; y < m_gridSize.y; y++)
@@ -113,7 +114,7 @@ namespace CustomToolkit.AdvancedTypes
 
             return closestNode;
         }
-		
+
         /// <summary>
         /// Gets node by grid position
         /// </summary>
@@ -127,7 +128,7 @@ namespace CustomToolkit.AdvancedTypes
 
             return m_nodes[x, y];
         }
-		
+
         /// <summary>
         /// Gets neighbour in a direction from node
         /// </summary>
@@ -144,7 +145,7 @@ namespace CustomToolkit.AdvancedTypes
 
             return GetNode(node.m_gridPos.x + direction.x, node.m_gridPos.y + direction.y);
         }
-		
+
         /// <summary>
         /// Get neighbouring nodes
         /// </summary>
@@ -153,16 +154,16 @@ namespace CustomToolkit.AdvancedTypes
         public List<TNode> GetNeighbours(TNode node)
         {
             List<TNode> neighbours = new List<TNode>();
-	    
+
             if (node.m_gridPos.x > 0)
             {
                 //Left
                 neighbours.Add(GetNeighbour(node, new Vector2Int(-1, 0)));
-	        
+
                 //Left Down
                 if(node.m_gridPos.y > 0)
                     neighbours.Add(GetNeighbour(node, new Vector2Int(-1, -1)));
-	        
+
                 //Left Up
                 if(node.m_gridPos.y < m_gridSize.y - 1)
                     neighbours.Add(GetNeighbour(node, new Vector2Int(-1, 1)));
@@ -172,52 +173,52 @@ namespace CustomToolkit.AdvancedTypes
             {
                 //Right
                 neighbours.Add(GetNeighbour(node, new Vector2Int(1, 0)));
-	        
+
                 //Right Down
                 if(node.m_gridPos.y > 0)
                     neighbours.Add(GetNeighbour(node, new Vector2Int(1, -1)));
-	        
+
                 //Right Up
                 if(node.m_gridPos.y < m_gridSize.y - 1)
                     neighbours.Add(GetNeighbour(node, new Vector2Int(1, 1)));
             }
-	    
+
             //Down
             if(node.m_gridPos.y > 0)
                 neighbours.Add(GetNeighbour(node, new Vector2Int(0, -1)));
-	    
+
             //Up
             if(node.m_gridPos.y < m_gridSize.y - 1)
                 neighbours.Add(GetNeighbour(node, new Vector2Int(0, 1)));
-	    
+
             return neighbours;
         }
-		
+
         private void CalcGridSize()
         {
             m_gridSize.x = Mathf.RoundToInt(m_gridWorldSize.x/ NodeDiameter);
             m_gridSize.y = Mathf.RoundToInt(m_gridWorldSize.y/ NodeDiameter);
         }
-        
+
         protected virtual void OnNodeCreated(TNode node)
         {
-			
+
         }
 
         protected Vector3 GetWorldPointFromGridPoint(int x, int y)
         {
             return transform.position + Vector3.right * (x * NodeDiameter + m_nodeRadius) + Vector3.forward * (y * NodeDiameter + m_nodeRadius);
         }
-        
+
         private void OnDrawGizmos()
         {
             if(!m_debug)
                 return;
-        
+
             CalcGridSize();
 
             Gizmos.color = m_debugTileColor;
-        
+
             float bias = 0.02f;
 
             for (int x = 0; x < GridSize.x; x++)
@@ -225,11 +226,11 @@ namespace CustomToolkit.AdvancedTypes
                 for (int y = 0; y < GridSize.y; y++)
                 {
                     Vector3 worldPoint = GetWorldPointFromGridPoint(x, y);
-                
+
                     Gizmos.DrawCube(worldPoint, new Vector3(NodeDiameter - bias, 0.1f, NodeDiameter - bias));
                 }
             }
-        
+
             Gizmos.color = Color.white;
         }
     }

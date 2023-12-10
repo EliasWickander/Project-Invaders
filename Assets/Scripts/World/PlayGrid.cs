@@ -12,12 +12,12 @@ public struct TileStatus
 
 public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 {
-	[SerializeField] 
+	[SerializeField]
 	private Server_OnTileStatusChangedEvent m_onTileStatusChangedServerEvent;
-    
-	[SerializeField] 
+
+	[SerializeField]
 	private Client_OnTileStatusChangedEvent m_onTileStatusChangedClientEvent;
-	
+
 	public static PlayGrid Instance { get; private set; }
 
 	private SyncDictionary<Vector2Int, TileStatus> m_tileNetworkedStatus = new SyncDictionary<Vector2Int, TileStatus>();
@@ -26,7 +26,7 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 	protected override void Awake()
     {
         Instance = this;
-        
+
         base.Awake();
     }
 
@@ -52,18 +52,18 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 
 	    if (tile == null)
 	    {
-		    Debug.LogError($"Failed to set local tile status of tile at position {key}, but no tile is associated with position", gameObject);
+		    Debug.LogError($"Attempted to set local tile status of tile at position {key}, but no tile is associated with position", gameObject);
 		    return;
 	    }
-	    
+
 	    //Set tile local status
 	    tile.SetStatus(newStatus);
     }
-    
+
     protected override void OnTileCreated(WorldGridTile tile)
     {
 	    base.OnTileCreated(tile);
-	    
+
 	    float bias = 0.02f;
 
 	    Transform tileTransform = tile.transform;
@@ -71,7 +71,7 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 	    tileTransform.SetParent(transform);
 
 	    tile.OnStatusChanged += OnTileStatusChanged;
-	    
+
 	    if (NetworkServer.active)
 	    {
 		    m_tileNetworkedStatus.Add(tile.m_gridPos, new TileStatus());
@@ -104,7 +104,7 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 
 	    TileStatus oldStatus = m_tileNetworkedStatus[tilePos];
 	    m_tileNetworkedStatus[tilePos] = status;
-	    
+
 	    if(m_onTileStatusChangedServerEvent != null)
 		    m_onTileStatusChangedServerEvent.Raise(new OnTileStatusChangedEventData() {m_tile = GetNode(tilePos.x, tilePos.y), m_oldStatus = oldStatus, m_newStatus = m_tileNetworkedStatus[tilePos]});
     }
@@ -112,13 +112,13 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
     private bool GetTileStatus(Vector2Int tilePos, out TileStatus outTileStatus)
     {
 	    outTileStatus = new TileStatus();
-	    
+
 	    if (!m_tileNetworkedStatus.Keys.Contains(tilePos))
 	    {
 		    Debug.LogError($"Attempted to get tile status of tile at position {tilePos} but no tile associated with position");
 		    return false;
 	    }
-	    
+
 	    outTileStatus = m_tileNetworkedStatus[tilePos];
 	    return true;
     }
@@ -128,8 +128,8 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 	    {
 		    //If player went from pending owner to owner, remove pending status
 		    string pendingOwner = oldTileStatus.PendingOwnerPlayerId == playerId ? null : oldTileStatus.PendingOwnerPlayerId;
-		    
-		    SetTileStatus(tilePos, new TileStatus(){PendingOwnerPlayerId = pendingOwner, OwnerPlayerId = playerId});   
+
+		    SetTileStatus(tilePos, new TileStatus(){PendingOwnerPlayerId = pendingOwner, OwnerPlayerId = playerId});
 	    }
     }
 
