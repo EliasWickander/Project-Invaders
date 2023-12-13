@@ -33,6 +33,10 @@ namespace CustomToolkit.AdvancedTypes
         private Vector2Int m_gridSize;
         public Vector2Int GridSize => m_gridSize;
 
+        //Amount of tiles (does not include edge tiles)
+        private int m_amountTiles = 0;
+        public int AmountTiles => m_amountTiles;
+
         protected virtual void Awake()
         {
             if(m_createOnAwake)
@@ -49,6 +53,7 @@ namespace CustomToolkit.AdvancedTypes
 
             CalcGridSize();
 
+            m_amountTiles = 0;
             m_nodes = new TNode[m_gridSize.x, m_gridSize.y];
 
             for (int x = 0; x < m_gridSize.x ; x ++)
@@ -67,6 +72,10 @@ namespace CustomToolkit.AdvancedTypes
 
                         //The edge nodes are not actually part of the grid. We just use them for the fill algorithm
                         newNode.gameObject.SetActive(false);
+                    }
+                    else
+                    {
+	                    m_amountTiles++;
                     }
 
                     m_nodes[x, y] = newNode;

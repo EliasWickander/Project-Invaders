@@ -81,6 +81,20 @@ namespace CustomToolkit.UnityMVVM
             }
         }
 
+        public void Swap(int index1, int index2)
+        {
+	        if (innerList.Count < index1 || innerList.Count < index2)
+		        throw new Exception("Failed to swap elements in observable list. List is not big enough");
+
+	        T temp = innerList[index1];
+	        innerList[index1] = innerList[index2];
+	        innerList[index2] = temp;
+
+	        if (CollectionChanged != null)
+	        {
+		        CollectionChanged(this, NotifyCollectionChangedEventArgs.Swap(innerList[index2], innerList[index1]));
+	        }
+        }
         public void Clear()
         {
             var oldItems = innerList.Cast<object>().ToArray();

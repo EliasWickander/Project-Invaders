@@ -1,0 +1,82 @@
+using System.Collections.Generic;
+using System.ComponentModel;
+using CustomToolkit.UnityMVVM;
+using UnityEngine;
+
+[Binding]
+public class ScoreEntryViewModel : ViewModel
+{
+	private Player m_player;
+
+	private PropertyChangedEventArgs m_playerNameProp = new PropertyChangedEventArgs(nameof(PlayerName));
+	private string m_playerName = string.Empty;
+
+	[Binding]
+	public string PlayerName
+	{
+		get
+		{
+			return m_playerName;
+		}
+		set
+		{
+			if (m_playerName != value)
+			{
+				m_playerName = value;
+				OnPropertyChanged(m_playerNameProp);
+			}
+		}
+	}
+
+	private PropertyChangedEventArgs m_progressProp = new PropertyChangedEventArgs(nameof(Progress));
+	private float m_progress = 0.0f;
+
+	[Binding]
+	public float Progress
+	{
+		get
+		{
+			return m_progress;
+		}
+		set
+		{
+			if (m_progress != value)
+			{
+				m_progress = value;
+				OnPropertyChanged(m_progressProp);
+				OnPropertyChanged(m_progressDisplayTextProp);
+			}
+		}
+	}
+	private PropertyChangedEventArgs m_progressDisplayTextProp = new PropertyChangedEventArgs(nameof(ProgressDisplayText));
+
+	[Binding]
+	public string ProgressDisplayText => $"{Mathf.FloorToInt(m_progress * 100)}%";
+
+	public void SetPlayer(Player player)
+	{
+		m_player = player;
+		PlayerName = m_player.DisplayName;
+	}
+
+	public void Update()
+	{
+		if(m_player == null)
+			return;
+
+		UpdateTileProgress();
+	}
+
+	private void UpdateTileProgress()
+	{
+		TileManager tileManager = TileManager.Instance;
+		PlayGrid playGrid = PlayGrid.Instance;
+
+		if(tileManager == null || playGrid == null)
+			return;
+
+		List<WorldGridTile> ownedTiles = tileManager.GetOwnedTiles(m_player.PlayerId);
+
+		Progress = ownedTiles != null ? ownedTiles.Count / (float)playGrid.AmountTiles : 0.0f;
+	}
+}

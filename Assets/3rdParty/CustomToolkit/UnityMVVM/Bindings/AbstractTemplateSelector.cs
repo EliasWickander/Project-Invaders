@@ -83,7 +83,7 @@ namespace CustomToolkit.UnityMVVM
                     Debug.LogError(string.Format("Template object {0} references type {1}, but no matching type with a [Binding] attribute could be found.", template.name, typeName), template);
                     continue;
                 }
-                
+
                 availableTemplates.Add(type, template);
             }
         }
@@ -96,7 +96,7 @@ namespace CustomToolkit.UnityMVVM
         protected void InstantiateTemplate(object templateViewModel, int index = 0)
         {
             Assert.IsNotNull(templateViewModel, "Cannot instantiate child with null view model");
-            
+
             // Select template.
             var selectedTemplate = FindTemplateForType(templateViewModel.GetType());
 
@@ -141,7 +141,7 @@ namespace CustomToolkit.UnityMVVM
 
         /// <summary>
         /// Recursively look in the type, interfaces it implements and types it inherits
-        /// from for a type that matches a template. Also store how many steps away from 
+        /// from for a type that matches a template. Also store how many steps away from
         /// the specified template the found template was.
         /// </summary>
         private IEnumerable<KeyValuePair<int, Type>> FindTypesMatchingTemplate(Type t, int index = 0)
@@ -167,6 +167,18 @@ namespace CustomToolkit.UnityMVVM
             {
                 yield return new KeyValuePair<int, Type>(index, t);
             }
+        }
+
+        protected void SwapTemplates(object firstViewModel, object secondViewModel)
+        {
+	        GameObject first = instantiatedTemplates[firstViewModel];
+	        GameObject second = instantiatedTemplates[secondViewModel];
+
+	        int firstSiblingIndex = first.transform.GetSiblingIndex();
+	        int secondSiblingIndex = second.transform.GetSiblingIndex();
+
+	        first.transform.SetSiblingIndex(secondSiblingIndex);
+	        second.transform.SetSiblingIndex(firstSiblingIndex);
         }
 
         /// <summary>

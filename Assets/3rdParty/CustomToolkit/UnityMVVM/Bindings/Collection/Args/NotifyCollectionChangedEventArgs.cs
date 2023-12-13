@@ -7,7 +7,8 @@ namespace CustomToolkit.UnityMVVM
     {
         Add,
         Remove,
-        Reset,
+        Swap,
+        Reset
     }
 
     /// <summary>
@@ -78,6 +79,16 @@ namespace CustomToolkit.UnityMVVM
                 OldItems = new[] { item },
                 OldStartingIndex = index,
             };
+        }
+
+        public static NotifyCollectionChangedEventArgs Swap(object item1, object item2)
+        {
+	        return new NotifyCollectionChangedEventArgs()
+	        {
+		        Action = NotifyCollectionChangedAction.Swap,
+		        OldItems = new[] {item1},
+		        NewItems = new[] {item2}
+	        };
         }
 
         public static NotifyCollectionChangedEventArgs Reset(object[] items)

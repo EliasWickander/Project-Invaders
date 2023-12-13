@@ -10,8 +10,8 @@ namespace CustomToolkit.UnityMVVM
     /// <summary>
     /// Binds a property in the view-model that is a collection and instantiates copies
     /// of template objects to bind to the items of the collection.
-    /// 
-    /// Creates and destroys child objects when items are added and removed from a 
+    ///
+    /// Creates and destroys child objects when items are added and removed from a
     /// collection that implements INotifyCollectionChanged, like ObservableList.
     /// </summary>
     [AddComponentMenu("Unity Weld/Collection Binding")]
@@ -22,7 +22,7 @@ namespace CustomToolkit.UnityMVVM
         /// Collection that we have bound to.
         /// </summary>
         private IEnumerable viewModelCollectionValue;
-        
+
         public override void Connect()
         {
             Disconnect();
@@ -30,16 +30,16 @@ namespace CustomToolkit.UnityMVVM
             string propertyName;
             object newViewModel;
             ParseViewModelEndPointReference(
-                ViewModelPropertyName, 
-                out propertyName, 
+                ViewModelPropertyName,
+                out propertyName,
                 out newViewModel
             );
 
             viewModel = newViewModel;
 
             viewModelPropertyWatcher = new PropertyWatcher(
-                newViewModel, 
-                propertyName, 
+                newViewModel,
+                propertyName,
                 NotifyPropertyChanged_PropertyChanged
             );
 
@@ -103,6 +103,13 @@ namespace CustomToolkit.UnityMVVM
                     }
 
                     break;
+                case NotifyCollectionChangedAction.Swap:
+	                for (int i = 0; i < e.OldItems.Count; i++)
+	                {
+						SwapTemplates(e.OldItems[i], e.NewItems[i]);
+	                }
+
+	                break;
                 case NotifyCollectionChangedAction.Reset:
                     DestroyAllTemplates();
                     break;
@@ -122,8 +129,8 @@ namespace CustomToolkit.UnityMVVM
             string propertyName;
             string viewModelName;
             ParseEndPointReference(
-                ViewModelPropertyName, 
-                out propertyName, 
+                ViewModelPropertyName,
+                out propertyName,
                 out viewModelName
             );
 
@@ -131,8 +138,8 @@ namespace CustomToolkit.UnityMVVM
             if (viewModelCollectionProperty == null)
             {
                 throw new MemberNotFoundException(
-                    "Expected property " 
-                    + ViewModelPropertyName + ", but it wasn't found on type " 
+                    "Expected property "
+                    + ViewModelPropertyName + ", but it wasn't found on type "
                     + viewModelType + "."
                 );
             }
@@ -142,7 +149,7 @@ namespace CustomToolkit.UnityMVVM
             if (viewModelValue == null)
             {
                 throw new PropertyNullException(
-                    "Cannot bind to null property in view: " 
+                    "Cannot bind to null property in view: "
                     + ViewModelPropertyName
                 );
             }
@@ -151,8 +158,8 @@ namespace CustomToolkit.UnityMVVM
             if (viewModelCollectionValue == null)
             {
                 throw new InvalidTypeException(
-                    "Property " 
-                    + ViewModelPropertyName 
+                    "Property "
+                    + ViewModelPropertyName
                     + " is not a collection and cannot be used to bind collections."
                 );
             }

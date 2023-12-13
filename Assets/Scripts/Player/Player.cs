@@ -6,38 +6,39 @@ using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private PlayerData m_playerData;
 
     public PlayerData PlayerData => m_playerData;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Client_OnGameStartedEvent m_onGameStartedClientEvent;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Server_OnTileSteppedOnEvent m_onTileSteppedOnServerEvent;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Client_OnTileSteppedOnEvent m_onTileSteppedOnClientEvent;
 
-    [SerializeField] 
+    [SerializeField]
     private Server_OnPlayerSpawnedEvent m_onPlayerSpawnedServerEvent;
 
-    [SerializeField] 
+    [SerializeField]
     private Client_OnPlayerSpawnedEvent m_onPlayerSpawnedClientEvent;
 
-    [SerializeField] 
+    [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
 
-    [SerializeField] 
+    [SerializeField]
     private Client_OnPlayerKilledEvent m_onPlayerKilledClientEvent;
-    
-    [SyncVar] 
+
+    [SyncVar]
     private string m_displayName;
+    public string DisplayName => m_displayName;
 
     [SyncVar]
     public string PlayerId;
-    
+
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
     public Vector3 CurrentMoveDirection => m_currentMoveDirection;
@@ -45,7 +46,7 @@ public class Player : NetworkBehaviour
     private float m_moveTimer = 0;
 
     public WorldGridTile m_lastOwnedTileSteppedOn = null;
-    
+
     private Transform m_spawnTransform = null;
 
     public Transform SpawnTransform
@@ -62,19 +63,19 @@ public class Player : NetworkBehaviour
 
     private WorldGridTile m_spawnTile;
     public WorldGridTile SpawnTile => m_spawnTile;
-    
+
     [Server]
     public void OnSpawned(Transform spawnTransform, WorldGridTile spawnTile)
     {
         gameObject.SetActive(true);
-        
+
         SpawnTransform = spawnTransform;
         m_spawnTile = spawnTile;
         m_currentTile = m_spawnTile;
-        
+
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = 2});
-        
+
         OnSpawnedRpc();
     }
 
@@ -84,7 +85,7 @@ public class Player : NetworkBehaviour
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = 2});
     }
-    
+
     [Server]
     public void Kill()
     {
@@ -92,9 +93,9 @@ public class Player : NetworkBehaviour
             m_onPlayerKilledServerEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
 
         KillRpc();
-        
+
         ResetState();
-        
+
         gameObject.SetActive(false);
     }
 
@@ -104,17 +105,17 @@ public class Player : NetworkBehaviour
         if(m_onPlayerKilledClientEvent != null)
             m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
     }
-    
+
     [ClientRpc]
     public void OnGameStarted()
     {
         if(!isOwned)
             return;
-        
+
         if(m_onGameStartedClientEvent != null)
             m_onGameStartedClientEvent.Raise(new OnGameStartedEventData() {});
     }
-    
+
     public override void OnStartClient()
     {
         GameClient.Instance.GameWorld.AddPlayerToWorld(this);
@@ -125,15 +126,15 @@ public class Player : NetworkBehaviour
             PlayerInputController inputController = gameObject.AddComponent<PlayerInputController>();
             inputController.SetTarget(this);
         }
-        
-        NetworkManagerCustom.Instance.OnPlayerJoinedGame(this, isServer);
+
+        NetworkManagerCustom.Instance.OnPlayerJoinedGame(this);
     }
-    
+
     public override void OnStopClient()
     {
         GameClient.Instance.GameWorld.RemovePlayerFromWorld(this);
-        
-        NetworkManagerCustom.Instance.GamePlayers.Remove(this);
+
+        NetworkManagerCustom.Instance.OnPlayerLeftGame(this);
     }
 
     [Command]
@@ -141,7 +142,7 @@ public class Player : NetworkBehaviour
     {
         m_currentMoveDirection = dir;
     }
-    
+
     private void Update()
     {
         if(isServer)
@@ -162,7 +163,7 @@ public class Player : NetworkBehaviour
                 {
                     StepOnTile(targetTile.m_gridPos);
                 }
-                
+
                 m_moveTimer = 0;
             }
             else
@@ -189,15 +190,15 @@ public class Player : NetworkBehaviour
             m_onTileSteppedOnServerEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});
 
         StepOnNodeRpc(tilePos);
-        
+
         if (m_currentTile.TileStatus.OwnerPlayerId == PlayerId)
             m_lastOwnedTileSteppedOn = m_currentTile;
-        
+
         //If stepped on own trail, kill player
         if(steppedOnTrail)
             Kill();
     }
-    
+
     [ClientRpc]
     private void StepOnNodeRpc(Vector2Int tilePos)
     {
@@ -224,7 +225,7 @@ public class Player : NetworkBehaviour
         m_moveTimer = 0;
         m_spawnTransform = null;
         m_spawnTile = null;
-        
+
         SetMoveDirection(Vector3.zero);
     }
 }

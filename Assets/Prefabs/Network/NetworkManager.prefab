@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3612089695151286053}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3129844648246217782
 MonoBehaviour:
@@ -98,6 +98,8 @@ MonoBehaviour:
   m_onGameStartedServerEvent: {fileID: 11400000, guid: 42216ce4d3bbb234bac23cc4aaa8f342, type: 2}
   m_onPlayerJoinedGameClientEvent: {fileID: 11400000, guid: 02133ecf2ce4aa743995ed41b6995781, type: 2}
   m_onPlayerJoinedGameServerEvent: {fileID: 11400000, guid: 12d7a4630acb2824e90ee6ce1efc39f4, type: 2}
+  m_onPlayerLeftGameClientEvent: {fileID: 11400000, guid: 38fa4f7e904035447a2d6dca56b9a142, type: 2}
+  m_onPlayerLeftGameServerEvent: {fileID: 11400000, guid: 6cbfe9f0b3f6c1748b9f364018e20cd6, type: 2}
 --- !u!114 &4921770832255139380
 MonoBehaviour:
   m_ObjectHideFlags: 0

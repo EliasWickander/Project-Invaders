@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CustomToolkit.AdvancedTypes;
 using Mirror;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class PlayerTileTracker
     public List<WorldGridTile> m_trailTiles = new List<WorldGridTile>();
 }
 
-public class TileManager : MonoBehaviour
+public class TileManager : Singleton<TileManager>
 {
     [SerializeField]
     private Server_OnTileSteppedOnEvent m_onTileSteppedOnServerEvent;
@@ -421,38 +422,6 @@ public class TileManager : MonoBehaviour
                 loop.Add(pathNode.m_tile);
             }
         }
-    }
-
-    private (WorldGridTile, WorldGridTile) FindFurthestTiles(List<WorldGridTile> tiles)
-    {
-        if (tiles == null || tiles.Count <= 0)
-            return (null, null);
-
-        if (tiles.Count == 1)
-            return (tiles[0], tiles[0]);
-
-        if (tiles.Count == 2)
-            return (tiles[0], tiles[1]);
-
-        WorldGridTile first = null;
-        WorldGridTile second = null;
-        int maxDistance = 0;
-
-        for (int i = 0; i < tiles.Count; i++)
-        {
-            for (int j = i + 1; j < tiles.Count; j++)
-            {
-                int xDelta = Mathf.Abs(tiles[i].m_gridPos.x - tiles[j].m_gridPos.x);
-                if (xDelta > maxDistance)
-                {
-                    maxDistance = xDelta;
-                    first = tiles[i];
-                    second = tiles[j];
-                }
-            }
-        }
-
-        return (first, second);
     }
 
     public List<WorldGridTile> GetOwnedTiles(string playerId)
