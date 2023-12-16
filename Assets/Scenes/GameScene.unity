@@ -774,7 +774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c6d06088b6ca5b4998864408c7b0c32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_respawnDuration: 2
+  m_respawnDuration: 1
   m_onPlayerKilledServerEvent: {fileID: 11400000, guid: c1df507031b361644948fe734fc96a7f, type: 2}
 --- !u!4 &1247819596
 Transform:
