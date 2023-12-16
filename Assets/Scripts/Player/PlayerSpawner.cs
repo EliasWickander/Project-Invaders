@@ -7,10 +7,10 @@ using Random = UnityEngine.Random;
 
 public class PlayerSpawner : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private float m_respawnDuration = 2;
-    
-    [SerializeField] 
+
+    [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
     private PlayGrid m_playGrid;
 
@@ -30,19 +30,19 @@ public class PlayerSpawner : MonoBehaviour
     {
         m_playGrid = PlayGrid.Instance;
     }
-    
+
     private void OnPlayerKilled(OnPlayerKilledGameEventData data)
     {
         StartCoroutine(SpawnPlayer(data.m_player, m_respawnDuration));
     }
-    
+
     public void OnPlayerJoinedGame(OnPlayerJoinedGameEventData data)
     {
         Player player = data.m_player;
         Transform spawnTransform = player.SpawnTransform;
         WorldGridTile spawnTile = m_playGrid.GetNode(spawnTransform.position);
-        
-        data.m_player.OnSpawned(spawnTransform, spawnTile);
+
+        player.OnSpawned(spawnTransform, spawnTile);
     }
 
     private IEnumerator SpawnPlayer(Player player, float delay)
@@ -56,7 +56,7 @@ public class PlayerSpawner : MonoBehaviour
         yield return new WaitForSeconds(delay);
         SpawnPlayer(player);
     }
-    
+
     [Server]
     private void SpawnPlayer(Player player)
     {
@@ -65,11 +65,11 @@ public class PlayerSpawner : MonoBehaviour
 
         Transform spawnTransform = NetworkManagerCustom.Instance.GetStartPosition();
         Vector3 spawnPos = spawnTransform.position;
-        
+
         WorldGridTile spawnTile = m_playGrid.GetNode(spawnPos);
-        
+
         player.transform.position = spawnPos;
-        
+
         player.OnSpawned(spawnTransform, spawnTile);
     }
 }

@@ -39,6 +39,9 @@ public class Player : NetworkBehaviour
     [SyncVar]
     public string PlayerId;
 
+    [SyncVar(hook = nameof(OnDead))]
+    public bool IsDead;
+
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
     public Vector3 CurrentMoveDirection => m_currentMoveDirection;
@@ -67,7 +70,7 @@ public class Player : NetworkBehaviour
     [Server]
     public void OnSpawned(Transform spawnTransform, WorldGridTile spawnTile)
     {
-        gameObject.SetActive(true);
+	    IsDead = false;
 
         SpawnTransform = spawnTransform;
         m_spawnTile = spawnTile;
@@ -92,11 +95,11 @@ public class Player : NetworkBehaviour
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
 
+        IsDead = true;
+
         KillRpc();
 
         ResetState();
-
-        gameObject.SetActive(false);
     }
 
     [ClientRpc]
@@ -104,6 +107,11 @@ public class Player : NetworkBehaviour
     {
         if(m_onPlayerKilledClientEvent != null)
             m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
+    }
+
+    private void OnDead(bool oldValue, bool newValue)
+    {
+	    gameObject.SetActive(!newValue);
     }
 
     [ClientRpc]

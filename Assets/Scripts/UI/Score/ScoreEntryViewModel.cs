@@ -53,10 +53,31 @@ public class ScoreEntryViewModel : ViewModel
 	[Binding]
 	public string ProgressDisplayText => $"{Mathf.FloorToInt(m_progress * 100)}%";
 
+	private PropertyChangedEventArgs m_isPlayerDeadProp = new PropertyChangedEventArgs(nameof(IsPlayerDead));
+	private bool m_isPlayerDead = false;
+
+	[Binding]
+	public bool IsPlayerDead
+	{
+		get
+		{
+			return m_isPlayerDead;
+		}
+		set
+		{
+			if (m_isPlayerDead != value)
+			{
+				m_isPlayerDead = value;
+				OnPropertyChanged(m_isPlayerDeadProp);
+			}
+		}
+	}
+
 	public void SetPlayer(Player player)
 	{
+		PlayerName = player.DisplayName;
+
 		m_player = player;
-		PlayerName = m_player.DisplayName;
 	}
 
 	public void Update()
@@ -64,11 +85,19 @@ public class ScoreEntryViewModel : ViewModel
 		if(m_player == null)
 			return;
 
+		IsPlayerDead = m_player.IsDead;
+
 		UpdateTileProgress();
 	}
 
 	private void UpdateTileProgress()
 	{
+		if (IsPlayerDead)
+		{
+			Progress = 0.0f;
+			return;
+		}
+
 		TileManager tileManager = TileManager.Instance;
 		PlayGrid playGrid = PlayGrid.Instance;
 
