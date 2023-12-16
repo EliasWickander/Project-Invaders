@@ -562,7 +562,7 @@ Transform:
   m_GameObject: {fileID: 864878884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 1.045}
+  m_LocalPosition: {x: 4.46, y: 0, z: 5.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -801,7 +801,7 @@ Transform:
   m_GameObject: {fileID: 1014242320}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.394, y: 0, z: 1.045}
+  m_LocalPosition: {x: 2.32, y: 0, z: 2.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -971,7 +971,7 @@ Transform:
   m_GameObject: {fileID: 1377363094}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.1, y: 0, z: 3.21}
+  m_LocalPosition: {x: 6.35, y: 0, z: 1.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1132,7 +1132,7 @@ MonoBehaviour:
   m_debugTileColor: {r: 0, g: 1, b: 1, a: 1}
   m_createOnAwake: 1
   m_nodePrefab: {fileID: 5749873640972505703, guid: 062322eb3fc0e5a4c8b389465881cb42, type: 3}
-  m_gridWorldSize: {x: 10, y: 10}
+  m_gridWorldSize: {x: 20, y: 20}
   m_nodeRadius: 0.2
   m_onTileStatusChangedServerEvent: {fileID: 11400000, guid: fb6836cfaea34304f8abc44c8b13900b, type: 2}
   m_onTileStatusChangedClientEvent: {fileID: 11400000, guid: a5c0a5df6124f1e4583dcd307dda0c89, type: 2}
