@@ -21,19 +21,20 @@ public class GameWorld
     private Dictionary<string, Player> PlayersDictionary { get; set; } = new Dictionary<string, Player>();
     public List<Player> Players { get; set; } = new List<Player>();
 
-    public static event EventHandler<PlayerAddedEventArgs> OnPlayerAddedEvent; 
-    public static event EventHandler<PlayerRemovedEventArgs> OnPlayerRemovedEvent; 
-    
+    public static Player LocalPlayer = null;
+    public static event EventHandler<PlayerAddedEventArgs> OnPlayerAddedEvent;
+    public static event EventHandler<PlayerRemovedEventArgs> OnPlayerRemovedEvent;
+
     public GameWorld()
     {
         Pathfinding = new Pathfinding();
     }
-    
+
     public void AddPlayerToWorld(Player player)
     {
         if(player == null)
             return;
-        
+
         if (PlayersDictionary.ContainsValue(player))
         {
             Debug.LogError($"Player {player} already added to world");
@@ -48,7 +49,10 @@ public class GameWorld
 
         Players.Add(player);
         PlayersDictionary.Add(player.PlayerId, player);
-        
+
+        if (player.isOwned)
+	        LocalPlayer = player;
+
         OnPlayerAddedEvent?.Invoke(this, new PlayerAddedEventArgs() {m_player = player});
     }
 
@@ -56,7 +60,7 @@ public class GameWorld
     {
         if(player == null)
             return;
-        
+
         if (!PlayersDictionary.ContainsKey(player.PlayerId))
         {
             Debug.LogError($"Player {player} is not added to world. Something is wrong");
@@ -65,10 +69,13 @@ public class GameWorld
 
         Players.Remove(player);
         PlayersDictionary.Remove(player.PlayerId);
-        
+
+        if (LocalPlayer == player)
+	        LocalPlayer = null;
+
         OnPlayerRemovedEvent?.Invoke(this, new PlayerRemovedEventArgs() {m_player = player});
     }
-    
+
     public Player GetPlayerFromId(string id)
     {
         if (!PlayersDictionary.ContainsKey(id))
