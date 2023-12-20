@@ -77,7 +77,7 @@ public class Player : NetworkBehaviour
         m_currentTile = m_spawnTile;
 
         if(m_onPlayerSpawnedServerEvent != null)
-            m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = 2});
+            m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
 
         OnSpawnedRpc();
     }
@@ -86,7 +86,7 @@ public class Player : NetworkBehaviour
     private void OnSpawnedRpc()
     {
         if(m_onPlayerSpawnedClientEvent != null)
-            m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = 2});
+            m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
     }
 
     [Server]

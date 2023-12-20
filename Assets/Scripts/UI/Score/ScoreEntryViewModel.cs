@@ -51,7 +51,7 @@ public class ScoreEntryViewModel : ViewModel
 	private PropertyChangedEventArgs m_progressDisplayTextProp = new PropertyChangedEventArgs(nameof(ProgressDisplayText));
 
 	[Binding]
-	public string ProgressDisplayText => $"{Mathf.FloorToInt(m_progress * 100)}%";
+	public string ProgressDisplayText => $"{Mathf.Clamp(Mathf.FloorToInt(m_progress * 100), 1, 100)}%";
 
 	private PropertyChangedEventArgs m_isPlayerDeadProp = new PropertyChangedEventArgs(nameof(IsPlayerDead));
 	private bool m_isPlayerDead = false;
