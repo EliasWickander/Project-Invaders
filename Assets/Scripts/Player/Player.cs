@@ -169,6 +169,8 @@ public class Player : NetworkBehaviour
 
                 if (targetTile != null && targetTile != m_currentTile)
                 {
+	                transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
+	                
                     StepOnTile(targetTile.m_gridPos);
                 }
 
@@ -187,12 +189,11 @@ public class Player : NetworkBehaviour
         PlayGrid playGrid = PlayGrid.Instance;
         WorldGridTile tile = playGrid.GetNode(tilePos.x, tilePos.y);
 
-        bool steppedOnTrail = tile.TileStatus.PendingOwnerPlayerId == PlayerId;
-
+        string pendingOwnerPlayerId = tile.TileStatus.PendingOwnerPlayerId;
+        
         m_currentTile = tile;
 
         transform.position = tile.transform.position;
-        transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
 
         if(m_onTileSteppedOnServerEvent != null)
             m_onTileSteppedOnServerEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});
@@ -201,10 +202,23 @@ public class Player : NetworkBehaviour
 
         if (m_currentTile.TileStatus.OwnerPlayerId == PlayerId)
             m_lastOwnedTileSteppedOn = m_currentTile;
-
-        //If stepped on own trail, kill player
-        if(steppedOnTrail)
-            Kill();
+	        
+        if (!string.IsNullOrEmpty(pendingOwnerPlayerId))
+        {
+	        if (pendingOwnerPlayerId == PlayerId)
+	        {
+		        //If stepped on own trail, kill player
+		        Kill();
+	        }
+	        else
+	        {
+		        //If stepped on other player's trail, kill player and take their territory
+		        Player steppedOnPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(pendingOwnerPlayerId);
+		        
+		        TileManager.Instance.ChangeTileOwnership(pendingOwnerPlayerId, PlayerId);
+		        steppedOnPlayer.Kill();
+	        }
+        }
     }
 
     [ClientRpc]
@@ -233,7 +247,6 @@ public class Player : NetworkBehaviour
         m_moveTimer = 0;
         m_spawnTransform = null;
         m_spawnTile = null;
-
-        SetMoveDirection(Vector3.zero);
+        m_currentMoveDirection = Vector3.zero;
     }
 }

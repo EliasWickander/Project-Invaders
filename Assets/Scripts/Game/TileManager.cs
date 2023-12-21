@@ -423,7 +423,16 @@ public class TileManager : Singleton<TileManager>
             }
         }
     }
+    
+    [Server]
+    public void ChangeTileOwnership(string oldPlayerId, string newPlayerId)
+    {
+	    List<WorldGridTile> tilesToGive = GetOwnedTiles(oldPlayerId);
 
+	    for (int i = tilesToGive.Count - 1; i >= 0; i--)
+		    m_grid.SetTileOwner(tilesToGive[i].m_gridPos, newPlayerId);
+    }
+    
     public List<WorldGridTile> GetOwnedTiles(string playerId)
     {
         if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
