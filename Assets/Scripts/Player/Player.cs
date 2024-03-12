@@ -160,6 +160,8 @@ public class Player : NetworkBehaviour
     [Server]
     private void HandleMovement()
     {
+	    return;
+	    
         if (m_currentMoveDirection != Vector3.zero)
         {
             if (m_moveTimer >= m_playerData.MoveSpeed)
