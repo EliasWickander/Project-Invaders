@@ -934,6 +934,7 @@ MonoBehaviour:
   m_onTileStatusChangedServerEvent: {fileID: 11400000, guid: fb6836cfaea34304f8abc44c8b13900b, type: 2}
   m_onTileStatusChangedClientEvent: {fileID: 11400000, guid: a5c0a5df6124f1e4583dcd307dda0c89, type: 2}
   m_onPlayerSpawnedServerEvent: {fileID: 11400000, guid: 825eddfac161fc84fa6ca3f66f16c5c3, type: 2}
+  m_onPlayerSpawnedClientEvent: {fileID: 11400000, guid: 871665fbe7cea3545bae9471bda444da, type: 2}
   m_onPlayerKilledServerEvent: {fileID: 11400000, guid: c1df507031b361644948fe734fc96a7f, type: 2}
 --- !u!1 &1014242320
 GameObject:

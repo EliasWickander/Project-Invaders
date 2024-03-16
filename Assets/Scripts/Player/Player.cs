@@ -79,12 +79,16 @@ public class Player : NetworkBehaviour
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
 
-        OnSpawnedRpc();
+        OnSpawnedRpc(spawnTransform, spawnTile.m_gridPos);
     }
 
     [ClientRpc]
-    private void OnSpawnedRpc()
+    private void OnSpawnedRpc(Transform spawnTransform, Vector2Int spawnTilePos)
     {
+	    SpawnTransform = spawnTransform;
+	    m_spawnTile = PlayGrid.Instance.GetNode(spawnTilePos.x, spawnTilePos.y);
+	    m_currentTile = m_spawnTile;
+	    
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
     }
@@ -145,19 +149,17 @@ public class Player : NetworkBehaviour
         NetworkManagerCustom.Instance.OnPlayerLeftGame(this);
     }
 
-    [Command]
     public void SetMoveDirection(Vector3 dir)
     {
-        m_currentMoveDirection = dir;
+	    if(isOwned) 
+		    m_currentMoveDirection = dir;
     }
 
     private void Update()
     {
-        if(isServer)
-            HandleMovement();
+	    HandleMovement();
     }
 
-    [Server]
     private void HandleMovement()
     {
         if (m_currentMoveDirection != Vector3.zero)
@@ -183,7 +185,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Server]
     private void StepOnTile(Vector2Int tilePos)
     {
         PlayGrid playGrid = PlayGrid.Instance;
@@ -195,10 +196,17 @@ public class Player : NetworkBehaviour
 
         transform.position = tile.transform.position;
 
-        if(m_onTileSteppedOnServerEvent != null)
-            m_onTileSteppedOnServerEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});
+        if (NetworkServer.active)
+        {
+	        if(m_onTileSteppedOnServerEvent != null)
+		        m_onTileSteppedOnServerEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});   
+        }
 
-        StepOnNodeRpc(tilePos);
+        if (NetworkClient.active)
+        {
+	        if(m_onTileSteppedOnClientEvent != null)
+		        m_onTileSteppedOnClientEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});
+        }
 
         if (m_currentTile.TileStatus.OwnerPlayerId == PlayerId)
             m_lastOwnedTileSteppedOn = m_currentTile;
@@ -219,13 +227,6 @@ public class Player : NetworkBehaviour
 		        steppedOnPlayer.Kill();
 	        }
         }
-    }
-
-    [ClientRpc]
-    private void StepOnNodeRpc(Vector2Int tilePos)
-    {
-        if(m_onTileSteppedOnClientEvent != null)
-            m_onTileSteppedOnClientEvent.Raise(new OnTileSteppedOnEventData() {m_player = this, m_tilePos = tilePos});
     }
 
     [Server]

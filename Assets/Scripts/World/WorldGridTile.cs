@@ -27,7 +27,7 @@ public class WorldGridTile : WorldGridNode
 
     public void UpdateMaterial(Material material)
     {
-        m_meshRenderer.material = material;
+         m_meshRenderer.material = material;
     }
 
     public void SetStatus(TileStatus status)

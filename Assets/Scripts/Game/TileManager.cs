@@ -28,6 +28,9 @@ public class TileManager : Singleton<TileManager>
     private Server_OnPlayerSpawnedEvent m_onPlayerSpawnedServerEvent;
 
     [SerializeField]
+    private Client_OnPlayerSpawnedEvent m_onPlayerSpawnedClientEvent;
+    
+    [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
 
     private PlayGrid m_grid;
@@ -44,6 +47,9 @@ public class TileManager : Singleton<TileManager>
         if(m_onTileSteppedOnServerEvent != null)
             m_onTileSteppedOnServerEvent.RegisterListener(OnTileSteppedOnServer);
 
+        if(m_onTileSteppedOnClientEvent != null)
+	        m_onTileSteppedOnClientEvent.RegisterListener(OnTileSteppedOnClient);
+        
         if(m_onTileStatusChangedServerEvent != null)
             m_onTileStatusChangedServerEvent.RegisterListener(OnTileStatusChangedServer);
 
@@ -51,8 +57,11 @@ public class TileManager : Singleton<TileManager>
             m_onTileStatusChangedClientEvent.RegisterListener(OnTileStatusChangedClient);
 
         if(m_onPlayerSpawnedServerEvent != null)
-            m_onPlayerSpawnedServerEvent.RegisterListener(OnPlayerSpawned);
+            m_onPlayerSpawnedServerEvent.RegisterListener(OnPlayerSpawnedServer);
 
+        if(m_onPlayerSpawnedClientEvent != null)
+	        m_onPlayerSpawnedClientEvent.RegisterListener(OnPlayerSpawnedClient);
+        
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilled);
 
@@ -72,8 +81,11 @@ public class TileManager : Singleton<TileManager>
             m_onTileStatusChangedClientEvent.UnregisterListener(OnTileStatusChangedClient);
 
         if(m_onPlayerSpawnedServerEvent != null)
-            m_onPlayerSpawnedServerEvent.UnregisterListener(OnPlayerSpawned);
+            m_onPlayerSpawnedServerEvent.UnregisterListener(OnPlayerSpawnedServer);
 
+        if(m_onPlayerSpawnedClientEvent != null)
+	        m_onPlayerSpawnedClientEvent.UnregisterListener(OnPlayerSpawnedClient);
+        
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilled);
 
@@ -134,7 +146,7 @@ public class TileManager : Singleton<TileManager>
     }
 
     [Server]
-    private void OnPlayerSpawned(OnPlayerSpawnedGameEventData data)
+    private void OnPlayerSpawnedServer(OnPlayerSpawnedGameEventData data)
     {
         Player spawnedPlayer = data.m_player;
         Transform spawnTransform = spawnedPlayer.SpawnTransform;
@@ -145,6 +157,14 @@ public class TileManager : Singleton<TileManager>
         SetOwnerArea(spawnedPlayer, spawnTile, data.m_startTerritoryRadius);
     }
 
+    private void OnPlayerSpawnedClient(OnPlayerSpawnedGameEventData data)
+    {
+	    Player spawnedPlayer = data.m_player;
+	    WorldGridTile spawnTile = spawnedPlayer.SpawnTile;
+	    
+	    SetOwnerArea(spawnedPlayer, spawnTile, data.m_startTerritoryRadius);
+    }
+    
     [Server]
     private void OnPlayerKilled(OnPlayerKilledGameEventData data)
     {
@@ -263,40 +283,45 @@ public class TileManager : Singleton<TileManager>
         }
     }
 
+    private void OnTileSteppedOnClient(OnTileSteppedOnEventData data)
+    {
+	    if (data.m_player == null)
+	    {
+		    Debug.LogError("Player can not be null in OnTileSteppedOnEventData", gameObject);
+		    return;
+	    }
+
+	    WorldGridTile tile = m_grid.GetNode(data.m_tilePos.x, data.m_tilePos.y);
+	    string playerId = data.m_player.PlayerId;
+
+	    if (tile.TileStatus.OwnerPlayerId != playerId)
+	    {
+		    //If walking on own trail,
+		    if (tile.TileStatus.PendingOwnerPlayerId == playerId)
+			    return;
+
+		    m_grid.SetTilePendingOwner(tile.m_gridPos, playerId);
+	    }
+	    else
+	    {
+		    //If walking on tile that's owned, add all nodes enclosed by trail to owned tiles
+		    if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+		    {
+			    if (tileTracker.m_trailTiles.Count > 0)
+			    {
+				    Player player = GameClient.Instance.GameWorld.GetPlayerFromId(playerId);
+
+				    EncloseLoop(data.m_player.PlayerId, tile,player.m_lastOwnedTileSteppedOn, tileTracker.m_trailTiles, out List<WorldGridTile> loop);
+
+				    FillEnclosedArea(data.m_player.PlayerId, loop);
+			    }
+		    }
+	    }
+    }
+    
     public void OnTileSteppedOnServer(OnTileSteppedOnEventData data)
     {
-        if (data.m_player == null)
-        {
-            Debug.LogError("Player can not be null in OnTileSteppedOnEventData", gameObject);
-            return;
-        }
 
-        WorldGridTile tile = m_grid.GetNode(data.m_tilePos.x, data.m_tilePos.y);
-        string playerId = data.m_player.PlayerId;
-
-        if (tile.TileStatus.OwnerPlayerId != playerId)
-        {
-            //If walking on own trail,
-            if (tile.TileStatus.PendingOwnerPlayerId == playerId)
-                return;
-
-            m_grid.SetTilePendingOwner(tile.m_gridPos, playerId);
-        }
-        else
-        {
-            //If walking on tile that's owned, add all nodes enclosed by trail to owned tiles
-            if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
-            {
-                if (tileTracker.m_trailTiles.Count > 0)
-                {
-                    Player player = GameClient.Instance.GameWorld.GetPlayerFromId(playerId);
-
-                    EncloseLoop(data.m_player.PlayerId, tile,player.m_lastOwnedTileSteppedOn, tileTracker.m_trailTiles, out List<WorldGridTile> loop);
-
-                    FillEnclosedArea(data.m_player.PlayerId, loop);
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -423,8 +448,7 @@ public class TileManager : Singleton<TileManager>
             }
         }
     }
-    
-    [Server]
+
     public void ChangeTileOwnership(string oldPlayerId, string newPlayerId)
     {
 	    List<WorldGridTile> tilesToGive = GetOwnedTiles(oldPlayerId);
