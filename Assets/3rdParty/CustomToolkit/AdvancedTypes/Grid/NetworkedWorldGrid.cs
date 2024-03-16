@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomToolkit.AdvancedTypes
 {
-    public abstract class NetworkedWorldGrid<TNode> : NetworkBehaviour where TNode : WorldGridNode, new()
+    public abstract class NetworkedWorldGrid<TNode> : MonoBehaviour where TNode : WorldGridNode, new()
     {
         [SerializeField]
         private bool m_debug = false;
