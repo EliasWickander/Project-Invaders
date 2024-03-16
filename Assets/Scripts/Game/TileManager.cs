@@ -44,14 +44,8 @@ public class TileManager : Singleton<TileManager>
 
     private void OnEnable()
     {
-        if(m_onTileSteppedOnServerEvent != null)
-            m_onTileSteppedOnServerEvent.RegisterListener(OnTileSteppedOnServer);
-
         if(m_onTileSteppedOnClientEvent != null)
 	        m_onTileSteppedOnClientEvent.RegisterListener(OnTileSteppedOnClient);
-        
-        if(m_onTileStatusChangedServerEvent != null)
-            m_onTileStatusChangedServerEvent.RegisterListener(OnTileStatusChangedServer);
 
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.RegisterListener(OnTileStatusChangedClient);
@@ -63,7 +57,7 @@ public class TileManager : Singleton<TileManager>
 	        m_onPlayerSpawnedClientEvent.RegisterListener(OnPlayerSpawnedClient);
         
         if(m_onPlayerKilledServerEvent != null)
-            m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilled);
+            m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilledServer);
 
         GameWorld.OnPlayerAddedEvent += OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent += OnPlayerRemoved;
@@ -71,12 +65,6 @@ public class TileManager : Singleton<TileManager>
 
     private void OnDisable()
     {
-        if(m_onTileSteppedOnServerEvent != null)
-            m_onTileSteppedOnServerEvent.UnregisterListener(OnTileSteppedOnServer);
-
-        if(m_onTileStatusChangedServerEvent != null)
-            m_onTileStatusChangedServerEvent.UnregisterListener(OnTileStatusChangedServer);
-
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.UnregisterListener(OnTileStatusChangedClient);
 
@@ -87,7 +75,7 @@ public class TileManager : Singleton<TileManager>
 	        m_onPlayerSpawnedClientEvent.UnregisterListener(OnPlayerSpawnedClient);
         
         if(m_onPlayerKilledServerEvent != null)
-            m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilled);
+            m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilledServer);
 
         GameWorld.OnPlayerAddedEvent -= OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent -= OnPlayerRemoved;
@@ -166,7 +154,7 @@ public class TileManager : Singleton<TileManager>
     }
     
     [Server]
-    private void OnPlayerKilled(OnPlayerKilledGameEventData data)
+    private void OnPlayerKilledServer(OnPlayerKilledGameEventData data)
     {
         Player killedPlayer = data.m_player;
         NetworkManagerCustom.Instance.EnableStartPoint(killedPlayer.SpawnTransform);
@@ -213,11 +201,6 @@ public class TileManager : Singleton<TileManager>
     }
 
     private void OnTileStatusChangedClient(OnTileStatusChangedEventData data)
-    {
-        OnTileStatusChanged(data);
-    }
-
-    private void OnTileStatusChangedServer(OnTileStatusChangedEventData data)
     {
         OnTileStatusChanged(data);
     }
@@ -317,11 +300,6 @@ public class TileManager : Singleton<TileManager>
 			    }
 		    }
 	    }
-    }
-    
-    public void OnTileSteppedOnServer(OnTileSteppedOnEventData data)
-    {
-
     }
 
     /// <summary>

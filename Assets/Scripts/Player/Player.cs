@@ -211,22 +211,22 @@ public class Player : NetworkBehaviour
         if (m_currentTile.TileStatus.OwnerPlayerId == PlayerId)
             m_lastOwnedTileSteppedOn = m_currentTile;
 	        
-        if (!string.IsNullOrEmpty(pendingOwnerPlayerId))
-        {
-	        if (pendingOwnerPlayerId == PlayerId)
-	        {
-		        //If stepped on own trail, kill player
-		        Kill();
-	        }
-	        else
-	        {
-		        //If stepped on other player's trail, kill player and take their territory
-		        Player steppedOnPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(pendingOwnerPlayerId);
-		        
-		        TileManager.Instance.ChangeTileOwnership(pendingOwnerPlayerId, PlayerId);
-		        steppedOnPlayer.Kill();
-	        }
-        }
+        // if (!string.IsNullOrEmpty(pendingOwnerPlayerId))
+        // {
+	       //  if (pendingOwnerPlayerId == PlayerId)
+	       //  {
+		      //   //If stepped on own trail, kill player
+		      //   Kill();
+	       //  }
+	       //  else
+	       //  {
+		      //   //If stepped on other player's trail, kill player and take their territory
+		      //   Player steppedOnPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(pendingOwnerPlayerId);
+		      //   
+		      //   TileManager.Instance.ChangeTileOwnership(pendingOwnerPlayerId, PlayerId);
+		      //   steppedOnPlayer.Kill();
+	       //  }
+        // }
     }
 
     [Server]
