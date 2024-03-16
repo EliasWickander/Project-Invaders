@@ -67,6 +67,8 @@ public class Player : NetworkBehaviour
     private WorldGridTile m_spawnTile;
     public WorldGridTile SpawnTile => m_spawnTile;
 
+    public List<Vector2Int> PendingTiles { get; set; } = new List<Vector2Int>();
+
     [Server]
     public void OnSpawned(Transform spawnTransform, WorldGridTile spawnTile)
     {
@@ -75,7 +77,8 @@ public class Player : NetworkBehaviour
         SpawnTransform = spawnTransform;
         m_spawnTile = spawnTile;
         m_currentTile = m_spawnTile;
-
+		PendingTiles.Clear();
+		
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
 
@@ -88,6 +91,7 @@ public class Player : NetworkBehaviour
 	    SpawnTransform = spawnTransform;
 	    m_spawnTile = PlayGrid.Instance.GetNode(spawnTilePos.x, spawnTilePos.y);
 	    m_currentTile = m_spawnTile;
+	    PendingTiles.Clear();
 	    
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
