@@ -45,8 +45,7 @@ public class Player : NetworkBehaviour
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
     public Vector3 CurrentMoveDirection => m_currentMoveDirection;
-
-    private float m_moveTimer = 0;
+    public double MoveTimeStamp { get; set; }
 
     public WorldGridTile m_lastOwnedTileSteppedOn = null;
 
@@ -155,20 +154,20 @@ public class Player : NetworkBehaviour
 
     public void SetMoveDirection(Vector3 dir)
     {
-	    if(isOwned) 
-		    m_currentMoveDirection = dir;
+	    m_currentMoveDirection = dir;
+	    MoveTimeStamp = 0;
     }
 
     private void Update()
     {
-	    HandleMovement();
+	    //HandleMovement();
     }
 
     private void HandleMovement()
     {
         if (m_currentMoveDirection != Vector3.zero)
         {
-            if (m_moveTimer >= m_playerData.MoveSpeed)
+            if (NetworkTime.time >= MoveTimeStamp)
             {
                 PlayGrid playGrid = PlayGrid.Instance;
                 WorldGridTile targetTile = playGrid.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
@@ -180,11 +179,7 @@ public class Player : NetworkBehaviour
                     StepOnTile(targetTile.m_gridPos);
                 }
 
-                m_moveTimer = 0;
-            }
-            else
-            {
-                m_moveTimer += Time.deltaTime;
+                MoveTimeStamp = NetworkTime.time + m_playerData.MoveSpeed;
             }
         }
     }
@@ -249,7 +244,7 @@ public class Player : NetworkBehaviour
     {
         m_currentTile = null;
         m_lastOwnedTileSteppedOn = null;
-        m_moveTimer = 0;
+        MoveTimeStamp = 0;
         m_spawnTransform = null;
         m_spawnTile = null;
         m_currentMoveDirection = Vector3.zero;
