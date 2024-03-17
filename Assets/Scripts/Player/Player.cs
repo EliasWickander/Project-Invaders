@@ -45,8 +45,8 @@ public class Player : NetworkBehaviour
     private WorldGridTile m_currentTile = null;
     private Vector3 m_currentMoveDirection = Vector3.zero;
     public Vector3 CurrentMoveDirection => m_currentMoveDirection;
-    public double MoveTimeStamp { get; set; }
 
+    public double MoveTimer { get; set; }
     public WorldGridTile m_lastOwnedTileSteppedOn = null;
 
     private Transform m_spawnTransform = null;
@@ -155,33 +155,19 @@ public class Player : NetworkBehaviour
     public void SetMoveDirection(Vector3 dir)
     {
 	    m_currentMoveDirection = dir;
-	    MoveTimeStamp = 0;
     }
-
-    private void Update()
+    
+    public void Move(Vector3 direction)
     {
-	    //HandleMovement();
-    }
+	    PlayGrid playGrid = PlayGrid.Instance;
+	    WorldGridTile targetTile = playGrid.GetNeighbour(m_currentTile, new Vector2Int((int)direction.x, (int)direction.z));
 
-    private void HandleMovement()
-    {
-        if (m_currentMoveDirection != Vector3.zero)
-        {
-            if (NetworkTime.time >= MoveTimeStamp)
-            {
-                PlayGrid playGrid = PlayGrid.Instance;
-                WorldGridTile targetTile = playGrid.GetNeighbour(m_currentTile, new Vector2Int((int)m_currentMoveDirection.x, (int)m_currentMoveDirection.z));
-
-                if (targetTile != null && targetTile != m_currentTile)
-                {
-	                transform.rotation = Quaternion.LookRotation(m_currentMoveDirection);
+	    if (targetTile != null && targetTile != m_currentTile)
+	    {
+		    transform.rotation = Quaternion.LookRotation(direction);
 	                
-                    StepOnTile(targetTile.m_gridPos);
-                }
-
-                MoveTimeStamp = NetworkTime.time + m_playerData.MoveSpeed;
-            }
-        }
+		    StepOnTile(targetTile.m_gridPos);
+	    }
     }
 
     private void StepOnTile(Vector2Int tilePos)
@@ -244,7 +230,6 @@ public class Player : NetworkBehaviour
     {
         m_currentTile = null;
         m_lastOwnedTileSteppedOn = null;
-        MoveTimeStamp = 0;
         m_spawnTransform = null;
         m_spawnTile = null;
         m_currentMoveDirection = Vector3.zero;

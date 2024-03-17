@@ -6,6 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkIdentity))]
 public abstract class ClientPrediction<ClientInput, ClientState> : MonoBehaviour where ClientInput : INetworkClientInput where ClientState : INetworkClientState
 {
+	[SerializeField] 
+	private bool m_debug = false;
+	
 	[SerializeField, Tooltip("The number of ticks that can be stored in input/state buffers")] 
 	private uint m_bufferSize = 1024;
 
@@ -57,8 +60,9 @@ public abstract class ClientPrediction<ClientInput, ClientState> : MonoBehaviour
 		//If latest server state doesn't match the state we expect this tick, we're out of sync. Reconcile
 		if (!latestServerState.Equals(m_stateBuffer[serverStateBufferIndex]))
 		{
-			Debug.Log("reconciliation");
-		
+			if (m_debug)
+				Debug.Log("Reconciling", gameObject);
+			
 			//Rewind
 			m_client.SetState(latestServerState);
 

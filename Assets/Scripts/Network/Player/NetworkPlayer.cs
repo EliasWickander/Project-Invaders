@@ -22,12 +22,14 @@ public struct NetworkPlayerState : INetworkClientState
 {
 	public uint m_tick;
 	public Vector3 m_position;
+	public double m_moveTimer;
 
 	public uint Tick => m_tick;
 
 	public bool Equals(NetworkPlayerState other)
 	{
-		return Vector3.Distance(other.m_position, m_position) < 0.001f;
+		return Vector3.Distance(other.m_position, m_position) < 0.001f && 
+		       m_moveTimer.Equals(other.m_moveTimer);
 	}
 	
 	public bool Equals(INetworkClientState other)
@@ -51,19 +53,20 @@ public class NetworkPlayer : NetworkClient<NetworkPlayerInput, NetworkPlayerStat
 
 	public override void SetState(NetworkPlayerState state)
 	{
-		transform.position = state.m_position;
+		m_player.transform.position = state.m_position;
+		m_player.MoveTimer = state.m_moveTimer;
 	}
 
 	public override NetworkPlayerState ProcessInput(NetworkPlayerInput input)
 	{
-		transform.position += input.m_moveDirection * 5 * NetworkServer.tickInterval;
-		
 		if (input.m_moveTimer >= m_player.PlayerData.MoveSpeed)
 		{
-			//Need to multiply with min time between ticks to make sure it's same on server
-			//transform.position += input.m_moveDirection;
+			if (input.m_moveDirection != Vector3.zero)
+			{
+				m_player.Move(input.m_moveDirection);
 
-			m_moveTimer = 0;
+				m_moveTimer = 0;	
+			}
 		}
 		else
 		{
@@ -73,7 +76,8 @@ public class NetworkPlayer : NetworkClient<NetworkPlayerInput, NetworkPlayerStat
 		return new NetworkPlayerState()
 		{
 			m_tick = input.m_tick,
-			m_position = transform.position
+			m_position = transform.position,
+			m_moveTimer = m_moveTimer
 		};	
 	}
 }
