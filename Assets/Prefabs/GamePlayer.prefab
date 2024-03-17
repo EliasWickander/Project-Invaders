@@ -244,6 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56fc4c3937ee405a933c777fbcd2f05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_debug: 1
   m_bufferSize: 1024
   m_client: {fileID: 7196251172822222333}
   m_networkPlayer: {fileID: 7196251172822222333}

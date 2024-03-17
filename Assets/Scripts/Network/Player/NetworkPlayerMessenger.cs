@@ -1,4 +1,5 @@
 ﻿using System;
+using CustomToolkit.Mirror;
 using Mirror;
 
 public class NetworkPlayerMessenger : NetworkBehaviour, INetworkClientMessenger<NetworkPlayerInput, NetworkPlayerState>

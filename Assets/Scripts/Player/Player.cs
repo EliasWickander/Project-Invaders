@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkPlayer))]
 public class Player : NetworkBehaviour
 {
     [SerializeField]
@@ -11,6 +12,11 @@ public class Player : NetworkBehaviour
 
     public PlayerData PlayerData => m_playerData;
 
+    [SerializeField]
+    private NetworkPlayer m_networkPlayer;
+
+    public NetworkPlayer NetworkPlayer => m_networkPlayer;
+    
     [SerializeField]
     private Client_OnGameStartedEvent m_onGameStartedClientEvent;
 
@@ -67,6 +73,11 @@ public class Player : NetworkBehaviour
     public WorldGridTile SpawnTile => m_spawnTile;
 
     public List<Vector2Int> PendingTiles { get; set; } = new List<Vector2Int>();
+
+    private void Awake()
+    {
+	    m_networkPlayer = GetComponent<NetworkPlayer>();
+    }
 
     [Server]
     public void OnSpawned(Transform spawnTransform, WorldGridTile spawnTile)
