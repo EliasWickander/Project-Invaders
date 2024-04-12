@@ -65,6 +65,9 @@ public class TileManager : Singleton<TileManager>
 
     private void OnDisable()
     {
+	    if(m_onTileSteppedOnClientEvent != null)
+		    m_onTileSteppedOnClientEvent.UnregisterListener(OnTileSteppedOnClient);
+	    
         if(m_onTileStatusChangedClientEvent != null)
             m_onTileStatusChangedClientEvent.UnregisterListener(OnTileStatusChangedClient);
 

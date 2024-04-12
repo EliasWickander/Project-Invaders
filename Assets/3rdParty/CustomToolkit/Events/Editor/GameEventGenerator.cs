@@ -17,7 +17,7 @@ public class GameEventGenerator : EditorWindow
     
     private const string c_defaultTargetDir = "Assets/Scripts/Util/GameEvents";
     
-    [MenuItem("Custom Tools/Game Event Generator")]
+    [MenuItem("Custom Tools/Game Event/Game Event Generator")]
     public static void ShowWindow()
     {
         GetWindow(typeof(GameEventGenerator));

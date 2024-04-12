@@ -7,28 +7,10 @@ namespace CustomToolkit.Events
 {
     public abstract class GameEvent : ScriptableObject
     {
-        protected List<IGameEventListener> m_listeners = new List<IGameEventListener>();
-
-        public void Raise()
-        {
-            for (int i = 0; i < m_listeners.Count; i++)
-                m_listeners[i].OnEventRaised();
-        }
-
-        public void RegisterListener(IGameEventListener listener)
-        {
-            if(!m_listeners.Contains(listener))
-                m_listeners.Add(listener);
-        }
-
-        public void UnregisterListener(IGameEventListener listener)
-        {
-            if (m_listeners.Contains(listener))
-                m_listeners.Remove(listener);
-        }
+	    public abstract void ClearListeners();
     }
 
-    public abstract class GameEvent<T> : ScriptableObject
+    public abstract class GameEvent<T> : GameEvent
     {
         protected List<IGameEventListener<T>> m_listeners = new List<IGameEventListener<T>>();
         protected List<Action<T>> m_actionListeners = new List<Action<T>>();
@@ -64,6 +46,12 @@ namespace CustomToolkit.Events
         {
             if (m_listeners.Contains(listener))
                 m_listeners.Remove(listener);
+        }
+
+        public override void ClearListeners()
+        {
+	        m_listeners.Clear();
+	        m_actionListeners.Clear();
         }
     }
     
