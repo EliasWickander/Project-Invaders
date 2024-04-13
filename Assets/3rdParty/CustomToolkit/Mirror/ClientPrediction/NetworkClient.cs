@@ -64,9 +64,11 @@ namespace CustomToolkit.Mirror
 			//Process all inputs on server
 			if (m_identity.isServer)
 				ProcessInputs();
-
+			
 			if (m_identity.isClient && m_identity.isOwned)
 				m_prediction.HandleTick(m_currentTick, m_messenger.LatestServerState);
+			else if(!m_identity.isServer)
+				HandleOtherPlayerState(m_messenger.LatestServerState);
 		}
 
 		private void ProcessInputs()
@@ -92,6 +94,14 @@ namespace CustomToolkit.Mirror
 			SendStateToClient(lastRecordedState);
 		}
 	
+		private void HandleOtherPlayerState(ClientState state)
+		{
+			m_prediction.RecordState(m_messenger.LatestServerState.Tick, m_messenger.LatestServerState);
+			
+			//TODO: State interpolation for smoother update
+			SetState(state);
+		}
+		
 		private void SendStateToClient(ClientState state)
 		{
 			m_messenger.SendStateToClient(state);

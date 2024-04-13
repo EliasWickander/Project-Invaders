@@ -46,11 +46,13 @@ namespace CustomToolkit.Mirror
 
 			m_inputBuffer[bufferIndex] = currentInput;
 
-			//Store state for this frame
-			m_stateBuffer[bufferIndex] = m_client.ProcessInput(currentInput);
+			m_client.SendInputToServer(currentInput);
 
 			if (!m_identity.isServer)
-				m_client.SendInputToServer(currentInput);
+			{
+				//Store state for this frame
+				m_stateBuffer[bufferIndex] = m_client.ProcessInput(currentInput);
+			}
 		}
 
 		private void HandleServerReconciliation(uint currentTick, ClientState latestServerState)
