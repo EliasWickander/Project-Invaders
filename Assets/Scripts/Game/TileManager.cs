@@ -8,6 +8,9 @@ public class PlayerTileTracker
     public string m_playerId;
     public List<WorldGridTile> m_ownedTiles = new List<WorldGridTile>();
     public List<WorldGridTile> m_trailTiles = new List<WorldGridTile>();
+
+    public List<Vector2Int> m_ownedTilePositions = new List<Vector2Int>();
+    public List<Vector2Int> m_trailTilePositions = new List<Vector2Int>();
 }
 
 public class TileManager : Singleton<TileManager>
@@ -230,6 +233,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Remove(tile);
+
+                    if (tileTracker.m_trailTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_trailTilePositions.Remove(tile.m_gridPos);
                 }
             }
 
@@ -240,6 +246,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (!tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Add(tile);
+
+                    if (!tileTracker.m_trailTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_trailTilePositions.Add(tile.m_gridPos);
                 }
             }
         }
@@ -254,6 +263,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (tileTracker.m_ownedTiles.Contains(tile))
                         tileTracker.m_ownedTiles.Remove(tile);
+
+                    if (tileTracker.m_ownedTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_ownedTilePositions.Remove(tile.m_gridPos);
                 }
             }
 
@@ -264,6 +276,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (!tileTracker.m_ownedTiles.Contains(tile))
                         tileTracker.m_ownedTiles.Add(tile);
+                    
+                    if(!tileTracker.m_ownedTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_ownedTilePositions.Add(tile.m_gridPos);
                 }
             }
         }
@@ -454,4 +469,11 @@ public class TileManager : Singleton<TileManager>
         return tileTracker.m_trailTiles;
     }
 
+    public PlayerTileTracker GetTrackedTilesForPlayer(string playerId)
+    {
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+            return null;
+
+        return tileTracker;
+    }
 }
