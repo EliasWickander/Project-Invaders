@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CustomToolkit.Events
+namespace CustomToolkit.Mirror.Events
 {
     public abstract class NetworkGameEventTrigger<TType, TEvent> : MonoBehaviour, INetworkGameEventTrigger where TEvent : NetworkGameEvent<TType>
     {

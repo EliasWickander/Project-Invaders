@@ -1,8 +1,7 @@
-﻿using Mirror;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace CustomToolkit.Events
+namespace CustomToolkit.Mirror.Events
 {
     public abstract class NetworkGameEventListener<TType, TEvent> : MonoBehaviour, INetworkGameEventListener<TType> where TEvent : NetworkGameEvent<TType>
     {

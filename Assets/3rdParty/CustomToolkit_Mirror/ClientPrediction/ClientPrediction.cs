@@ -37,8 +37,13 @@ namespace CustomToolkit.Mirror
 				if (latestServerState != null &&
 				    (m_lastProcessedState == null || !m_lastProcessedState.Equals(latestServerState)))
 					HandleServerReconciliation(currentTick, latestServerState);
+				
+				if(latestServerState != null)
+					Debug.Log("actual tick " + currentTick + " last processed tick " + latestServerState.Tick);
 			}
 
+			if(m_identity.isServer)
+				Debug.Log("Server tick " + currentTick);
 			uint bufferIndex = currentTick % m_bufferSize;
 
 			//Store input for this frame

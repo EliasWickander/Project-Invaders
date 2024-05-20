@@ -35,6 +35,9 @@ public class TileManager : Singleton<TileManager>
     
     [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
+    
+    [SerializeField]
+    private Client_OnPlayerKilledEvent m_onPlayerKilledClientEvent;
 
     private PlayGrid m_grid;
 
@@ -61,6 +64,9 @@ public class TileManager : Singleton<TileManager>
         
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilledServer);
+        
+        if(m_onPlayerKilledClientEvent != null)
+            m_onPlayerKilledClientEvent.RegisterListener(OnPlayerKilledClient);
 
         GameWorld.OnPlayerAddedEvent += OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent += OnPlayerRemoved;
@@ -82,6 +88,9 @@ public class TileManager : Singleton<TileManager>
         
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilledServer);
+        
+        if(m_onPlayerKilledClientEvent != null)
+            m_onPlayerKilledClientEvent.UnregisterListener(OnPlayerKilledClient);
 
         GameWorld.OnPlayerAddedEvent -= OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent -= OnPlayerRemoved;
@@ -116,11 +125,7 @@ public class TileManager : Singleton<TileManager>
             {
                 WorldGridTile trailTile = trailTiles[i];
 
-                TileStatus oldStatus = trailTile.TileStatus;
-                TileStatus newStatus = new TileStatus()
-                    { PendingOwnerPlayerId = null, OwnerPlayerId = oldStatus.OwnerPlayerId };
-
-                m_grid.SetTileStatus(trailTile.m_gridPos, newStatus);
+                m_grid.SetTilePendingOwner(trailTile.m_gridPos, null);
             }
 
             //Remove all owned tiles
@@ -130,12 +135,14 @@ public class TileManager : Singleton<TileManager>
             {
                 WorldGridTile ownedTile = ownedTiles[i];
 
-                TileStatus oldStatus = ownedTile.TileStatus;
-                TileStatus newStatus = new TileStatus()
-                    { PendingOwnerPlayerId = oldStatus.PendingOwnerPlayerId, OwnerPlayerId = null };
-
-                m_grid.SetTileStatus(ownedTile.m_gridPos, newStatus);
+                m_grid.SetTileOwner(ownedTile.m_gridPos, null);
             }
+            
+            Debug.Log(tileTracker.m_ownedTiles.Count + " " + tileTracker.m_ownedTiles.Count + " " + tileTracker.m_ownedTilePositions.Count + " " + tileTracker.m_trailTilePositions.Count);
+        }
+        else
+        {
+            Debug.LogError("Tried to clear associated tiles of player that wasn't tracked");
         }
     }
 
@@ -168,6 +175,13 @@ public class TileManager : Singleton<TileManager>
         ClearAssociatedTiles(killedPlayer.PlayerId);
     }
 
+    private void OnPlayerKilledClient(OnPlayerKilledGameEventData data)
+    {
+        Player killedPlayer = data.m_player;
+        
+        ClearAssociatedTiles(killedPlayer.PlayerId);
+    }
+    
     private void SetOwnerArea(Player player, WorldGridTile sourceTile, int radius)
     {
         List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, radius);

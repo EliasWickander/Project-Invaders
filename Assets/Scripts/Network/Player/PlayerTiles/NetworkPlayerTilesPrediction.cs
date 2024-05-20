@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using CustomToolkit.Mirror;
@@ -14,7 +15,17 @@ public class NetworkPlayerTilesPrediction : ClientPrediction<NetworkPlayerTilesI
 
         m_player = GetComponent<NetworkPlayer>();
     }
-    
+
+    private void OnEnable()
+    {
+        m_player.Player.OnDeadEvent += OnPlayerDead;
+    }
+
+    private void OnDisable()
+    {
+        m_player.Player.OnDeadEvent -= OnPlayerDead;
+    }
+
     public override NetworkPlayerTilesInput GetInput(uint currentTick)
     {
         var tileManager = TileManager.Instance;
@@ -25,5 +36,10 @@ public class NetworkPlayerTilesPrediction : ClientPrediction<NetworkPlayerTilesI
             return new NetworkPlayerTilesInput();
         
         return new NetworkPlayerTilesInput(currentTick, playerTileTracker.m_ownedTilePositions.ToArray(), playerTileTracker.m_trailTilePositions.ToArray());
+    }
+    
+    private void OnPlayerDead()
+    {
+        //ClearBuffers();
     }
 }

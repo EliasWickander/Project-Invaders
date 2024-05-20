@@ -204,6 +204,7 @@ MonoBehaviour:
   PlayerId: 
   IsDead: 0
   m_lastOwnedTileSteppedOn: {fileID: 0}
+  m_visualContainer: {fileID: 8247786535339723371}
 --- !u!114 &880514592980709446
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkPlayer))]
 public class Player : NetworkBehaviour
 {
+    public event Action OnDeadEvent;
+    
     [SerializeField]
     private PlayerData m_playerData;
 
@@ -74,6 +76,8 @@ public class Player : NetworkBehaviour
 
     public List<Vector2Int> PendingTiles { get; set; } = new List<Vector2Int>();
 
+    public Transform m_visualContainer;
+
     private void Awake()
     {
 	    m_networkPlayer = GetComponent<NetworkPlayer>();
@@ -106,13 +110,13 @@ public class Player : NetworkBehaviour
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
     }
-
+    
     [Server]
     public void Kill()
     {
         if(m_onPlayerKilledServerEvent != null)
-            m_onPlayerKilledServerEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
-
+            m_onPlayerKilledServerEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});   
+        
         IsDead = true;
 
         KillRpc();
@@ -123,13 +127,18 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void KillRpc()
     {
-        if(m_onPlayerKilledClientEvent != null)
-            m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});
+        if (!NetworkServer.active)
+        {
+            if(m_onPlayerKilledClientEvent != null)
+                m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});   
+        }
     }
 
     private void OnDead(bool oldValue, bool newValue)
     {
 	    gameObject.SetActive(!newValue);
+        
+        OnDeadEvent?.Invoke();
     }
 
     [ClientRpc]
@@ -206,23 +215,26 @@ public class Player : NetworkBehaviour
 
         if (m_currentTile.TileStatus.OwnerPlayerId == PlayerId)
             m_lastOwnedTileSteppedOn = m_currentTile;
-	        
-        // if (!string.IsNullOrEmpty(pendingOwnerPlayerId))
-        // {
-	       //  if (pendingOwnerPlayerId == PlayerId)
-	       //  {
-		      //   //If stepped on own trail, kill player
-		      //   Kill();
-	       //  }
-	       //  else
-	       //  {
-		      //   //If stepped on other player's trail, kill player and take their territory
-		      //   Player steppedOnPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(pendingOwnerPlayerId);
-		      //   
-		      //   TileManager.Instance.ChangeTileOwnership(pendingOwnerPlayerId, PlayerId);
-		      //   steppedOnPlayer.Kill();
-	       //  }
-        // }
+
+        if (NetworkServer.active)
+        {
+            if (!string.IsNullOrEmpty(pendingOwnerPlayerId))
+            {
+                if (pendingOwnerPlayerId == PlayerId)
+                {
+                    //If stepped on own trail, kill player
+                    Kill();
+                }
+                else
+                {
+                    //If stepped on other player's trail, kill player and take their territory
+                    Player steppedOnPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(pendingOwnerPlayerId);
+		        
+                    TileManager.Instance.ChangeTileOwnership(pendingOwnerPlayerId, PlayerId);
+                    steppedOnPlayer.Kill();
+                }
+            }      
+        }
     }
 
     [Server]

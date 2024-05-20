@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CustomToolkit.Mirror;
 using UnityEngine;
 
@@ -20,15 +21,17 @@ public class NetworkPlayerTiles : NetworkClient<NetworkPlayerTilesInput, Network
     public override void SetState(NetworkPlayerTilesState state)
     {
         var playGrid = PlayGrid.Instance;
-
-        foreach (var ownedTile in state.m_ownedTiles)
+        
+        if (state.m_ownedTiles != null)
         {
-            playGrid.SetTileOwner(ownedTile, m_player.PlayerId);
+            foreach (var ownedTile in state.m_ownedTiles)
+                playGrid.SetTileOwner(ownedTile, m_player.PlayerId);
         }
 
-        foreach (var pendingTile in state.m_pendingTiles)
+        if (state.m_trailTiles != null)
         {
-            playGrid.SetTilePendingOwner(pendingTile, m_player.PlayerId);
+            foreach (var pendingTile in state.m_trailTiles)
+                playGrid.SetTilePendingOwner(pendingTile, m_player.PlayerId);
         }
     }
 
@@ -38,7 +41,7 @@ public class NetworkPlayerTiles : NetworkClient<NetworkPlayerTilesInput, Network
         {
             m_tick = input.Tick,
             m_ownedTiles = input.m_ownedTiles,
-            m_pendingTiles = input.m_pendingTiles
+            m_trailTiles = input.m_pendingTiles
         };
     }
 }

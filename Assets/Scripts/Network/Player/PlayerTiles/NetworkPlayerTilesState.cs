@@ -6,14 +6,14 @@ using UnityEngine;
 public struct NetworkPlayerTilesState : INetworkClientState
 {
     public Vector2Int[] m_ownedTiles;
-    public Vector2Int[] m_pendingTiles;
+    public Vector2Int[] m_trailTiles;
     
     public uint m_tick;
     public uint Tick => m_tick;
 
     public bool Equals(NetworkPlayerTilesState other)
     {
-        return m_pendingTiles == other.m_pendingTiles && m_ownedTiles == other.m_ownedTiles;
+        return m_trailTiles == other.m_trailTiles && m_ownedTiles == other.m_ownedTiles;
     }
 	
     public bool Equals(INetworkClientState other)
