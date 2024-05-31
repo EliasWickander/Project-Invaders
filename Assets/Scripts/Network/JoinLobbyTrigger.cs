@@ -23,8 +23,6 @@ public class JoinLobbyTrigger : MonoBehaviour
         {
             if(!string.IsNullOrEmpty(ip))
                 NetworkManagerCustom.Instance.JoinLobby(ip);
-            else
-                NetworkManagerCustom.Instance.JoinLobby("localhost");
         }
     }
 
@@ -34,8 +32,6 @@ public class JoinLobbyTrigger : MonoBehaviour
         {
             if(!string.IsNullOrEmpty(ip.text))
                 NetworkManagerCustom.Instance.JoinLobby(ip.text);
-            else
-                NetworkManagerCustom.Instance.JoinLobby("localhost");
         }
     }
 }
