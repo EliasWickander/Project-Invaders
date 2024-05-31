@@ -150,10 +150,7 @@ GameObject:
   - component: {fileID: 880514592980709446}
   - component: {fileID: 7196251172822222333}
   - component: {fileID: 5851476270740976292}
-  - component: {fileID: 3052933463152660363}
-  - component: {fileID: 4869228173358046406}
-  - component: {fileID: 5191048740123574595}
-  - component: {fileID: 3657318249791782816}
+  - component: {fileID: 6634254726707825711}
   m_Layer: 0
   m_Name: GamePlayer
   m_TagString: Untagged
@@ -251,7 +248,7 @@ MonoBehaviour:
   m_debug: 1
   m_bufferSize: 1024
   m_client: {fileID: 7196251172822222333}
---- !u!114 &3052933463152660363
+--- !u!114 &6634254726707825711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -261,49 +258,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48b27938c15a4acab880f1d5ca902d4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
---- !u!114 &4869228173358046406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7043530882013725549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ba4e0096c005fa4d96f64be45724892, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prediction: {fileID: 5191048740123574595}
---- !u!114 &5191048740123574595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7043530882013725549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdd99264fb2be114dbf1b529996645d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_debug: 0
-  m_bufferSize: 1024
-  m_client: {fileID: 4869228173358046406}
---- !u!114 &3657318249791782816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7043530882013725549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84478815fea64af44a08db3be12103c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0

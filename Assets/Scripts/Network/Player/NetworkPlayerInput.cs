@@ -15,4 +15,11 @@ public struct NetworkPlayerInput : INetworkClientInput
 		m_moveDirection = moveDirection;
 		m_moveTimer = moveTimer;
 	}
+	
+	public string Log()
+	{
+		return $"Tick: {m_tick}\n" +
+		       $"Move Direction: {m_moveDirection}\n" +
+		       $"Move Timer: {m_moveTimer}\n";
+	}
 }

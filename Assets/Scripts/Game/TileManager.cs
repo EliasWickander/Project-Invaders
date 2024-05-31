@@ -114,7 +114,7 @@ public class TileManager : Singleton<TileManager>
             m_playerTileTrackers.Remove(removedPlayerId);
     }
 
-    private void ClearAssociatedTiles(string playerId)
+    public void ClearAssociatedTiles(string playerId)
     {
         if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
         {
@@ -137,8 +137,6 @@ public class TileManager : Singleton<TileManager>
 
                 m_grid.SetTileOwner(ownedTile.m_gridPos, null);
             }
-            
-            Debug.Log(tileTracker.m_ownedTiles.Count + " " + tileTracker.m_ownedTiles.Count + " " + tileTracker.m_ownedTilePositions.Count + " " + tileTracker.m_trailTilePositions.Count);
         }
         else
         {

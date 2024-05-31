@@ -6,7 +6,7 @@ namespace CustomToolkit.Mirror
 	{
 		event Action<ClientInput> OnInputReceived;
 
-		ClientState LatestServerState { get; }
+		ClientState LatestServerState { get; set; }
 
 		public void SendInputToServer(ClientInput input);
 		public void SendStateToClient(ClientState state);

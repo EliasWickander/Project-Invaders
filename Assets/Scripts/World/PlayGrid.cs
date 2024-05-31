@@ -118,8 +118,6 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
 			    return;
 		    
 		    SetTileStatus(tilePos, new TileStatus() {PendingOwnerPlayerId = playerId, OwnerPlayerId = oldTileStatus.OwnerPlayerId });
-		    
-		    Debug.Log("Set trail owner for tile " + tilePos + ": " + playerId);
 	    }
     }
 }

@@ -8,5 +8,7 @@ namespace CustomToolkit.Mirror
 		/// The tick in which this state was processed
 		/// </summary>
 		uint Tick { get; }
+
+		string Log();
 	}
 }

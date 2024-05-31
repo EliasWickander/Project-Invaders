@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -8,18 +9,16 @@ namespace CustomToolkit.Mirror
 	public abstract class NetworkClient<ClientInput, ClientState> : MonoBehaviour, INetworkClient where ClientInput : INetworkClientInput where ClientState : INetworkClientState
 	{
 		public INetworkClientState LatestServerState => m_messenger.LatestServerState;
-		public uint CurrentTick => m_currentTick;
 
 		[SerializeField] 
 		private ClientPrediction<ClientInput, ClientState> m_prediction;
+		public ClientPrediction<ClientInput, ClientState> Prediction => m_prediction;
 
 		private INetworkClientMessenger<ClientInput, ClientState> m_messenger;
+		public INetworkClientMessenger<ClientInput, ClientState> Messenger => m_messenger;
 	
-		private NetworkIdentity m_identity = null;
+		protected NetworkIdentity m_identity = null;
 		private Queue<ClientInput> m_inputQueue = new Queue<ClientInput>(6);
-	
-		private uint m_currentTick = 0;
-		private float m_tickTimer = 0;
 
 		protected virtual void Awake()
 		{
@@ -39,34 +38,27 @@ namespace CustomToolkit.Mirror
 		{
 			if(m_messenger != null)
 				m_messenger.OnInputReceived += OnInputReceived;
+			
+			ClearBuffers();
+			NetworkSimulation.Instance.AddEntity(this);
 		}
 
 		protected virtual void OnDisable()
 		{
 			if(m_messenger != null)
 				m_messenger.OnInputReceived -= OnInputReceived;
-		}
-	
-		private void Update()
-		{
-			m_tickTimer += Time.deltaTime;
-
-			while (m_tickTimer >= NetworkServer.tickInterval)
-			{
-				m_tickTimer -= NetworkServer.tickInterval;
-				HandleTick();
-				m_currentTick++;
-			}
+			
+			NetworkSimulation.Instance.RemoveEntity(this);
 		}
 
-		private void HandleTick()
+		public virtual void HandleTick(uint currentTick)
 		{
 			//Process all inputs on server
 			if (m_identity.isServer)
 				ProcessInputs();
 			
 			if (m_identity.isClient && m_identity.isOwned)
-				m_prediction.HandleTick(m_currentTick, m_messenger.LatestServerState);
+				m_prediction.HandleTick(currentTick, m_messenger.LatestServerState);
 			else if(!m_identity.isServer)
 				HandleOtherPlayerState(m_messenger.LatestServerState);
 		}
@@ -114,10 +106,29 @@ namespace CustomToolkit.Mirror
 	
 		private void OnInputReceived(ClientInput input)
 		{
+			//Ignore obsolete input
+			if(input.Tick < LatestServerState.Tick)
+				return;
+
 			m_inputQueue.Enqueue(input);
 		}
 	
 		public abstract void SetState(ClientState state);
 		public abstract ClientState ProcessInput(ClientInput input);
+		
+		public void ClearBuffers()
+		{
+			m_inputQueue.Clear();
+
+			m_prediction?.ClearBuffers();
+		}
+
+		public void SetActive(bool isActive)
+		{
+			enabled = isActive;
+				
+			if(m_prediction != null)
+				m_prediction.enabled = isActive;
+		}
 	}
 }

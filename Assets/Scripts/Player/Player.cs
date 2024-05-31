@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CustomToolkit.Mirror;
 using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkPlayer))]
 public class Player : NetworkBehaviour
 {
-    public event Action OnDeadEvent;
-    
     [SerializeField]
     private PlayerData m_playerData;
 
@@ -47,7 +46,7 @@ public class Player : NetworkBehaviour
     [SyncVar]
     public string PlayerId;
 
-    [SyncVar(hook = nameof(OnDead))]
+    [SyncVar(hook = nameof(OnDead))] 
     public bool IsDead;
 
     private WorldGridTile m_currentTile = null;
@@ -77,7 +76,7 @@ public class Player : NetworkBehaviour
     public List<Vector2Int> PendingTiles { get; set; } = new List<Vector2Int>();
 
     public Transform m_visualContainer;
-
+    
     private void Awake()
     {
 	    m_networkPlayer = GetComponent<NetworkPlayer>();
@@ -92,21 +91,32 @@ public class Player : NetworkBehaviour
         m_spawnTile = spawnTile;
         m_currentTile = m_spawnTile;
 		PendingTiles.Clear();
-		
+		SetMoveDirection(Vector3.zero);
+        
         if(m_onPlayerSpawnedServerEvent != null)
             m_onPlayerSpawnedServerEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
 
-        OnSpawnedRpc(spawnTransform, spawnTile.m_gridPos);
+        var playerCurrentState = m_networkPlayer.GetState(NetworkSimulation.Instance.CurrentTick);
+
+        OnSpawnedRpc(playerCurrentState, spawnTransform, spawnTile.m_gridPos);
     }
 
     [ClientRpc]
-    private void OnSpawnedRpc(Transform spawnTransform, Vector2Int spawnTilePos)
+    private void OnSpawnedRpc(NetworkPlayerState playerStateOnSpawn, Transform spawnTransform, Vector2Int spawnTilePos)
     {
 	    SpawnTransform = spawnTransform;
 	    m_spawnTile = PlayGrid.Instance.GetNode(spawnTilePos.x, spawnTilePos.y);
 	    m_currentTile = m_spawnTile;
 	    PendingTiles.Clear();
-	    
+        SetMoveDirection(Vector3.zero);
+
+        if (m_networkPlayer != null)
+        {
+            m_networkPlayer.Messenger.LatestServerState = playerStateOnSpawn;
+
+            m_networkPlayer.SetActive(true);
+        }
+        
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
     }
@@ -129,6 +139,9 @@ public class Player : NetworkBehaviour
     {
         if (!NetworkServer.active)
         {
+            //When killed, pause prediction/network simulation. We're just a dead body until spawned again
+            m_networkPlayer?.SetActive(false);
+            
             if(m_onPlayerKilledClientEvent != null)
                 m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});   
         }
@@ -136,9 +149,10 @@ public class Player : NetworkBehaviour
 
     private void OnDead(bool oldValue, bool newValue)
     {
-	    gameObject.SetActive(!newValue);
-        
-        OnDeadEvent?.Invoke();
+        if(oldValue == newValue)
+            return;
+
+        m_visualContainer.gameObject.SetActive(!newValue);
     }
 
     [ClientRpc]

@@ -6,5 +6,7 @@
 		/// The tick in which this input was sent on the client
 		/// </summary>
 		uint Tick { get; }
+		
+		string Log();
 	}
 }

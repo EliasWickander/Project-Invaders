@@ -1,14 +1,14 @@
 ﻿using System;
 using CustomToolkit.Mirror;
 using Mirror;
+using UnityEngine;
 
 public class NetworkPlayerMessenger : NetworkBehaviour, INetworkClientMessenger<NetworkPlayerInput, NetworkPlayerState>
 {
 	public event Action<NetworkPlayerInput> OnInputReceived;
 
-	private NetworkPlayerState m_latestServerState;
-	public NetworkPlayerState LatestServerState => m_latestServerState;
-	
+	public NetworkPlayerState LatestServerState { get; set; }
+
 	public void SendInputToServer(NetworkPlayerInput input)
 	{
 		CmdSendInputToServer(input);
@@ -28,6 +28,10 @@ public class NetworkPlayerMessenger : NetworkBehaviour, INetworkClientMessenger<
 	[ClientRpc(channel = Channels.Unreliable)]
 	private void RpcSendStateToClient(NetworkPlayerState state)
 	{
-		m_latestServerState = state;
+		//Ignore outdated server states
+		if(state.Tick <= LatestServerState.Tick)
+			return;
+
+		LatestServerState = state;
 	}
 }
