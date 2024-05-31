@@ -9,9 +9,4 @@
     {
         void OnEventRaised(T value);
     }
-    
-    public interface INetworkGameEventListener<T>
-    {
-        void OnEventRaised(ConnectionType type, T value);
-    }
 }

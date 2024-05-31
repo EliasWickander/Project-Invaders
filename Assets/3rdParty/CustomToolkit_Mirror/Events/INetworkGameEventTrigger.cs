@@ -1,4 +1,4 @@
-﻿namespace CustomToolkit.Events
+﻿namespace CustomToolkit.Mirror.Events
 {
     public interface INetworkGameEventTrigger
     {

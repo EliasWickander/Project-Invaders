@@ -100,6 +100,9 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
     {
 	    if (GetTileStatus(tilePos, out TileStatus oldTileStatus))
 	    {
+		    if(oldTileStatus.OwnerPlayerId == playerId)
+			    return;
+		    
 		    //If player went from pending owner to owner, remove pending status
 		    string pendingOwner = oldTileStatus.PendingOwnerPlayerId == playerId ? null : oldTileStatus.PendingOwnerPlayerId;
 
@@ -111,6 +114,9 @@ public class PlayGrid : NetworkedWorldGrid<WorldGridTile>
     {
 	    if (GetTileStatus(tilePos, out TileStatus oldTileStatus))
 	    {
+		    if(oldTileStatus.PendingOwnerPlayerId == playerId)
+			    return;
+		    
 		    SetTileStatus(tilePos, new TileStatus() {PendingOwnerPlayerId = playerId, OwnerPlayerId = oldTileStatus.OwnerPlayerId });
 	    }
     }

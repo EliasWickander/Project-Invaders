@@ -8,6 +8,9 @@ public class PlayerTileTracker
     public string m_playerId;
     public List<WorldGridTile> m_ownedTiles = new List<WorldGridTile>();
     public List<WorldGridTile> m_trailTiles = new List<WorldGridTile>();
+
+    public List<Vector2Int> m_ownedTilePositions = new List<Vector2Int>();
+    public List<Vector2Int> m_trailTilePositions = new List<Vector2Int>();
 }
 
 public class TileManager : Singleton<TileManager>
@@ -32,6 +35,9 @@ public class TileManager : Singleton<TileManager>
     
     [SerializeField]
     private Server_OnPlayerKilledEvent m_onPlayerKilledServerEvent;
+    
+    [SerializeField]
+    private Client_OnPlayerKilledEvent m_onPlayerKilledClientEvent;
 
     private PlayGrid m_grid;
 
@@ -58,6 +64,9 @@ public class TileManager : Singleton<TileManager>
         
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.RegisterListener(OnPlayerKilledServer);
+        
+        if(m_onPlayerKilledClientEvent != null)
+            m_onPlayerKilledClientEvent.RegisterListener(OnPlayerKilledClient);
 
         GameWorld.OnPlayerAddedEvent += OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent += OnPlayerRemoved;
@@ -79,6 +88,9 @@ public class TileManager : Singleton<TileManager>
         
         if(m_onPlayerKilledServerEvent != null)
             m_onPlayerKilledServerEvent.UnregisterListener(OnPlayerKilledServer);
+        
+        if(m_onPlayerKilledClientEvent != null)
+            m_onPlayerKilledClientEvent.UnregisterListener(OnPlayerKilledClient);
 
         GameWorld.OnPlayerAddedEvent -= OnPlayerAdded;
         GameWorld.OnPlayerRemovedEvent -= OnPlayerRemoved;
@@ -102,7 +114,7 @@ public class TileManager : Singleton<TileManager>
             m_playerTileTrackers.Remove(removedPlayerId);
     }
 
-    private void ClearAssociatedTiles(string playerId)
+    public void ClearAssociatedTiles(string playerId)
     {
         if (m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
         {
@@ -113,11 +125,7 @@ public class TileManager : Singleton<TileManager>
             {
                 WorldGridTile trailTile = trailTiles[i];
 
-                TileStatus oldStatus = trailTile.TileStatus;
-                TileStatus newStatus = new TileStatus()
-                    { PendingOwnerPlayerId = null, OwnerPlayerId = oldStatus.OwnerPlayerId };
-
-                m_grid.SetTileStatus(trailTile.m_gridPos, newStatus);
+                m_grid.SetTilePendingOwner(trailTile.m_gridPos, null);
             }
 
             //Remove all owned tiles
@@ -127,12 +135,12 @@ public class TileManager : Singleton<TileManager>
             {
                 WorldGridTile ownedTile = ownedTiles[i];
 
-                TileStatus oldStatus = ownedTile.TileStatus;
-                TileStatus newStatus = new TileStatus()
-                    { PendingOwnerPlayerId = oldStatus.PendingOwnerPlayerId, OwnerPlayerId = null };
-
-                m_grid.SetTileStatus(ownedTile.m_gridPos, newStatus);
+                m_grid.SetTileOwner(ownedTile.m_gridPos, null);
             }
+        }
+        else
+        {
+            Debug.LogError("Tried to clear associated tiles of player that wasn't tracked");
         }
     }
 
@@ -165,6 +173,13 @@ public class TileManager : Singleton<TileManager>
         ClearAssociatedTiles(killedPlayer.PlayerId);
     }
 
+    private void OnPlayerKilledClient(OnPlayerKilledGameEventData data)
+    {
+        Player killedPlayer = data.m_player;
+        
+        ClearAssociatedTiles(killedPlayer.PlayerId);
+    }
+    
     private void SetOwnerArea(Player player, WorldGridTile sourceTile, int radius)
     {
         List<WorldGridTile> nodesWithinRadius = GetNodesWithinRadius(sourceTile, radius);
@@ -230,6 +245,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Remove(tile);
+
+                    if (tileTracker.m_trailTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_trailTilePositions.Remove(tile.m_gridPos);
                 }
             }
 
@@ -240,6 +258,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (!tileTracker.m_trailTiles.Contains(tile))
                         tileTracker.m_trailTiles.Add(tile);
+
+                    if (!tileTracker.m_trailTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_trailTilePositions.Add(tile.m_gridPos);
                 }
             }
         }
@@ -254,6 +275,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (tileTracker.m_ownedTiles.Contains(tile))
                         tileTracker.m_ownedTiles.Remove(tile);
+
+                    if (tileTracker.m_ownedTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_ownedTilePositions.Remove(tile.m_gridPos);
                 }
             }
 
@@ -264,6 +288,9 @@ public class TileManager : Singleton<TileManager>
                 {
                     if (!tileTracker.m_ownedTiles.Contains(tile))
                         tileTracker.m_ownedTiles.Add(tile);
+                    
+                    if(!tileTracker.m_ownedTilePositions.Contains(tile.m_gridPos))
+                        tileTracker.m_ownedTilePositions.Add(tile.m_gridPos);
                 }
             }
         }
@@ -454,4 +481,11 @@ public class TileManager : Singleton<TileManager>
         return tileTracker.m_trailTiles;
     }
 
+    public PlayerTileTracker GetTrackedTilesForPlayer(string playerId)
+    {
+        if (!m_playerTileTrackers.TryGetValue(playerId, out var tileTracker))
+            return null;
+
+        return tileTracker;
+    }
 }

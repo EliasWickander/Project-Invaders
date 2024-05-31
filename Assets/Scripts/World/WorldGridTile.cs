@@ -35,6 +35,9 @@ public class WorldGridTile : WorldGridNode
         TileStatus oldStatus = m_tileStatus;
         m_tileStatus = status;
 
+        if(oldStatus.Equals(m_tileStatus))
+            return;
+        
         if (!string.IsNullOrEmpty(m_tileStatus.PendingOwnerPlayerId))
         {
             Player pendingPlayer = GameClient.Instance.GameWorld.GetPlayerFromId(status.PendingOwnerPlayerId);
