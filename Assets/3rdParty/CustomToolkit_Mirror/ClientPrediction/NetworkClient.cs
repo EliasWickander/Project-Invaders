@@ -130,5 +130,13 @@ namespace CustomToolkit.Mirror
 			if(m_prediction != null)
 				m_prediction.enabled = isActive;
 		}
+
+		//Reset network simulation to start from new server state
+		public void ForceSyncServerState(ClientState state)
+		{
+			Messenger.LatestServerState = state;
+			
+			m_prediction?.ForceSyncServerState(state);
+		}
 	}
 }

@@ -8,9 +8,6 @@ namespace CustomToolkit.Mirror
 	public abstract class ClientPrediction<ClientInput, ClientState> : MonoBehaviour
 		where ClientInput : INetworkClientInput where ClientState : INetworkClientState
 	{
-		[SerializeField] 
-		private bool m_debug = false;
-
 		[SerializeField, Tooltip("The number of ticks that can be stored in input/state buffers")]
 		private uint m_bufferSize = 1024;
 
@@ -58,7 +55,7 @@ namespace CustomToolkit.Mirror
 		{
 			if (currentTick < latestServerState.Tick)
 			{
-				if (m_debug)
+				if (ServerDebug.s_debugPackages)
 					Debug.LogWarning("Current tick is less than the latest server state tick, which is not valid.");
 				
 				return;
@@ -71,10 +68,9 @@ namespace CustomToolkit.Mirror
 			// If latest server state doesn't match the state we expect this tick, we're out of sync. Reconcile
 			if (!latestServerState.Equals(m_stateBuffer[serverStateBufferIndex]))
 			{
-				if (m_debug)
+				if (ServerDebug.s_debugPackages)
 				{
-					Debug.Log("Reconciling", gameObject);
-					Debug.Log("Latest server state was " + latestServerState.Log() + "\n Predicted state was " + m_stateBuffer[serverStateBufferIndex].Log());
+					Debug.Log("Reconciling. Latest server state was " + latestServerState.Log() + "\n Predicted state was " + m_stateBuffer[serverStateBufferIndex].Log());
 				}
 
 				// Rewind
@@ -118,6 +114,13 @@ namespace CustomToolkit.Mirror
 			
 			if(m_inputBuffer != null)
 				Array.Clear(m_inputBuffer, 0, m_inputBuffer.Length);
+		}
+
+		public void ForceSyncServerState(ClientState state)
+		{
+			RecordState(state.Tick, state);
+			
+			m_client.SetState(state);
 		}
 	}
 }

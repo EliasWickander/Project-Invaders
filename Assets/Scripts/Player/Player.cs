@@ -8,6 +8,9 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkPlayer))]
 public class Player : NetworkBehaviour
 {
+    public event Action OnDeathEvent;
+    public event Action OnSpawnEvent;
+    
     [SerializeField]
     private PlayerData m_playerData;
 
@@ -99,6 +102,8 @@ public class Player : NetworkBehaviour
         var playerCurrentState = m_networkPlayer.GetState(NetworkSimulation.Instance.CurrentTick);
 
         OnSpawnedRpc(playerCurrentState, spawnTransform, spawnTile.m_gridPos);
+        
+        OnSpawnEvent?.Invoke();
     }
 
     [ClientRpc]
@@ -112,13 +117,21 @@ public class Player : NetworkBehaviour
 
         if (m_networkPlayer != null)
         {
-            m_networkPlayer.Messenger.LatestServerState = playerStateOnSpawn;
+            if (ServerDebug.s_debugPackages)
+                Debug.Log("Synced with latest state on server: " + playerStateOnSpawn.Log());
 
             m_networkPlayer.SetActive(true);
+            
+            m_networkPlayer.ForceSyncServerState(playerStateOnSpawn);
+            
+            if(!NetworkServer.active)
+                OnSpawnEvent?.Invoke();
         }
         
         if(m_onPlayerSpawnedClientEvent != null)
             m_onPlayerSpawnedClientEvent.Raise(new OnPlayerSpawnedGameEventData() {m_player = this, m_startTerritoryRadius = m_playerData.StartTerritoryRadius});
+        
+        Debug.Log($"Player {PlayerId} spawned");
     }
     
     [Server]
@@ -132,6 +145,8 @@ public class Player : NetworkBehaviour
         KillRpc();
 
         ResetState();
+        
+        OnDeathEvent?.Invoke();
     }
 
     [ClientRpc]
@@ -144,7 +159,11 @@ public class Player : NetworkBehaviour
             
             if(m_onPlayerKilledClientEvent != null)
                 m_onPlayerKilledClientEvent.Raise(new OnPlayerKilledGameEventData() {m_player = this});   
+            
+            OnDeathEvent?.Invoke();
         }
+        
+        Debug.Log($"Player {PlayerId} killed");
     }
 
     private void OnDead(bool oldValue, bool newValue)

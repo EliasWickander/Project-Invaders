@@ -24,6 +24,20 @@ public class NetworkPlayer : NetworkClient<NetworkPlayerInput, NetworkPlayerStat
 		m_player = GetComponent<Player>();
 	}
 
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+
+		m_player.OnSpawnEvent += OnSpawned;
+	}
+
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+		
+		m_player.OnSpawnEvent -= OnSpawned;
+	}
+
 	public override void SetState(NetworkPlayerState state)
 	{
 		m_player.transform.position = state.m_position;
@@ -111,5 +125,10 @@ public class NetworkPlayer : NetworkClient<NetworkPlayerInput, NetworkPlayerStat
 			m_trailTiles = trailTiles,
 			m_ownedTiles = ownedTiles
 		};	
+	}
+	
+	private void OnSpawned()
+	{
+		m_moveTimer = 0.0f;
 	}
 }
