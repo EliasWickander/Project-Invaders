@@ -16,6 +16,9 @@ public class NetworkPlayerMessenger : NetworkBehaviour, INetworkClientMessenger<
 
 	public void SendStateToClient(NetworkPlayerState state)
 	{
+		if (ServerDebug.s_debugPackages)
+			Debug.Log($"Sending package to client: {state.Log()}");	
+		
 		RpcSendStateToClient(state);
 	}
 
@@ -28,9 +31,17 @@ public class NetworkPlayerMessenger : NetworkBehaviour, INetworkClientMessenger<
 	[ClientRpc(channel = Channels.Unreliable)]
 	private void RpcSendStateToClient(NetworkPlayerState state)
 	{
+		if (ServerDebug.s_debugPackages)
+			Debug.Log($"Received package on client: {state.Log()}");	
+		
 		//Ignore outdated server states
-		if(state.Tick <= LatestServerState.Tick)
-			return;
+		if (state.Tick <= LatestServerState.Tick)
+		{
+			if (ServerDebug.s_debugPackages)
+				Debug.Log($"Ignored package due to being out of date. Tick: {state.Tick}. Latest server tick: {LatestServerState.Tick}");	
+			
+			return;	
+		}
 
 		LatestServerState = state;
 	}

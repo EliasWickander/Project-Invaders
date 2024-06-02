@@ -1,5 +1,23 @@
-﻿using CustomToolkit.Mirror;
+using CustomToolkit.Mirror;
 using UnityEngine;
+
+public struct TileContainer
+{
+	public List<Vector2Int> m_tiles;
+
+	public string Log()
+	{
+		if (m_tiles == null)
+			return string.Empty;
+
+		string s = string.Empty;
+		
+		foreach (Vector2Int tile in m_tiles)
+			s += $"{tile}\n";
+
+		return s;
+	}
+}
 
 //Player state handled over network
 public struct NetworkPlayerState : INetworkClientState
