@@ -17,6 +17,9 @@ public class NetworkPlayerPrediction : ClientPrediction<NetworkPlayerInput, Netw
 	{
 		Player player = m_player.Player;
 		
-		return new NetworkPlayerInput(currentTick, player.CurrentMoveDirection, m_player.m_moveTimer);
+		return new NetworkPlayerInput {
+			m_tick = currentTick, 
+			m_moveDirection = player.CurrentMoveDirection, 
+			m_moveTimer = m_player.m_moveTimer};
 	}
 }

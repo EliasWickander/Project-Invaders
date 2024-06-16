@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using CustomToolkit.Mirror;
+using Mirror;
 using UnityEngine;
 
 //Player state handled over network
-public struct NetworkPlayerState : INetworkClientState
+public struct NetworkPlayerState : INetworkClientState, NetworkMessage
 {
 	public uint m_tick;
 	public Vector3 m_position;
