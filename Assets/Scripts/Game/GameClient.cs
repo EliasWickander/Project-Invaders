@@ -12,11 +12,14 @@ public class GameClient : Singleton<GameClient>
     public GameData GameData => m_gameData;
 
     public GameWorld GameWorld { get; private set; }
+    
+    public NetworkTransmissionManager NetworkTransmissionManager { get; private set; }
 
     protected override void OnSingletonAwake()
     {
         base.OnSingletonAwake();
 
         GameWorld = new GameWorld();
+        NetworkTransmissionManager = new NetworkTransmissionManager();
     }
 }

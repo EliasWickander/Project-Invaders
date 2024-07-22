@@ -96,7 +96,7 @@ namespace CustomToolkit.Mirror
 		
 		private void SendStateToClient(ClientState state)
 		{
-			m_messenger.SendStateToClient(state);
+			m_messenger.SendStateToClient(GameClient.Instance.NetworkTransmissionManager.GetNextTransmissionId(), state);
 		}
 	
 		public void SendInputToServer(ClientInput input)

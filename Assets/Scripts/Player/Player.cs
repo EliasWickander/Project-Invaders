@@ -117,7 +117,7 @@ public class Player : NetworkBehaviour
 
         if (m_networkPlayer != null)
         {
-            if (ServerDebug.s_debugPackages)
+            if (GameDebug.s_debugNetworkMessages)
                 Debug.Log("Synced with latest state on server: " + playerStateOnSpawn.Log());
 
             m_networkPlayer.SetActive(true);

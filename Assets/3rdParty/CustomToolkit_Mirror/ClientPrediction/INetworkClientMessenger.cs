@@ -9,6 +9,6 @@ namespace CustomToolkit.Mirror
 		ClientState LatestServerState { get; set; }
 
 		public void SendInputToServer(ClientInput input);
-		public void SendStateToClient(ClientState state);
+		public void SendStateToClient(int transmissionId, ClientState state);
 	}
 }

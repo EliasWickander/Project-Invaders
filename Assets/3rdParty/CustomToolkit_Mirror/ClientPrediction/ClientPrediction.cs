@@ -55,7 +55,7 @@ namespace CustomToolkit.Mirror
 		{
 			if (currentTick < latestServerState.Tick)
 			{
-				if (ServerDebug.s_debugPackages)
+				if (GameDebug.s_debugNetworkMessages)
 					Debug.LogWarning("Current tick is less than the latest server state tick, which is not valid.");
 				
 				return;
@@ -68,7 +68,7 @@ namespace CustomToolkit.Mirror
 			// If latest server state doesn't match the state we expect this tick, we're out of sync. Reconcile
 			if (!latestServerState.Equals(m_stateBuffer[serverStateBufferIndex]))
 			{
-				if (ServerDebug.s_debugPackages)
+				if (GameDebug.s_debugNetworkMessages)
 				{
 					Debug.Log("Reconciling. Latest server state was " + latestServerState.Log() + "\n Predicted state was " + m_stateBuffer[serverStateBufferIndex].Log());
 				}
