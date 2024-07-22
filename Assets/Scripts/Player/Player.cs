@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CustomToolkit.Mirror;
 using Mirror;
 using UnityEngine;
@@ -16,6 +17,9 @@ public class Player : NetworkBehaviour
 
     public PlayerData PlayerData => m_playerData;
 
+    private PlayerCustomizationData m_customizationData;
+    public PlayerCustomizationData CustomizationData => m_customizationData;
+    
     [SerializeField]
     private NetworkPlayer m_networkPlayer;
 
@@ -51,6 +55,9 @@ public class Player : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnDead))] 
     public bool IsDead;
+
+    [SyncVar(hook = nameof(OnElementChanged))]
+    public string ElementId = string.Empty;
 
     private WorldGridTile m_currentTile = null;
     public WorldGridTile CurrentTile => m_currentTile;
@@ -175,6 +182,17 @@ public class Player : NetworkBehaviour
         m_visualContainer.gameObject.SetActive(!newValue);
     }
 
+    private void OnElementChanged(string oldId, string newId)
+    {
+        if(oldId == newId)
+            return;
+        
+        var elements = GameClient.Instance.GameData.Elements;
+        var elementData = elements.FirstOrDefault(x => x.Id == newId) ?? elements[0];
+
+        m_customizationData = elementData.PlayerCustomizationData;
+    }
+
     [ClientRpc]
     public void OnGameStarted()
     {
@@ -275,6 +293,12 @@ public class Player : NetworkBehaviour
     public void SetDisplayName(string displayName)
     {
         m_displayName = displayName;
+    }
+
+    [Server]
+    public void SetElement(string elementId)
+    {
+        ElementId = elementId;
     }
 
     [Server]

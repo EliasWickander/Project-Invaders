@@ -49,7 +49,7 @@ public class WorldGridTile : WorldGridNode
             }
             
             if(pendingPlayer != null)
-                UpdateMaterial(pendingPlayer.PlayerData.TrailMaterial);
+                UpdateMaterial(pendingPlayer.CustomizationData.TrailMaterial);
         }
         else if(!string.IsNullOrEmpty(m_tileStatus.OwnerPlayerId))
         {
@@ -62,7 +62,7 @@ public class WorldGridTile : WorldGridNode
             }
             
             if(ownerPlayer != null)
-                UpdateMaterial(ownerPlayer.PlayerData.TerritoryMaterial);
+                UpdateMaterial(ownerPlayer.CustomizationData.TerritoryMaterial);
         }
         else
         {

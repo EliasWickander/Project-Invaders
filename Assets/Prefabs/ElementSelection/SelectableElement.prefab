@@ -30,7 +30,6 @@ RectTransform:
   m_Children:
   - {fileID: 909442848779610800}
   m_Father: {fileID: 6948963438767316359}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -70,7 +69,6 @@ RectTransform:
   - {fileID: 8946727754476677876}
   - {fileID: 9085645203419435843}
   m_Father: {fileID: 3602684416413584629}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -91,7 +89,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewAdapterTypeName: CustomToolkit.UnityMVVM.Adapters.BoolInversionAdapter
   viewAdapterOptions: {fileID: 0}
-  viewModelPropertyName: SelectableElementViewModel.IsLocked
+  viewModelPropertyName: ElementData.IsLocked
 --- !u!1 &2719687745550148480
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +120,6 @@ RectTransform:
   m_Children:
   - {fileID: 4090077625227534563}
   m_Father: {fileID: 3446419817511973764}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -160,7 +157,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8249096273349127345}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -215,6 +211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3602684416413584629}
   - component: {fileID: 330064887732056692}
+  - component: {fileID: 2601750856487692894}
   m_Layer: 0
   m_Name: SelectableElement
   m_TagString: Untagged
@@ -237,7 +234,6 @@ RectTransform:
   - {fileID: 6948963438767316359}
   - {fileID: 3446419817511973764}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -257,6 +253,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewModelTypeName: SelectableElementViewModel
+--- !u!114 &2601750856487692894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3948654420947396751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b905be31848626347b42127c2012dd5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewModelPropertyName: SelectableElementViewModel.Data
+  viewModelTypeName: ElementData
 --- !u!1 &4297674968351309338
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +298,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3948549988968640003}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -366,7 +375,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9085645203419435843}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -501,7 +509,6 @@ RectTransform:
   - {fileID: 686773937242296996}
   - {fileID: 8249096273349127345}
   m_Father: {fileID: 3602684416413584629}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -522,7 +529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewAdapterTypeName: 
   viewAdapterOptions: {fileID: 0}
-  viewModelPropertyName: SelectableElementViewModel.IsLocked
+  viewModelPropertyName: ElementData.IsLocked
 --- !u!1 &5775018504052444083
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +562,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8946727754476677876}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -614,7 +620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewAdapterTypeName: 
   viewAdapterOptions: {fileID: 0}
-  viewModelPropertyName: SelectableElementViewModel.Icon
+  viewModelPropertyName: ElementData.Icon
   viewPropertyName: UnityEngine.UI.Image.sprite
 --- !u!1 &5820097862101537070
 GameObject:
@@ -647,7 +653,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 686773937242296996}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -722,7 +727,6 @@ RectTransform:
   m_Children:
   - {fileID: 5637084023029560575}
   m_Father: {fileID: 6948963438767316359}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -759,7 +763,6 @@ RectTransform:
   m_Children:
   - {fileID: 7703888871760764439}
   m_Father: {fileID: 3446419817511973764}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -796,7 +799,6 @@ RectTransform:
   m_Children:
   - {fileID: 6632998664227489307}
   m_Father: {fileID: 6948963438767316359}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

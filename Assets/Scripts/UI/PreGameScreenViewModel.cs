@@ -66,6 +66,6 @@ public class PreGameScreenViewModel : ViewModelMonoBehaviour
         
         HasLockedInElement = true;
         
-        m_localPlayer.SelectElement();
+        m_localPlayer.SelectElement(SelectedElement.Data.Id);
     }
 }

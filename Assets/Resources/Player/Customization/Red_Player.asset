@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4af98a33801945041bf7d94e49f7beef, type: 3}
-  m_Name: PlaceholderElement 1
+  m_Script: {fileID: 11500000, guid: f07593d116058824b86b7d2bc51d4550, type: 3}
+  m_Name: Red_Player
   m_EditorClassIdentifier: 
-  m_icon: {fileID: 21300000, guid: e2d2e499776b6b9499136e38ec4e1b9e, type: 3}
-  m_isLocked: 1
+  m_trailMaterial: {fileID: 2100000, guid: a71d7a7e30374a4449b90b9c900e8a95, type: 2}
+  m_territoryMaterial: {fileID: 2100000, guid: c0baac5ae2a5ddd49b01bf9a23631a41, type: 2}

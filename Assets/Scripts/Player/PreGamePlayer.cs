@@ -12,6 +12,9 @@ public class PreGamePlayer : NetworkBehaviour
     [SyncVar] 
     public bool HasSelectedElement = false;
 
+    [SyncVar] 
+    public string SelectedElementId = string.Empty;
+    
     [SerializeField] 
     private Client_OnPreGameEndedEvent m_onPreGameEndedClientEvent;
     
@@ -32,10 +35,11 @@ public class PreGamePlayer : NetworkBehaviour
     }
 
     [Command]
-    public void SelectElement()
+    public void SelectElement(string elementId)
     {
         HasSelectedElement = true;
-
+        SelectedElementId = elementId;
+        
         NetworkManagerCustom networkManager = NetworkManagerCustom.Instance;
         
         if(networkManager.CanStartGame())

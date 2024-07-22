@@ -19,6 +19,11 @@ public struct CreateLobbyPlayerMessage : NetworkMessage
 
 }
 
+public struct SpawnPlayerMessage : NetworkMessage
+{
+    
+}
+
 public class NetworkManagerCustom : NetworkManager
 {
     public static NetworkManagerCustom Instance => singleton as NetworkManagerCustom;
@@ -468,6 +473,7 @@ public class NetworkManagerCustom : NetworkManager
 
                 gamePlayerInstance.SetPlayerId(Guid.NewGuid().ToString());
                 gamePlayerInstance.SetDisplayName(playerProfile.m_displayName);
+                gamePlayerInstance.SetElement(preGamePlayer.SelectedElementId);
 
                 NetworkServer.ReplacePlayerForConnection(playerProfile.m_connection, gamePlayerInstance.gameObject, true);
 
@@ -487,7 +493,7 @@ public class NetworkManagerCustom : NetworkManager
         if(m_onPreGameEndedServerEvent != null)
             m_onPreGameEndedServerEvent.Raise(new OnPreGameEndedEventData() {});
     }
-
+    
     public bool CanStartGame()
     {
         if (!Utils.IsSceneActive(m_gameScene) || PreGamePlayers.Count <= 0)

@@ -8,6 +8,7 @@ public class SelectableElementViewModel : ViewModel
 {
     private ElementData m_data = null;
 
+    [Binding]
     public ElementData Data
     {
         get
@@ -20,39 +21,6 @@ public class SelectableElementViewModel : ViewModel
         }
     }
     
-    private PropertyChangedEventArgs m_iconProp = new PropertyChangedEventArgs(nameof(Icon));
-    private Sprite m_icon = null;
-
-    [Binding]
-    public Sprite Icon
-    {
-        get
-        {
-            return m_icon;
-        }
-        set
-        {
-            m_icon = value;
-            OnPropertyChanged(m_iconProp);
-        }
-    }
-
-    private PropertyChangedEventArgs m_isLockedProp = new PropertyChangedEventArgs(nameof(IsLocked));
-    private bool m_isLocked = false;
-
-    [Binding]
-    public bool IsLocked
-    {
-        get
-        {
-            return m_isLocked;
-        }
-        set
-        {
-            m_isLocked = value;
-            OnPropertyChanged(m_isLockedProp);
-        }
-    }
     public event Action<SelectableElementViewModel> OnSelected;
     
     [Binding]

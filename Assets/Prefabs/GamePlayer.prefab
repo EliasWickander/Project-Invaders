@@ -190,6 +190,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   m_playerData: {fileID: 11400000, guid: 76a46e6f1b569fa43a7eec1be3e0d7db, type: 2}
+  m_customizationData: {fileID: 11400000, guid: bb5929e68e1e0a34fb4fa0deacf12338, type: 2}
   m_networkPlayer: {fileID: 0}
   m_onGameStartedClientEvent: {fileID: 11400000, guid: 9feb06a7d10c92a4ea7ed6d582475b9f, type: 2}
   m_onTileSteppedOnServerEvent: {fileID: 11400000, guid: 1edd3ebcd4c6dab4ca80e2a482349f52, type: 2}
@@ -245,7 +246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56fc4c3937ee405a933c777fbcd2f05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_debug: 1
   m_bufferSize: 1024
   m_client: {fileID: 7196251172822222333}
 --- !u!114 &6634254726707825711
@@ -263,3 +263,4 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  m_maxMessageSize: 1195
