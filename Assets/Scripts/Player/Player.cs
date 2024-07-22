@@ -53,6 +53,7 @@ public class Player : NetworkBehaviour
     public bool IsDead;
 
     private WorldGridTile m_currentTile = null;
+    public WorldGridTile CurrentTile => m_currentTile;
     private Vector3 m_currentMoveDirection = Vector3.zero;
     public Vector3 CurrentMoveDirection => m_currentMoveDirection;
 
@@ -207,7 +208,7 @@ public class Player : NetworkBehaviour
 
     public void SetMoveDirection(Vector3 dir)
     {
-	    m_currentMoveDirection = dir;
+        m_currentMoveDirection = dir;
     }
     
     public void Move(Vector3 direction)

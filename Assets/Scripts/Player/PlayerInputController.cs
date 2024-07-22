@@ -51,6 +51,13 @@ public class PlayerInputController : MonoBehaviour
         if(inputMoveDir == -m_player.CurrentMoveDirection)
             return;
 
+        //Don't allow movement in a direction with no neighbour
+        PlayGrid playGrid = PlayGrid.Instance;
+        WorldGridTile neighbourTile = playGrid.GetNeighbour(m_player.CurrentTile, new Vector2Int((int)inputMoveDir.x, (int)inputMoveDir.z));
+
+        if(neighbourTile == null || neighbourTile == m_player.CurrentTile)
+            return;
+            
         m_player.SetMoveDirection(inputMoveDir);
     }
 }
