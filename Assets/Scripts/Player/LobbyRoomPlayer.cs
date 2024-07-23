@@ -21,8 +21,7 @@ public class LobbyRoomPlayer : NetworkBehaviour
     
     [SerializeField] 
     private Server_OnPlayerReadyStatusChangedEvent m_onPlayerReadyStatusChangedServerEvent;
-
-    //
+    
     [SyncVar]
     public int PlayerIndex = -1;
     
@@ -112,12 +111,12 @@ public class LobbyRoomPlayer : NetworkBehaviour
     }
 
     [Command]
-    public void StartGameCommand()
+    public void StartGameCommand(int gameModeIndex)
     {
         if(!IsLeader)
             return;
 
-        NetworkManagerCustom.Instance.StartPreGame();
+        NetworkManagerCustom.Instance.StartPreGame(gameModeIndex);
     }
 
     [ClientRpc]

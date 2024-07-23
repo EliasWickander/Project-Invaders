@@ -6,12 +6,16 @@ using CustomToolkit.UnityMVVM;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Binding]
 public class GameLobbyViewModel : ViewModelMonoBehaviour
 {
     public PlayerLobbyEntryViewModel[] m_playerEntries;
 
+    [SerializeField]
+    private IntVariable m_selectedGameModeVariable;
+    
     private LobbyRoomPlayer m_localPlayer;
 
     private PropertyChangedEventArgs m_isLocalPlayerHostProp = new PropertyChangedEventArgs(nameof(IsLocalPlayerHost));
@@ -160,6 +164,6 @@ public class GameLobbyViewModel : ViewModelMonoBehaviour
     [Binding]
     public void StartGame()
     {
-        m_localPlayer.StartGameCommand();
+        m_localPlayer.StartGameCommand(m_selectedGameModeVariable.Value);
     }
 }

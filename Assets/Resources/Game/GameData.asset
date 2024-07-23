@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b97adc43002fe44ad98922fe46a9a7, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
+  m_gameModes:
+  - {fileID: 11400000, guid: ea9056310fea77048adadecd242bf9d0, type: 2}
+  - {fileID: 11400000, guid: c2969f4a99928e9418b715d0230979a9, type: 2}
   m_elements:
   - {fileID: 11400000, guid: fe8e1f2c5664a874aa26e35020cc05c4, type: 2}
   - {fileID: 11400000, guid: f80f9eeacdb639d429734d48c930ddaf, type: 2}

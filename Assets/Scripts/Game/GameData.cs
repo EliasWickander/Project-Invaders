@@ -6,7 +6,10 @@ using UnityEngine;
 public class GameData : ScriptableObject
 {
     [SerializeField] 
+    private GameModeData[] m_gameModes;
+    public GameModeData[] GameModes => m_gameModes;
+    
+    [SerializeField] 
     private ElementData[] m_elements;
-
     public ElementData[] Elements => m_elements;
 }

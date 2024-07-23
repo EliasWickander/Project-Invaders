@@ -393,10 +393,13 @@ public class NetworkManagerCustom : NetworkManager
     }
 
     /// <summary>
-    /// Start game
+    /// Start pre game
     /// </summary>
-    public void StartPreGame()
+    public void StartPreGame(int gameModeIndex)
     {
+        GameModeData gameModeData = GameClient.Instance.GameData.GameModes[gameModeIndex];
+        
+        Debug.Log("Starting pre game with game mode " + gameModeData.DisplayName);
         //If starting from lobby, change scene to game on server side
         if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
